@@ -14,7 +14,7 @@ module.exports = {
     renderer: config.srcRendererDir
   },
   output: {
-    path: config.distRendererDir
+    path: config.distRendererDir,
     filename: '[name].js',
     publicPath: ''
   },

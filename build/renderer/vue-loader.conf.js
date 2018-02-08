@@ -8,7 +8,7 @@ module.exports = {
     sourceMap: true,
     extract: isProduction
   }),
-  cssSourceMap: sourceMapEnabled,
+  cssSourceMap: true,
   cacheBusting: true,
   transformToRequire: {
     video: ['src', 'poster'],
