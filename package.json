@@ -12,7 +12,8 @@
     "build:renderer": "node build/renderer/build.js"
   },
   "dependencies": {
-    "vue": "^2.5.2"
+    "lodash": "4.7.1",
+    "normalize.css": "^8.0.0"
   },
   "devDependencies": {
     "autoprefixer": "^7.2.6",
@@ -25,6 +26,8 @@
     "chalk": "^2.3.0",
     "css-loader": "^0.28.9",
     "electron": "^1.8.2",
+    "electron-debug": "^1.5.0",
+    "electron-devtools-installer": "^2.2.3",
     "eslint": "^4.17.0",
     "eslint-config-standard": "^10.2.1",
     "eslint-friendly-formatter": "^3.0.0",
@@ -44,9 +47,14 @@
     "postcss-import": "^11.0.0",
     "postcss-loader": "^2.1.0",
     "postcss-url": "^7.3.0",
+    "pug": "^2.0.0-rc.4",
+    "pug-loader": "^2.3.0",
     "rimraf": "^2.6.2",
+    "stylus": "^0.54.5",
+    "stylus-loader": "^3.0.1",
     "uglifyjs-webpack-plugin": "^1.1.8",
     "url-loader": "^0.6.2",
+    "vue": "^2.5.13",
     "vue-loader": "^14.1.1",
     "vue-style-loader": "^4.0.1",
     "vue-template-compiler": "^2.5.13",

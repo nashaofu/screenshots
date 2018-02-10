@@ -1,28 +1,22 @@
-import { app, BrowserWindow } from 'electron'
-let mainWindow
-const winURL = process.env.NODE_ENV === 'development'
-  ? `http://localhost:8080`
-  : `file://${__dirname}/index.html`
+import debug from 'electron-debug'
+import { app } from 'electron'
+import ShortcutCapture from './shortcut-capture'
 
-function createWindow () {
-  console.log(2312212)
-  /**
-   * Initial window options
-   */
-  mainWindow = new BrowserWindow({
-    height: 563,
-    useContentSize: true,
-    width: 1000
+debug({ showDevTools: true })
+
+app.on('ready', () => {
+  let installExtension = require('electron-devtools-installer')
+  installExtension.default(installExtension.VUEJS_DEVTOOLS)
+    .then(() => { })
+    .catch(err => {
+      console.log('Unable to install `vue-devtools`: \n', err)
+    })
+  const sc = new ShortcutCapture({
+    winTitle: '截图',
+    hotkey: 'ctrl+alt+a'
   })
-
-  mainWindow.loadURL(winURL)
-
-  mainWindow.on('closed', () => {
-    mainWindow = null
-  })
-}
-
-app.on('ready', createWindow)
+  console.log(sc)
+})
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {

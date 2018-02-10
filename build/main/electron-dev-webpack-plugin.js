@@ -2,14 +2,14 @@ const chalk = require('chalk')
 const electron = require('electron')
 const childProcess = require('child_process')
 
-module.exports = class ElectronDevPlugin {
+module.exports = class ElectronDevWebpackPlugin {
   constructor (options) {
     this.process = []
     this.timer = null
   }
 
   apply (compiler) {
-    compiler.plugin('done', (stats) => {
+    compiler.plugin('done', stats => {
       const cp = childProcess.spawn(electron, [
         '--inspect=5858',
         '.'
@@ -54,8 +54,8 @@ module.exports = class ElectronDevPlugin {
   }
 
   log (data) {
-    // console.log('---------------------Main Process Log Start---------------------')
-    // console.log(data)
-    // console.log('----------------------Main Process Log End----------------------')
+    console.log('---------------------Main Process Log Start---------------------')
+    console.log(data)
+    console.log('----------------------Main Process Log End----------------------')
   }
 }
