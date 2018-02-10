@@ -13,7 +13,7 @@ const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 module.exports = merge(baseWebpackConfig, {
   module: {
     rules: utils.styleLoaders({
-      sourceMap: config.build.productionSourceMap,
+      sourceMap: config.prod.sourcemap,
       extract: true,
       usePostCSS: true
     })
@@ -35,7 +35,7 @@ module.exports = merge(baseWebpackConfig, {
           warnings: false
         }
       },
-      sourceMap: true,
+      sourceMap: config.prod.sourcemap,
       parallel: true
     }),
     // extract css into its own file
@@ -45,19 +45,21 @@ module.exports = merge(baseWebpackConfig, {
       // Their CSS will instead be inserted dynamically with style-loader when the codesplit chunk has been loaded by webpack.
       // It's currently set to `true` because we are seeing that sourcemaps are included in the codesplit bundle as well when it's `false`,
       // increasing file size: https://github.com/vuejs-templates/webpack/issues/1110
-      allChunks: true,
+      allChunks: true
     }),
     // Compress extracted CSS. We are using this plugin so that possible
     // duplicated CSS from different components can be deduped.
     new OptimizeCSSPlugin({
-      cssProcessorOptions: { safe: true, map: { inline: false } }
+      cssProcessorOptions: config.prod.sourcemap
+        ? { safe: true, map: { inline: false } }
+        : { safe: true }
     }),
     // generate dist index.html with correct asset hash for caching.
     // you can customize output by editing /index.html
     // see https://github.com/ampedandwired/html-webpack-plugin
     new HtmlWebpackPlugin({
       filename: 'index.html',
-      template: 'index.html',
+      template: path.join(config.srcRendererDir, 'index.html'),
       inject: true,
       minify: {
         removeComments: true,

@@ -15,7 +15,9 @@ module.exports = {
   dev: {
     host: 'localhost',
     port: 8080,
-    poll: true,
     proxyTable: {}
+  },
+  prod: {
+    sourcemap: true
   }
 }
