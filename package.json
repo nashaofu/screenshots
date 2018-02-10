@@ -3,11 +3,13 @@
   "version": "1.0.0",
   "description": "A Vue.js project",
   "author": "nashaofu <diaocheng@outlook.com>",
+  "main": "./dist/main/main.js",
   "scripts": {
-    "dev": "webpack-dev-server --inline --progress --config build/renderer/webpack.dev.conf.js",
-    "start": "npm run dev",
     "lint": "eslint --ext .js,.vue .",
-    "build": "node build/renderer/build.js"
+    "dev:main": "webpack --config build/main/webpack.dev.conf.js --watch",
+    "dev:renderer": "webpack-dev-server --inline --progress --config build/renderer/webpack.dev.conf.js",
+    "build:main": "node build/main/build.js",
+    "build:renderer": "node build/renderer/build.js"
   },
   "dependencies": {
     "vue": "^2.5.2"
@@ -22,6 +24,7 @@
     "babel-preset-stage-2": "^6.24.1",
     "chalk": "^2.3.0",
     "css-loader": "^0.28.9",
+    "electron": "^1.8.2",
     "eslint": "^4.17.0",
     "eslint-config-standard": "^10.2.1",
     "eslint-friendly-formatter": "^3.0.0",
@@ -42,8 +45,6 @@
     "postcss-loader": "^2.1.0",
     "postcss-url": "^7.3.0",
     "rimraf": "^2.6.2",
-    "semver": "^5.5.0",
-    "shelljs": "^0.8.1",
     "uglifyjs-webpack-plugin": "^1.1.8",
     "url-loader": "^0.6.2",
     "vue-loader": "^14.1.1",
