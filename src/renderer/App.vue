@@ -56,9 +56,9 @@ export default {
   },
   computed: {
     bounds () {
-      if (process.env.NODE_ENV === 'development') {
-        return this.displays[0]
-      }
+      // if (process.env.NODE_ENV === 'development') {
+      //   return this.displays[0]
+      // }
       return this.displays
         .reduce((size, { width, height, x, y }) => {
           if (size.width < x + width) {
@@ -121,7 +121,11 @@ export default {
               y: display.y,
               width,
               height,
-              thumbnail
+              thumbnail: thumbnail.resize({
+                width,
+                height,
+                quality: 'best'
+              })
             }
           }))
         })
@@ -165,15 +169,17 @@ export default {
       this.drawRect = false
     },
     drawBackground (sources) {
-      const ctx = this.$refs.background.ctx
-      ctx.clearRect(0, 0, this.width, this.height)
-      sources.forEach(({ x, y, width, height, thumbnail }) => {
-        const $img = new Image()
-        const blob = new Blob([thumbnail.toPNG()], { type: 'image/png' })
-        $img.src = URL.createObjectURL(blob)
-
-        $img.addEventListener('load', () => {
-          ctx.drawImage($img, x, y, width, height, x, y, width, height)
+      this.$nextTick(() => {
+        const ctx = this.$refs.background.ctx
+        ctx.clearRect(0, 0, this.width, this.height)
+        // sources = [sources[1]]
+        sources.forEach(({ x, y, width, height, thumbnail }) => {
+          const $img = new Image()
+          const blob = new Blob([thumbnail.toPNG()], { type: 'image/png' })
+          $img.src = URL.createObjectURL(blob)
+          $img.addEventListener('load', () => {
+            ctx.drawImage($img, 0, 0, width, height, x, y, width, height)
+          })
         })
       })
     },
@@ -196,7 +202,6 @@ export default {
     save () {
       const ctx = this.$refs.rectangle.ctx
       const dataURL = ctx.canvas.toDataURL('image/png')
-      console.log(dataURL)
       ipcRenderer.send('shortcut-capture', dataURL)
     }
   }

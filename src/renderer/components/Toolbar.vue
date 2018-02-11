@@ -1,7 +1,10 @@
 <template lang="pug">
 .toolbar(
   :style="style",
-  @click="$emit('save')"
+  @mousedown.stop="stop",
+  @mousemove.stop="stop",
+  @mouseup.stop="stop"
+  @click.stop="$emit('save')"
 ) 确定
 </template>
 
@@ -31,6 +34,11 @@ export default {
         left: `${this.x}px`,
         top: `${this.y}px`
       }
+    }
+  },
+  methods: {
+    stop () {
+
     }
   }
 }
