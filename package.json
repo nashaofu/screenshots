@@ -12,7 +12,7 @@
     "build:renderer": "node build/renderer/build.js"
   },
   "dependencies": {
-    "lodash": "4.7.1",
+    "lodash": "^4.17.5",
     "normalize.css": "^8.0.0"
   },
   "devDependencies": {

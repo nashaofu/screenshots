@@ -29,7 +29,7 @@ export default class ShortcutCapture {
       menu: false,
       transparent: true,
       resizable: false,
-      // alwaysOnTop: true,
+      alwaysOnTop: process.env.NODE_ENV === 'production',
       skipTaskbar: true,
       closable: true,
       minimizable: false,
@@ -76,7 +76,6 @@ export default class ShortcutCapture {
 
   onShortcutCapture () {
     ipcMain.on('shortcut-capture', (e, dataURL) => {
-      console.log(dataURL)
       clipboard.writeImage(nativeImage.createFromDataURL(dataURL))
     })
   }

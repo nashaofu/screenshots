@@ -17,10 +17,6 @@ export default {
         width: 0,
         height: 0
       })
-    },
-    sources: {
-      type: Array,
-      default: () => []
     }
   },
   data () {
@@ -38,28 +34,6 @@ export default {
   },
   mounted () {
     this.ctx = this.$el.getContext('2d')
-  },
-  watch: {
-    sources: {
-      deep: true,
-      handler () {
-        this.draw()
-      }
-    }
-  },
-  methods: {
-    draw () {
-      this.ctx.clearRect(0, 0, this.width, this.height)
-      this.sources.forEach(({ x, y, width, height, thumbnail }) => {
-        const $img = new Image()
-        const blob = new Blob([thumbnail], { type: 'image/png' })
-        $img.src = URL.createObjectURL(blob)
-
-        $img.addEventListener('load', () => {
-          this.ctx.drawImage($img, x, y, width, height, x, y, width, height)
-        })
-      })
-    }
   }
 }
 </script>
@@ -72,5 +46,4 @@ export default {
   right 0
   bottom 0
   left 0
-  cursor pointer
 </style>

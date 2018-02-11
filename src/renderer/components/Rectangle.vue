@@ -10,15 +10,6 @@ canvas.rectangle(
 export default {
   name: 'Rectangle',
   props: {
-    bounds: {
-      type: Object,
-      default: () => ({
-        x: 0,
-        y: 0,
-        width: 0,
-        height: 0
-      })
-    },
     rect: {
       type: Object,
       default: () => ({
@@ -54,22 +45,13 @@ export default {
     style () {
       return {
         left: `${this.x}px`,
-        top: `${this.y}px`
+        top: `${this.y}px`,
+        display: this.width && this.height ? 'block' : 'none'
       }
     }
   },
   mounted () {
     this.ctx = this.$el.getContext('2d')
-  },
-  watch: {
-    rect: {
-      deep: true,
-      handler () {
-        if (this.ctx) {
-          this.ctx.clearRect(0, 0, this.width, this.height)
-        }
-      }
-    }
   }
 }
 </script>
@@ -80,4 +62,5 @@ export default {
   position absolute
   margin -2px
   border 2px dashed #fff
+  cursor move
 </style>

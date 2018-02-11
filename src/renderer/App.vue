@@ -1,18 +1,22 @@
 <template lang="pug">
 .app(
+  @keypress.esc="cancel",
   @mousedown.left="mousedown",
   @mousemove="mousemove",
   @mouseup="mouseup"
 )
   background(
     ref="background",
-    :bounds="bounds",
-    :sources="sources"
+    :bounds="bounds"
   )
+  .app-mask
   rectangle(
     ref="rectangle",
-    :bounds="bounds",
     :rect="rect"
+  )
+  toolbar(
+    :rect="rect",
+    @save="save"
   )
   button(@click="click") 截图
 </template>
@@ -25,12 +29,14 @@ import {
   remote,
   screen
 } from 'electron'
+import Toolbar from './components/Toolbar'
 import Rectangle from './components/Rectangle'
 import Background from './components/Background'
 
 export default {
   name: 'App',
   components: {
+    Toolbar,
     Rectangle,
     Background
   },
@@ -68,8 +74,10 @@ export default {
   created () {
     this.$win = remote.getCurrentWindow()
     this.displays = this.getDisplays()
+    this.$win.setBounds(this.bounds)
     ipcRenderer.on('shortcut-capture', async () => {
-      this.sources = await this.getSources()
+      const sources = await this.getSources()
+      this.drawBackground(sources)
       this.show()
     })
     ipcRenderer.emit('shortcut-capture')
@@ -113,7 +121,7 @@ export default {
               y: display.y,
               width,
               height,
-              thumbnail: thumbnail.toPNG()
+              thumbnail
             }
           }))
         })
@@ -130,12 +138,6 @@ export default {
     hide () {
       this.$win.hide()
       this.$win.setFullScreen(false)
-      this.$win.setBounds({
-        x: 0,
-        y: 0,
-        width: 0,
-        height: 0
-      })
     },
     mousedown (e) {
       this.drawRect = true
@@ -145,13 +147,13 @@ export default {
         x2: e.clientX,
         y2: e.clientY
       }
-      this.draw()
+      this.drawRectangle()
     },
     mousemove (e) {
       if (this.drawRect) {
         this.rect.x2 = e.clientX
         this.rect.y2 = e.clientY
-        this.draw()
+        this.drawRectangle()
       }
     },
     mouseup (e) {
@@ -159,25 +161,42 @@ export default {
         this.rect.x2 = e.clientX
         this.rect.y2 = e.clientY
       }
-      this.draw()
+      this.drawRectangle()
       this.drawRect = false
-      this.save()
     },
-    draw () {
+    drawBackground (sources) {
+      const ctx = this.$refs.background.ctx
+      ctx.clearRect(0, 0, this.width, this.height)
+      sources.forEach(({ x, y, width, height, thumbnail }) => {
+        const $img = new Image()
+        const blob = new Blob([thumbnail.toPNG()], { type: 'image/png' })
+        $img.src = URL.createObjectURL(blob)
+
+        $img.addEventListener('load', () => {
+          ctx.drawImage($img, x, y, width, height, x, y, width, height)
+        })
+      })
+    },
+    drawRectangle () {
       this.$nextTick(() => {
         const ctx = this.$refs.rectangle.ctx
         const source = this.$refs.background.$el
-        const {x1, y1, x2, y2 } = this.rect
+        const { x1, y1, x2, y2 } = this.rect
         const x = x1 < x2 ? x1 : x2
         const y = y1 < y2 ? y1 : y2
         const width = Math.abs(x2 - x1)
         const height = Math.abs(y2 - y1)
+        ctx.clearRect(0, 0, this.width, this.height)
         ctx.drawImage(source, x, y, width, height, 0, 0, width, height)
       })
+    },
+    cancel () {
+      this.hide()
     },
     save () {
       const ctx = this.$refs.rectangle.ctx
       const dataURL = ctx.canvas.toDataURL('image/png')
+      console.log(dataURL)
       ipcRenderer.send('shortcut-capture', dataURL)
     }
   }
@@ -188,22 +207,20 @@ export default {
 @import "normalize.css"
 
 .app
-  color #333
-  &-bg
-    display block
+  position absolute
+  top 0
+  right 0
+  bottom 0
+  left 0
+  cursor crosshair
+  user-select none
+  &-mask
     position absolute
     top 0
     right 0
     bottom 0
     left 0
-  &-canvas
-    position absolute
-    top 0
-    left 0
-  &-toolbar
-    position absolute
-    top 0
-    left 0
+    background-color rgba(0, 0, 0, 0.1)
   button
     position absolute
     top 50%
