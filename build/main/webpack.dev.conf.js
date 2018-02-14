@@ -2,8 +2,8 @@
 const webpack = require('webpack')
 const merge = require('webpack-merge')
 const baseWebpackConfig = require('./webpack.base.conf')
-const ElectronDevWebpackPlugin = require('./electron-dev-webpack-plugin')
 const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
+const ElectronDevWebpackPlugin = require('electron-dev-webpack-plugin')
 
 module.exports = merge(baseWebpackConfig, {
   // cheap-module-eval-source-map is faster for development
