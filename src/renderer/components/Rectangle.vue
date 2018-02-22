@@ -60,6 +60,7 @@ export default {
 .rectangle
   display block
   position absolute
+  z-index 100
   margin -2px
   border 2px dashed #fff
   cursor move

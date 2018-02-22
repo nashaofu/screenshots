@@ -1,9 +1,6 @@
 <template lang="pug">
 .toolbar(
   :style="style",
-  @mousedown.stop="stop",
-  @mousemove.stop="stop",
-  @mouseup.stop="stop"
   @click.stop="$emit('save')"
 ) 确定
 </template>

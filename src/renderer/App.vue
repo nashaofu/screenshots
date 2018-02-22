@@ -1,15 +1,11 @@
 <template lang="pug">
 .app(
-  @keypress.esc="cancel",
-  @mousedown.left="mousedown",
-  @mousemove="mousemove",
-  @mouseup="mouseup"
+  @keypress.esc="cancel"
 )
   background(
     ref="background",
     :bounds="bounds"
   )
-  .app-mask
   rectangle(
     ref="rectangle",
     :rect="rect"
@@ -18,6 +14,7 @@
     :rect="rect",
     @save="save"
   )
+  layer(@draw="drawRectangle")
   button(@click="click") 截图
 </template>
 
@@ -29,6 +26,7 @@ import {
   remote,
   screen
 } from 'electron'
+import Layer from './components/Layer'
 import Toolbar from './components/Toolbar'
 import Rectangle from './components/Rectangle'
 import Background from './components/Background'
@@ -36,22 +34,18 @@ import Background from './components/Background'
 export default {
   name: 'App',
   components: {
+    Layer,
     Toolbar,
     Rectangle,
     Background
   },
   data () {
     return {
-      $win: null,
+      window: null,
       displays: [],
       sources: [],
       flag: false, // 鼠标拖动
-      rect: {
-        x1: 0,
-        y1: 0,
-        x2: 0,
-        y2: 0
-      }
+      rect: { x1: 0, y1: 0, x2: 0, y2: 0 }
     }
   },
   computed: {
@@ -72,9 +66,9 @@ export default {
     }
   },
   created () {
-    this.$win = remote.getCurrentWindow()
+    this.window = remote.getCurrentWindow()
     this.displays = this.getDisplays()
-    this.$win.setBounds(this.bounds)
+    this.window.setBounds(this.bounds)
     ipcRenderer.on('shortcut-capture', async () => {
       const sources = await this.getSources()
       this.drawBackground(sources)
@@ -132,41 +126,16 @@ export default {
       })
     },
     show () {
-      this.$win.show()
-      this.$win.focus()
-      this.$win.setBounds(this.bounds)
+      this.window.show()
+      this.window.focus()
+      this.window.setBounds(this.bounds)
       if (this.displays.length === 1) {
-        this.$win.setFullScreen(true)
+        this.window.setFullScreen(true)
       }
     },
     hide () {
-      this.$win.hide()
-      this.$win.setFullScreen(false)
-    },
-    mousedown (e) {
-      this.drawRect = true
-      this.rect = {
-        x1: e.clientX,
-        y1: e.clientY,
-        x2: e.clientX,
-        y2: e.clientY
-      }
-      this.drawRectangle()
-    },
-    mousemove (e) {
-      if (this.drawRect) {
-        this.rect.x2 = e.clientX
-        this.rect.y2 = e.clientY
-        this.drawRectangle()
-      }
-    },
-    mouseup (e) {
-      if (this.drawRect) {
-        this.rect.x2 = e.clientX
-        this.rect.y2 = e.clientY
-      }
-      this.drawRectangle()
-      this.drawRect = false
+      this.window.hide()
+      this.window.setFullScreen(false)
     },
     drawBackground (sources) {
       this.$nextTick(() => {
@@ -183,11 +152,12 @@ export default {
         })
       })
     },
-    drawRectangle () {
+    drawRectangle (rect) {
+      this.rect = rect
       this.$nextTick(() => {
         const ctx = this.$refs.rectangle.ctx
         const source = this.$refs.background.$el
-        const { x1, y1, x2, y2 } = this.rect
+        const { x1, y1, x2, y2 } = rect
         const x = x1 < x2 ? x1 : x2
         const y = y1 < y2 ? y1 : y2
         const width = Math.abs(x2 - x1)
@@ -219,13 +189,6 @@ export default {
   left 0
   cursor crosshair
   user-select none
-  &-mask
-    position absolute
-    top 0
-    right 0
-    bottom 0
-    left 0
-    background-color rgba(0, 0, 0, 0.1)
   button
     position absolute
     top 50%
