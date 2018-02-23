@@ -35,18 +35,15 @@ export default {
       return y1 < y2 ? y1 : y2
     },
     width () {
-      const width = Math.abs(this.rect.x2 - this.rect.x1)
-      return width > 10 ? width : 0
+      return Math.abs(this.rect.x2 - this.rect.x1)
     },
     height () {
-      const height = Math.abs(this.rect.y2 - this.rect.y1)
-      return height > 10 ? height : 0
+      return Math.abs(this.rect.y2 - this.rect.y1)
     },
     style () {
       return {
         left: `${this.x}px`,
-        top: `${this.y}px`,
-        display: this.width && this.height ? 'block' : 'none'
+        top: `${this.y}px`
       }
     }
   },
@@ -60,8 +57,8 @@ export default {
 .rectangle
   display block
   position absolute
-  z-index 100
-  margin -2px
+  z-index 90
+  transform translate3d(-2px, -2px, 0)
   border 2px dashed #fff
   cursor move
 </style>

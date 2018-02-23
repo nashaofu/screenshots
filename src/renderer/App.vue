@@ -12,10 +12,9 @@
   )
   toolbar(
     :rect="rect",
-    @save="save"
+    @click="click"
   )
   layer(@draw="drawRectangle")
-  button(@click="click") 截图
 </template>
 
 <script>
@@ -41,7 +40,6 @@ export default {
   },
   data () {
     return {
-      window: null,
       displays: [],
       sources: [],
       flag: false, // 鼠标拖动
@@ -50,9 +48,6 @@ export default {
   },
   computed: {
     bounds () {
-      // if (process.env.NODE_ENV === 'development') {
-      //   return this.displays[0]
-      // }
       return this.displays
         .reduce((size, { width, height, x, y }) => {
           if (size.width < x + width) {
@@ -65,10 +60,10 @@ export default {
         }, { x: 0, y: 0, width: 0, height: 0 })
     }
   },
-  created () {
-    this.window = remote.getCurrentWindow()
+  mounted () {
     this.displays = this.getDisplays()
-    this.window.setBounds(this.bounds)
+    const $win = remote.getCurrentWindow()
+    $win.setBounds(this.bounds)
     ipcRenderer.on('shortcut-capture', async () => {
       const sources = await this.getSources()
       this.drawBackground(sources)
@@ -77,9 +72,6 @@ export default {
     ipcRenderer.emit('shortcut-capture')
   },
   methods: {
-    click () {
-      ipcRenderer.emit('shortcut-capture')
-    },
     getDisplays () {
       return screen.getAllDisplays()
         .map(({ id, bounds, scaleFactor }) => ({
@@ -126,16 +118,18 @@ export default {
       })
     },
     show () {
-      this.window.show()
-      this.window.focus()
-      this.window.setBounds(this.bounds)
+      const $win = remote.getCurrentWindow()
+      $win.show()
+      $win.focus()
+      $win.setBounds(this.bounds)
       if (this.displays.length === 1) {
-        this.window.setFullScreen(true)
+        $win.setFullScreen(true)
       }
     },
     hide () {
-      this.window.hide()
-      this.window.setFullScreen(false)
+      const $win = remote.getCurrentWindow()
+      $win.hide()
+      $win.setFullScreen(false)
     },
     drawBackground (sources) {
       this.$nextTick(() => {
@@ -169,7 +163,7 @@ export default {
     cancel () {
       this.hide()
     },
-    save () {
+    click () {
       const ctx = this.$refs.rectangle.ctx
       const dataURL = ctx.canvas.toDataURL('image/png')
       ipcRenderer.send('shortcut-capture', dataURL)
@@ -180,6 +174,7 @@ export default {
 
 <style lang="stylus">
 @import "normalize.css"
+@import "./assets/css/iconfont.styl"
 
 .app
   position absolute
@@ -189,8 +184,4 @@ export default {
   left 0
   cursor crosshair
   user-select none
-  button
-    position absolute
-    top 50%
-    left 50%
 </style>

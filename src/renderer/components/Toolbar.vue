@@ -1,8 +1,5 @@
 <template lang="pug">
-.toolbar(
-  :style="style",
-  @click.stop="$emit('save')"
-) 确定
+.toolbar(:style="style")
 </template>
 
 <script>
@@ -46,5 +43,6 @@ export default {
   background-color #fff
   display block
   position absolute
+  transform translate3d(-2px, -2px, 0)
   z-index 100
 </style>
