@@ -1,7 +1,5 @@
 <template lang="pug">
-.app(
-  @keypress.esc="cancel"
-)
+.app
   background(
     ref="background",
     :bounds="bounds"
@@ -160,13 +158,27 @@ export default {
         ctx.drawImage(source, x, y, width, height, 0, 0, width, height)
       })
     },
+    click (cmd) {
+      switch (cmd) {
+        case 'cancel':
+          this.cancel()
+          break
+        case 'done':
+          this.done()
+          break
+        default:
+          break
+      }
+    },
     cancel () {
+      this.rect = { x1: 0, y1: 0, x2: 0, y2: 0 }
       this.hide()
     },
-    click () {
+    done () {
       const ctx = this.$refs.rectangle.ctx
       const dataURL = ctx.canvas.toDataURL('image/png')
       ipcRenderer.send('shortcut-capture', dataURL)
+      this.hide()
     }
   }
 }
@@ -175,6 +187,14 @@ export default {
 <style lang="stylus">
 @import "normalize.css"
 @import "./assets/css/iconfont.styl"
+
+*
+  box-sizing border-box
+
+html,
+body,
+.app
+  overflow hidden
 
 .app
   position absolute

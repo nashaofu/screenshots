@@ -1,5 +1,13 @@
 <template lang="pug">
 .toolbar(:style="style")
+  .toolbar-button(@click.stop="click('brush')")
+    i.iconfont-brush
+  .toolbar-button(@click.stop="click('revoke')")
+    i.iconfont-revoke
+  .toolbar-button(@click.stop="click('cancel')")
+    i.iconfont-cancel
+  .toolbar-button(@click.stop="click('done')")
+    i.iconfont-done
 </template>
 
 <script>
@@ -18,10 +26,10 @@ export default {
   },
   computed: {
     x () {
-      return this.rect.x1
+      return this.rect.x1 > this.rect.x2 ? this.rect.x1 : this.rect.x2
     },
     y () {
-      return this.rect.y1
+      return this.rect.y1 > this.rect.y2 ? this.rect.y1 : this.rect.y2
     },
     style () {
       return {
@@ -31,8 +39,8 @@ export default {
     }
   },
   methods: {
-    stop () {
-
+    click (cmd) {
+      return this.$emit('click', cmd)
     }
   }
 }
@@ -40,9 +48,42 @@ export default {
 
 <style lang="stylus">
 .toolbar
+  width 120px
+  height 30px
   background-color #fff
   display block
   position absolute
-  transform translate3d(-2px, -2px, 0)
+  transform translate3d(-100%, 10px, 0)
+  border-radius 2px
   z-index 100
+  overflow hidden
+  &:before,
+  &:after
+    content ""
+    display table
+    float none
+    clear both
+  &-button
+    width 30px
+    height 30px
+    line-height 30px
+    float left
+    font-size 20px
+    text-align center
+    background-color #fff
+    border-top 1px solid #ccc
+    border-right 1px solid #ccc
+    border-bottom 1px solid #ccc
+    border-left 1px solid #ccc
+    cursor pointer
+    &:first-child
+      border-left none
+      border-radius 2px 0 0 2px
+    &:last-child
+      border-right none
+      border-radius 0 2px 2px 0
+    &:hover
+      background-color #eee
+    &:active
+      background-color #ccc
 </style>

@@ -58,7 +58,7 @@ export default {
   display block
   position absolute
   z-index 90
-  transform translate3d(-2px, -2px, 0)
-  border 2px dashed #fff
+  transform translate3d(-1px, -1px, 0)
+  border 1px dashed #fff
   cursor move
 </style>
