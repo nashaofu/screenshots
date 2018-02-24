@@ -1,5 +1,5 @@
 <template lang="pug">
-.app
+.app(@keydown="keydown")
   background(
     ref="background",
     :bounds="bounds"
@@ -56,6 +56,12 @@ export default {
           }
           return size
         }, { x: 0, y: 0, width: 0, height: 0 })
+    },
+    width () {
+      return this.bounds.width
+    },
+    height () {
+      return this.bounds.height
     }
   },
   mounted () {
@@ -65,9 +71,8 @@ export default {
     ipcRenderer.on('shortcut-capture', async () => {
       const sources = await this.getSources()
       this.drawBackground(sources)
-      this.show()
+      this.showWin()
     })
-    ipcRenderer.emit('shortcut-capture')
   },
   methods: {
     getDisplays () {
@@ -115,25 +120,33 @@ export default {
         })
       })
     },
-    show () {
+    showWin () {
       const $win = remote.getCurrentWindow()
-      $win.show()
-      $win.focus()
-      $win.setBounds(this.bounds)
-      if (this.displays.length === 1) {
-        $win.setFullScreen(true)
-      }
+      this.$nextTick(() => {
+        this.rect = { x1: 0, y1: 0, x2: 0, y2: 0 }
+        $win.show()
+        $win.focus()
+        $win.setBounds(this.bounds)
+        if (this.displays.length === 1) {
+          $win.setFullScreen(true)
+        }
+      })
     },
-    hide () {
+    hideWin () {
       const $win = remote.getCurrentWindow()
-      $win.hide()
-      $win.setFullScreen(false)
+      this.$nextTick(() => {
+        this.$refs.background.ctx.clearRect(0, 0, this.width, this.height)
+        this.$refs.rectangle.ctx.clearRect(0, 0, this.width, this.height)
+        this.rect = { x1: 0, y1: 0, x2: 0, y2: 0 }
+        $win.setFullScreen(false)
+        $win.setBounds({ x: 0, y: 0, width: 0, height: 0 })
+        $win.hide()
+      })
     },
     drawBackground (sources) {
       this.$nextTick(() => {
         const ctx = this.$refs.background.ctx
         ctx.clearRect(0, 0, this.width, this.height)
-        // sources = [sources[1]]
         sources.forEach(({ x, y, width, height, thumbnail }) => {
           const $img = new Image()
           const blob = new Blob([thumbnail.toPNG()], { type: 'image/png' })
@@ -144,19 +157,23 @@ export default {
         })
       })
     },
-    drawRectangle (rect) {
-      this.rect = rect
+    drawRectangle ({ x1, y1, x2, y2 }) {
+      this.rect = { x1, y1, x2, y2 }
+      // 确保dom更新后再更新canvas
       this.$nextTick(() => {
         const ctx = this.$refs.rectangle.ctx
-        const source = this.$refs.background.$el
-        const { x1, y1, x2, y2 } = rect
         const x = x1 < x2 ? x1 : x2
         const y = y1 < y2 ? y1 : y2
         const width = Math.abs(x2 - x1)
         const height = Math.abs(y2 - y1)
         ctx.clearRect(0, 0, this.width, this.height)
-        ctx.drawImage(source, x, y, width, height, 0, 0, width, height)
+        ctx.drawImage(this.$refs.background.$el, x, y, width, height, 0, 0, width, height)
       })
+    },
+    keydown (e) {
+      if (e.keyCode === 27) {
+        this.hideWin()
+      }
     },
     click (cmd) {
       switch (cmd) {
@@ -171,14 +188,13 @@ export default {
       }
     },
     cancel () {
-      this.rect = { x1: 0, y1: 0, x2: 0, y2: 0 }
-      this.hide()
+      this.hideWin()
     },
     done () {
       const ctx = this.$refs.rectangle.ctx
       const dataURL = ctx.canvas.toDataURL('image/png')
       ipcRenderer.send('shortcut-capture', dataURL)
-      this.hide()
+      this.hideWin()
     }
   }
 }

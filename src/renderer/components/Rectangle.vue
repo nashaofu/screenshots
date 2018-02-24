@@ -12,12 +12,7 @@ export default {
   props: {
     rect: {
       type: Object,
-      default: () => ({
-        x1: 0,
-        y1: 0,
-        x2: 0,
-        y2: 0
-      })
+      default: () => ({ x1: 0, y1: 0, x2: 0, y2: 0 })
     }
   },
   data () {
@@ -43,7 +38,8 @@ export default {
     style () {
       return {
         left: `${this.x}px`,
-        top: `${this.y}px`
+        top: `${this.y}px`,
+        visibility: this.width && this.height ? 'visible' : 'hidden'
       }
     }
   },
@@ -57,7 +53,7 @@ export default {
 .rectangle
   display block
   position absolute
-  z-index 90
+  z-index 100
   transform translate3d(-1px, -1px, 0)
   border 1px dashed #fff
   cursor move

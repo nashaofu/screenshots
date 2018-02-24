@@ -1,12 +1,24 @@
 <template lang="pug">
 .toolbar(:style="style")
-  .toolbar-button(@click.stop="click('brush')")
-    i.iconfont-brush
-  .toolbar-button(@click.stop="click('revoke')")
-    i.iconfont-revoke
-  .toolbar-button(@click.stop="click('cancel')")
+  //- .toolbar-button(
+  //-   title="涂鸦",
+  //-   @click.stop="click('brush')"
+  //- )
+  //-   i.iconfont-brush
+  //- .toolbar-button(
+  //-   title="撤销",
+  //-   @click.stop="click('revoke')"
+  //- )
+  //-   i.iconfont-revoke
+  .toolbar-button(
+    title="退出",
+    @click.stop="click('cancel')"
+  )
     i.iconfont-cancel
-  .toolbar-button(@click.stop="click('done')")
+  .toolbar-button(
+    title="完成",
+    @click.stop="click('done')"
+  )
     i.iconfont-done
 </template>
 
@@ -16,12 +28,7 @@ export default {
   props: {
     rect: {
       type: Object,
-      default: () => ({
-        x1: 0,
-        y1: 0,
-        x2: 0,
-        y2: 0
-      })
+      default: () => ({ x1: 0, y1: 0, x2: 0, y2: 0 })
     }
   },
   computed: {
@@ -32,9 +39,12 @@ export default {
       return this.rect.y1 > this.rect.y2 ? this.rect.y1 : this.rect.y2
     },
     style () {
+      const dx = Math.abs(this.rect.x2 - this.rect.x1)
+      const dy = Math.abs(this.rect.y2 - this.rect.y1)
       return {
         left: `${this.x}px`,
-        top: `${this.y}px`
+        top: `${this.y}px`,
+        visibility: dx && dy ? 'visible' : 'hidden'
       }
     }
   },
@@ -48,7 +58,7 @@ export default {
 
 <style lang="stylus">
 .toolbar
-  width 120px
+  width 60px
   height 30px
   background-color #fff
   display block
