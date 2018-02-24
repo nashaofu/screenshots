@@ -42,8 +42,8 @@ export default class ShortcutCapture {
     })
 
     const URL = process.env.NODE_ENV === 'development'
-      ? `http://localhost:8080`
-      : `file://${__dirname}/index.html`
+      ? 'http://localhost:8080'
+      : `file://${__dirname}/renderer/index.html`
 
     $win.loadURL(URL)
     return $win

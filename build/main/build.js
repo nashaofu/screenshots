@@ -11,7 +11,7 @@ const webpackConfig = require('./webpack.prod.conf')
 const spinner = ora('building for production main process...')
 spinner.start()
 
-rm(config.distMianDir, err => {
+rm(config.distMianFile, err => {
   if (err) throw err
   webpack(webpackConfig, (err, stats) => {
     spinner.stop()

@@ -12,7 +12,7 @@ module.exports = {
     main: config.srcMainDir
   },
   output: {
-    path: config.distMianDir,
+    path: config.distDir,
     filename: '[name].js'
   },
   target: 'electron-main',
@@ -40,5 +40,9 @@ module.exports = {
         include: [resolve('src/main')]
       }
     ]
+  },
+  node: {
+    __dirname: process.env.NODE_ENV !== 'production',
+    __filename: process.env.NODE_ENV !== 'production'
   }
 }

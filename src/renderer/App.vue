@@ -1,5 +1,5 @@
 <template lang="pug">
-.app(@keydown="keydown")
+.app
   background(
     ref="background",
     :bounds="bounds"
@@ -73,6 +73,7 @@ export default {
       this.drawBackground(sources)
       this.showWin()
     })
+    window.addEventListener('keydown', this.keydown)
   },
   methods: {
     getDisplays () {
