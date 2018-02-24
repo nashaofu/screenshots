@@ -10,6 +10,13 @@ module.exports = merge(baseWebpackConfig, {
   entry: {
     main: path.resolve(config.srcMainDir, 'shortcut-capture.js')
   },
+  output: {
+    path: config.distDir,
+    filename: '[name].js',
+    library: 'ShortcutCapture',
+    libraryExport: 'default',
+    libraryTarget: 'commonjs2'
+  },
   devtool: false,
 
   plugins: [

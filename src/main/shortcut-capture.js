@@ -67,11 +67,13 @@ export default class ShortcutCapture {
       globalShortcut.unregister(hotkey)
     }
     // 注册全局快捷键
-    globalShortcut.register(hotkey, () => {
-      this.$win.webContents.send('shortcut-capture')
-    })
+    globalShortcut.register(hotkey, () => this.shortcutCapture())
     this.hotkey = hotkey
     return true
+  }
+
+  shortcutCapture () {
+    this.$win.webContents.send('shortcut-capture')
   }
 
   onShortcutCapture () {
