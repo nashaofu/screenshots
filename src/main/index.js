@@ -11,10 +11,7 @@ app.on('ready', () => {
     .catch(err => {
       console.log('Unable to install `vue-devtools`: \n', err)
     })
-  const sc = new ShortcutCapture({
-    winTitle: '截图',
-    hotkey: 'ctrl+alt+a'
-  })
+  const sc = new ShortcutCapture({ hotkey: 'ctrl+alt+a' })
   console.log(sc)
 })
 

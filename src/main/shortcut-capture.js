@@ -1,28 +1,33 @@
 import {
+  app,
   ipcMain,
   clipboard,
   nativeImage,
   BrowserWindow,
   globalShortcut
 } from 'electron'
+import { getBounds } from '../utils'
 
 export default class ShortcutCapture {
-  constructor ({
-    winTitle = 'shortcut capture',
-    hotkey
-  } = {}) {
-    this.$win = this.initWin(winTitle)
+  constructor ({ hotkey } = {}) {
+    if (!app.isReady()) {
+      throw new Error('Cannot be executed before app\'s ready event')
+    }
+    this.$win = this.initWin()
     this.hotkey = this.registerHotkey(hotkey) ? hotkey : null
     this.onShortcutCapture()
+    this.onShow()
+    this.onHide()
   }
 
-  initWin (winTitle) {
+  initWin () {
     const $win = new BrowserWindow({
-      title: winTitle,
+      title: 'shortcut-capture',
       width: 0,
       height: 0,
       x: 0,
       y: 0,
+      type: 'desktop',
       useContentSize: true,
       frame: false,
       show: false,
@@ -30,7 +35,8 @@ export default class ShortcutCapture {
       transparent: true,
       resizable: false,
       alwaysOnTop: process.env.NODE_ENV === 'production',
-      skipTaskbar: true,
+      enableLargerThanScreen: true,
+      skipTaskbar: process.env.NODE_ENV === 'production',
       closable: true,
       minimizable: false,
       maximizable: false
@@ -73,12 +79,37 @@ export default class ShortcutCapture {
   }
 
   shortcutCapture () {
-    this.$win.webContents.send('shortcut-capture')
+    this.$win.webContents.send('ShortcutCapture::CAPTURE')
   }
 
   onShortcutCapture () {
-    ipcMain.on('shortcut-capture', (e, dataURL) => {
+    ipcMain.on('ShortcutCapture::CAPTURE', (e, dataURL) => {
       clipboard.writeImage(nativeImage.createFromDataURL(dataURL))
+    })
+  }
+
+  onShow () {
+    ipcMain.on('ShortcutCapture::SHOW', (e, displays) => {
+      const bounds = getBounds(displays)
+      this.$win.show()
+      if (displays.length === 1) {
+        this.$win.setFullScreen(true)
+      } else {
+        this.$win.setFullScreen(false)
+      }
+      this.$win.setBounds(bounds)
+      this.$win.focus()
+    })
+  }
+
+  onHide () {
+    ipcMain.on('ShortcutCapture::HIDE', (e, displays) => {
+      const bounds = getBounds(displays)
+      this.$win.setBounds(bounds)
+      // 保证页面上原有的内容被清除掉
+      setTimeout(() => {
+        this.$win.hide()
+      }, 200)
     })
   }
 }
