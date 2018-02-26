@@ -24,7 +24,7 @@ import Toolbar from './components/Toolbar'
 import Rectangle from './components/Rectangle'
 import Background from './components/Background'
 
-import { getBounds } from '../utils'
+import getBounds from './assets/js/getBounds'
 import getSources from './assets/js/getSources'
 import getDisplays from './assets/js/getDisplays'
 
@@ -56,6 +56,7 @@ export default {
   },
   mounted () {
     this.displays = getDisplays()
+    console.log(this.displays, this.bounds)
     ipcRenderer.on('ShortcutCapture::CAPTURE', async () => {
       this.hideWin()
       this.sources = await getSources(this.displays)
@@ -66,11 +67,17 @@ export default {
   },
   methods: {
     showWin () {
-      ipcRenderer.send('ShortcutCapture::SHOW', this.displays)
+      ipcRenderer.send('ShortcutCapture::SHOW', {
+        displays: this.displays,
+        bounds: this.bounds
+      })
     },
     hideWin () {
       this.reset()
-      ipcRenderer.send('ShortcutCapture::HIDE', this.displays)
+      ipcRenderer.send('ShortcutCapture::HIDE', {
+        displays: this.displays,
+        bounds: this.bounds
+      })
     },
     reset () {
       this.sources = []
@@ -152,6 +159,8 @@ export default {
 html,
 body,
 .app
+  -webkit-app-region no-drag
+  user-select none
   overflow hidden
 
 .app
@@ -161,5 +170,4 @@ body,
   bottom 0
   left 0
   cursor crosshair
-  user-select none
 </style>

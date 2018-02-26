@@ -20,7 +20,6 @@
     "registry": "https://registry.npmjs.org/"
   },
   "dependencies": {
-    "lodash": "^4.17.5",
     "normalize.css": "^8.0.0"
   },
   "devDependencies": {
