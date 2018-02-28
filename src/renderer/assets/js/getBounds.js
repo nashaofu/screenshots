@@ -1,17 +1,18 @@
 export default displays => {
-  console.log(displays)
-  return displays.reduce((size, { x1, y1, x2, y2 }) => {
-    if (size.x > x1) {
-      size.x = x1
+  return displays.reduce((size, { x, y, width, height }) => {
+    const w = x + width - size.x
+    const h = y + height - size.y
+    if (size.x > x) {
+      size.x = x
     }
-    if (size.y > y1) {
-      size.y = y1
+    if (size.y > y) {
+      size.y = y
     }
-    if (size.width < x2 - size.x) {
-      size.width = x2 - size.x
+    if (size.width < w) {
+      size.width = w
     }
-    if (size.height < y2 - size.y) {
-      size.height = y2 - size.y
+    if (size.height < h) {
+      size.height = h
     }
     return size
   }, { x: 0, y: 0, width: 0, height: 0 })

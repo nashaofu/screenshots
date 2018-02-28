@@ -88,20 +88,15 @@ export default class ShortcutCapture {
   }
 
   onShow () {
-    ipcMain.on('ShortcutCapture::SHOW', (e, { displays, bounds }) => {
+    ipcMain.on('ShortcutCapture::SHOW', (e, bounds) => {
       this.$win.show()
-      if (displays.length === 1) {
-        this.$win.setFullScreen(true)
-      } else {
-        this.$win.setFullScreen(false)
-      }
       this.$win.setBounds(bounds)
       this.$win.focus()
     })
   }
 
   onHide () {
-    ipcMain.on('ShortcutCapture::HIDE', (e, { displays, bounds }) => {
+    ipcMain.on('ShortcutCapture::HIDE', (e, bounds) => {
       this.$win.setBounds(bounds)
       // 保证页面上原有的内容被清除掉
       setTimeout(() => {

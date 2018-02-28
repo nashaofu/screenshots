@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import { ipcRenderer } from 'electron'
+import { ipcRenderer, screen } from 'electron'
 import Layer from './components/Layer'
 import Toolbar from './components/Toolbar'
 import Rectangle from './components/Rectangle'
@@ -54,9 +54,13 @@ export default {
       return this.bounds.height
     }
   },
-  mounted () {
+  created () {
     this.displays = getDisplays()
-    console.log(this.displays, this.bounds)
+  },
+  mounted () {
+    screen.on('display-metrics-changed', () => {
+      this.displays = getDisplays()
+    })
     ipcRenderer.on('ShortcutCapture::CAPTURE', async () => {
       this.hideWin()
       this.sources = await getSources(this.displays)
@@ -67,17 +71,11 @@ export default {
   },
   methods: {
     showWin () {
-      ipcRenderer.send('ShortcutCapture::SHOW', {
-        displays: this.displays,
-        bounds: this.bounds
-      })
+      ipcRenderer.send('ShortcutCapture::SHOW', this.bounds)
     },
     hideWin () {
       this.reset()
-      ipcRenderer.send('ShortcutCapture::HIDE', {
-        displays: this.displays,
-        bounds: this.bounds
-      })
+      ipcRenderer.send('ShortcutCapture::HIDE', this.bounds)
     },
     reset () {
       this.sources = []
