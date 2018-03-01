@@ -3,15 +3,18 @@ import { screen } from 'electron'
 export default () => {
   const displays = screen.getAllDisplays()
   const primaryDisplay = screen.getPrimaryDisplay()
-  return displays.map(({ id, bounds, scaleFactor }) => {
+
+  // win32 darwin linux平台分别处理
+  return displays.map(({ id, bounds, workArea, scaleFactor }) => {
     const scale = scaleFactor / primaryDisplay.scaleFactor
+    const display = process.platform === 'linux' ? workArea : bounds
     return {
       id,
-      width: bounds.width * scale,
-      height: bounds.height * scale,
-      x: bounds.x,
-      y: bounds.y,
-      scaleFactor
+      scaleFactor,
+      x: display.x * (scale >= 1 ? scale : 1),
+      y: display.y * (scale >= 1 ? scale : 1),
+      width: display.width * scale,
+      height: display.height * scale
     }
   })
 }
