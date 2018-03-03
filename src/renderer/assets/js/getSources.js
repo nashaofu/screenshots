@@ -52,13 +52,13 @@ export default async (displays, bounds) => {
         if (error) {
           return reject(error)
         }
-        resolve({
+        resolve([{
           x: 0,
           y: 0,
           width: bounds.width,
           height: bounds.height,
           thumbnail: sources[0].thumbnail
-        })
+        }])
       })
     })
   }
