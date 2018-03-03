@@ -1,6 +1,10 @@
 # shortcut-capture
 electron shortcut capture plugin
 
+## Install
+
+[![NPM](https://nodei.co/npm/shortcut-capture.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/shortcut-capture/)
+
 ## TODOS
 
 - [x] 截图区域移动

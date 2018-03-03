@@ -118,8 +118,22 @@ export default {
       this.drawRectangle({ x1, y1, x2, y2 })
     },
     keydown (e) {
-      if (e.keyCode === 27) {
-        this.hideWin()
+      const is = Math.abs(this.rect.x2 - this.rect.x1) >= 7 && Math.abs(this.rect.y2 - this.rect.y1) >= 7
+      switch (e.keyCode) {
+        case 13:
+          if (is) {
+            this.done()
+          }
+          break
+        case 27:
+          if (is) {
+            this.rect = { x1: 0, y1: 0, x2: 0, y2: 0 }
+          } else {
+            this.hideWin()
+          }
+          break
+        default:
+          break
       }
     },
     click (cmd) {
