@@ -1,7 +1,7 @@
 {
   "name": "shortcut-capture",
   "version": "0.0.3",
-  "description": "A Vue.js project",
+  "description": "electron shortcut capture plugin",
   "author": "nashaofu <diaocheng@outlook.com>",
   "main": "dist/main.js",
   "files": [
