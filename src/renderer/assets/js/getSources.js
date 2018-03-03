@@ -1,8 +1,8 @@
 import { desktopCapturer } from 'electron'
 
-export default displays => {
-  let dx = 0
-  let dy = 0
+export default (displays, bounds) => {
+  let dx = bounds.x
+  let dy = bounds.y
   displays.forEach(display => {
     if (dx > display.x) {
       dx = display.x

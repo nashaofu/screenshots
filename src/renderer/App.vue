@@ -63,7 +63,7 @@ export default {
     })
     ipcRenderer.on('ShortcutCapture::CAPTURE', async () => {
       this.hideWin()
-      this.sources = await getSources(this.displays)
+      this.sources = await getSources(this.displays, this.bounds)
       this.drawBackground(this.sources)
       this.showWin()
     })
