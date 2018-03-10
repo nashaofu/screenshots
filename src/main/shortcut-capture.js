@@ -6,14 +6,19 @@ import {
   BrowserWindow,
   globalShortcut
 } from 'electron'
+import path from 'path'
 
 export default class ShortcutCapture {
-  constructor ({ hotkey } = {}) {
+  constructor ({
+    hotkey,
+    dirname = path.join(app.getAppPath(), 'node_modules/shortcut-capture')
+  } = {}) {
     if (!app.isReady()) {
       throw new Error('Cannot be executed before app\'s ready event')
     }
-    this.$win = this.initWin()
+    this.dirname = dirname
     this.hotkey = this.registerHotkey(hotkey) ? hotkey : null
+    this.$win = this.initWin()
     this.onShortcutCapture()
     this.onShow()
     this.onHide()
@@ -48,7 +53,7 @@ export default class ShortcutCapture {
 
     const URL = process.env.NODE_ENV === 'development'
       ? 'http://localhost:8080'
-      : `file://${__dirname}/renderer/index.html`
+      : `file://${path.join(this.dirname, './dist/renderer/index.html')}`
 
     $win.loadURL(URL)
     return $win

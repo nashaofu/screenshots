@@ -1,6 +1,6 @@
 import { desktopCapturer } from 'electron'
 
-export default async (displays, bounds) => {
+export default async function (displays, bounds) {
   // 图片定位要以窗口最左侧开始
   // 但在窗口可能不是在(0, 0)位置
   let dx = bounds.x
