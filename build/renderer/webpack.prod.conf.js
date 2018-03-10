@@ -18,7 +18,7 @@ module.exports = merge(baseWebpackConfig, {
       usePostCSS: true
     })
   },
-  devtool: config.prod.sourcemap ? 'eval-source-map' : false,
+  devtool: config.prod.sourcemap ? '#source-map' : false,
   output: {
     path: config.distRendererDir,
     filename: 'js/[name].[chunkhash].js',
