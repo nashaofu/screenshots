@@ -10,7 +10,7 @@ module.exports = {
   srcMainDir: path.resolve(srcDir, './main'),
   srcRendererDir: path.resolve(srcDir, './renderer'),
   distDir: path.resolve(baseDir, './dist'),
-  distMianFile: path.resolve(distDir, './main.js'),
+  distMainFile: path.resolve(distDir, './main.js'),
   distRendererDir: path.resolve(distDir, './renderer'),
   dev: {
     host: 'localhost',
