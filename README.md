@@ -7,14 +7,13 @@ electron shortcut capture plugin(electron截图模块插件)
 
 ## Usage
 ```js
-import { app } from 'electron'
+import { app, globalShortcut } from 'electron'
 import ShortcutCapture from 'shortcut-capture'
 
 app.on('ready', () => {
   // 必须在ready之后初始化，否者会报错
-  const shortcutCapture = new ShortcutCapture({
-    hotkey: 'ctrl+alt+a' // 截图快捷键
-  })
+  const shortcutCapture = new ShortcutCapture()
+  globalShortcut.register('ctrl+alt+a', () => shortcutCapture.shortcutCapture())
   console.log(shortcutCapture)
 })
 
@@ -28,14 +27,12 @@ app.on('window-all-closed', () => {
 ## Options
 ```typescript
 new ShortcutCapture({
-  hotkey?: string,
   dirname?: string
 })
 ```
 
 | 名称 | 类型 | 说明 | 默认值 |
 | --- | --- | --- | --- |
-| hotkey | string | 截图快捷键 | - |
 | dirname | string | 本插件所在文件夹，目的是使得插件能够正确引用资源，如窗口界面 | path.join(app.getAppPath(), 'node_modules/shortcut-capture') |
 
 ## Properties
@@ -43,14 +40,11 @@ new ShortcutCapture({
 | 名称 | 类型 | 说明 |
 | --- | --- | --- |
 | $win | Electron.BrowserWindow | 截图窗口对象 |
-| hotkey | string | 当前截图快捷键 |
-| dirname | string | 本插件所在文件夹 |
 
 ## Methods
 
 | 名称 | 说明 | 参数 | 返回值 |
 | --- | --- | --- | --- |
-| registerHotkey | 注册快捷键，如已注册快捷键就替换原有的 | string | 返回是否注册成功，boolean类型 |
 | shortcutCapture | 调用截图方法直接截图 | - | - |
 
 ## TODOS

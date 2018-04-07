@@ -1,6 +1,6 @@
 import { desktopCapturer } from 'electron'
 
-export default async function (displays, bounds) {
+export default async (displays, bounds) => {
   // 图片定位要以窗口最左侧开始
   // 但在窗口可能不是在(0, 0)位置
   let dx = bounds.x
@@ -18,8 +18,8 @@ export default async function (displays, bounds) {
    * 图片经过缩放之后质量损失非常大
    */
   if (process.platform === 'win32') {
-    return await Promise.all(displays.map(async (display, index) => {
-      return await new Promise((resolve, reject) => {
+    return await Promise.all(displays.map((display, index) => {
+      return new Promise((resolve, reject) => {
         desktopCapturer.getSources({
           types: ['screen'],
           thumbnailSize: {

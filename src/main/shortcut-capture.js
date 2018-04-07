@@ -3,28 +3,24 @@ import {
   ipcMain,
   clipboard,
   nativeImage,
-  BrowserWindow,
-  globalShortcut
+  BrowserWindow
 } from 'electron'
 import path from 'path'
 
 export default class ShortcutCapture {
   constructor ({
-    hotkey,
     dirname = path.join(app.getAppPath(), 'node_modules/shortcut-capture')
   } = {}) {
     if (!app.isReady()) {
       throw new Error('Cannot be executed before app\'s ready event')
     }
-    this.dirname = dirname
-    this.hotkey = this.registerHotkey(hotkey) ? hotkey : null
-    this.$win = this.initWin()
+    this.$win = this.initWin(dirname)
     this.onShortcutCapture()
     this.onShow()
     this.onHide()
   }
 
-  initWin () {
+  initWin (dirname) {
     const $win = new BrowserWindow({
       title: 'shortcut-capture',
       width: 0,
@@ -53,33 +49,10 @@ export default class ShortcutCapture {
 
     const URL = process.env.NODE_ENV === 'development'
       ? 'http://localhost:8080'
-      : `file://${path.join(this.dirname, './dist/renderer/index.html')}`
+      : `file://${path.join(dirname, './dist/renderer/index.html')}`
 
     $win.loadURL(URL)
     return $win
-  }
-
-  /**
-   * 注册快捷键
-   * @param {String} hotkey
-   * @return {Boolean} 返回注册结果
-   */
-  registerHotkey (hotkey) {
-    if (typeof hotkey !== 'string') {
-      return false
-    }
-    if (globalShortcut.isRegistered(hotkey)) {
-      return false
-    }
-
-    // 解除原有的快捷键
-    if (this.hotkey) {
-      globalShortcut.unregister(hotkey)
-    }
-    // 注册全局快捷键
-    globalShortcut.register(hotkey, () => this.shortcutCapture())
-    this.hotkey = hotkey
-    return true
   }
 
   shortcutCapture () {
