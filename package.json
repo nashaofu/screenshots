@@ -22,7 +22,10 @@
     "registry": "https://registry.npmjs.org/"
   },
   "dependencies": {
-    "normalize.css": "^8.0.0"
+    "electron": "^2.0.1",
+    "electron-debug": "^1.5.0",
+    "normalize.css": "^8.0.0",
+    "vue": "^2.5.16"
   },
   "devDependencies": {
     "autoprefixer": "^7.2.6",
@@ -34,9 +37,7 @@
     "babel-preset-stage-2": "^6.24.1",
     "chalk": "^2.3.0",
     "css-loader": "^0.28.9",
-    "electron": "^1.8.2",
-    "electron-debug": "^1.5.0",
-    "electron-dev-webpack-plugin": "^0.0.7",
+    "electron-dev-webpack-plugin": "0.0.9",
     "electron-devtools-installer": "^2.2.3",
     "eslint": "^4.17.0",
     "eslint-config-standard": "^10.2.1",
@@ -64,7 +65,6 @@
     "stylus-loader": "^3.0.1",
     "uglifyjs-webpack-plugin": "^1.1.8",
     "url-loader": "^0.6.2",
-    "vue": "^2.5.13",
     "vue-loader": "^14.1.1",
     "vue-style-loader": "^4.0.1",
     "vue-template-compiler": "^2.5.13",
