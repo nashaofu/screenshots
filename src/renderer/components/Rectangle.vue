@@ -1,10 +1,28 @@
 <template lang="pug">
-canvas.rectangle(
-  :width="width",
-  :height="height",
+.rectangle(
   :style="style",
-  @mousedown.left="mousedown"
 )
+  canvas(
+    ref="canvas"
+    :width="width"
+    :height="height"
+    @mousedown.left="mousedown"
+  )
+  //- 边框
+  .rectangle-border.rectangle-border-top
+  .rectangle-border.rectangle-border-right
+  .rectangle-border.rectangle-border-bottom
+  .rectangle-border.rectangle-border-left
+  //- 拖拽点
+  .rectangle-pointer.rectangle-pointer-top-center
+  .rectangle-pointer.rectangle-pointer-top-right
+  .rectangle-pointer.rectangle-pointer-right-center
+  .rectangle-pointer.rectangle-pointer-right-bottom
+  .rectangle-pointer.rectangle-pointer-bottom-center
+  .rectangle-pointer.rectangle-pointer-bottom-left
+  .rectangle-pointer.rectangle-pointer-left-center
+  .rectangle-pointer.rectangle-pointer-left-top
+
 </template>
 
 <script>
@@ -51,6 +69,8 @@ export default {
     },
     style () {
       return {
+        width: `${this.width}px`,
+        height: `${this.height}px`,
         left: `${this.x}px`,
         top: `${this.y}px`,
         visibility: this.width && this.height ? 'visible' : 'hidden'
@@ -58,7 +78,7 @@ export default {
     }
   },
   mounted () {
-    this.ctx = this.$el.getContext('2d')
+    this.ctx = this.$refs.canvas.getContext('2d')
     window.addEventListener('mousemove', e => this.mousemove(e))
     window.addEventListener('mouseup', e => this.mouseup(e))
   },
@@ -138,11 +158,97 @@ export default {
 </script>
 
 <style lang="stylus">
+$border = 1px dotted rgba(255,255,255,0.9)
+$pointer-size = 8px
+$pointer-bg = rgba(0,0,0,0.3)
+$pointer-border = 1px solid #fff
 .rectangle
   display block
   position absolute
   z-index 100
-  transform translate3d(-1px, -1px, 0)
-  border 1px dashed #fff
-  cursor move
+  canvas
+    width 100%
+    height 100%
+    position absolute
+    top 0
+    right 0
+    bottom 0
+    left 0
+    cursor move
+  &-border
+    position absolute
+    &-top
+      top 0
+      right 0
+      left 0
+      border-top $border
+    &-right
+      top 0
+      right 0
+      bottom 0
+      border-right $border
+    &-bottom
+      right 0
+      bottom 0
+      left 0
+      border-bottom $border
+    &-left
+      top 0
+      bottom 0
+      left 0
+      border-left $border
+  &-pointer
+    width $pointer-size
+    height $pointer-size
+    background-color $pointer-bg
+    border $pointer-border
+    &-top-center,
+    &-top-right,
+    &-right-center,
+    &-right-bottom,
+    &-bottom-center,
+    &-bottom-left,
+    &-left-center,
+    &-left-top
+      position absolute
+      transform translate3d(-50%, -50%, 0)
+    &-top-center,
+    &-bottom-center
+      cursor n-resize
+    &-right-center,
+    &-left-center
+      cursor e-resize
+    &-top-right
+      cursor ne-resize
+    &-right-bottom
+      cursor nw-resize
+    &-bottom-left
+      cursor ne-resize
+    &-left-top
+      cursor nw-resize
+
+    &-top-center
+      top 0
+      left 50%
+    &-top-right
+      top 0
+      left 100%
+    &-right-center
+      top 50%
+      left 100%
+    &-right-bottom
+      top 100%
+      left 100%
+    &-bottom-center
+      top 100%
+      left 50%
+    &-bottom-left
+      top 100%
+      left 0
+    &-left-center
+      top 50%
+      left 0
+    &-left-top
+      top 0
+      left 0
 </style>
