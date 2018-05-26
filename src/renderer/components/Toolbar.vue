@@ -57,16 +57,19 @@ export default {
 </script>
 
 <style lang="stylus">
+$button-size = 26px
 .toolbar
-  width 60px
-  height 30px
-  background-color #fff
+  width $button-size * 2 + 2px
+  height 28px
+  background-color rgba(0,0,0,0.9)
   display block
   position absolute
   transform translate3d(-100%, 10px, 0)
   border-radius 2px
+  border 1px solid rgba(255,255,255,0.1)
   z-index 100
   overflow hidden
+  box-shadow 0 0 7px rgba(255,255,255,0.2)
   &:before,
   &:after
     content ""
@@ -74,26 +77,22 @@ export default {
     float none
     clear both
   &-button
-    width 30px
-    height 30px
-    line-height 30px
+    width $button-size
+    height $button-size
+    line-height $button-size
     float left
-    font-size 20px
+    color #fff
+    font-size 18px
     text-align center
-    background-color #fff
-    border-top 1px solid #ccc
-    border-right 1px solid #ccc
-    border-bottom 1px solid #ccc
-    border-left 1px solid #ccc
     cursor pointer
+    &:not(:first-child)
+      border-left 1px solid rgba(255,255,255,0.2)
     &:first-child
-      border-left none
       border-radius 2px 0 0 2px
     &:last-child
-      border-right none
       border-radius 0 2px 2px 0
     &:hover
-      background-color #eee
+      background-color rgba(0,0,0,0.95)
     &:active
-      background-color #ccc
+      background-color rgba(0,0,0,1)
 </style>

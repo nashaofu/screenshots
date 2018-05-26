@@ -8,42 +8,40 @@ export default {
   data () {
     return {
       is: false,
-      rect: { x1: 0, y1: 0, x2: 0, y2: 0 }
+      point: { x: 0, y: 0 }
     }
   },
   mounted () {
-    window.addEventListener('mousemove', e => this.mousemove(e))
-    window.addEventListener('mouseup', e => this.mouseup(e))
+    window.addEventListener('mousemove', this.mousemove)
+    window.addEventListener('mouseup', this.mouseup)
+  },
+  destroyed () {
+    window.removeEventListener('mousemove', this.mousemove)
+    window.removeEventListener('mouseup', this.mouseup)
   },
   methods: {
     mousedown (e) {
       this.is = true
-      this.rect = {
-        x1: e.clientX,
-        y1: e.clientY,
-        x2: e.clientX,
-        y2: e.clientY
-      }
-      this.draw()
+      this.point = { x: e.clientX, y: e.clientY }
+      this.draw(e)
     },
     mousemove (e) {
       if (this.is) {
-        this.rect.x2 = e.clientX
-        this.rect.y2 = e.clientY
-        this.draw()
+        this.draw(e)
       }
     },
     mouseup (e) {
       if (this.is) {
-        this.rect.x2 = e.clientX
-        this.rect.y2 = e.clientY
-        this.draw()
+        this.draw(e)
       }
       this.is = false
     },
-    draw () {
-      if (Math.abs(this.rect.x2 - this.rect.x1) >= 7 && Math.abs(this.rect.y2 - this.rect.y1) >= 7) {
-        this.$emit('draw', this.rect)
+    draw (e) {
+      let { x, y } = this.point
+      const x2 = e.clientX
+      const y2 = e.clientY
+      if (Math.abs(x2 - x) >= 7 && Math.abs(y2 - y) >= 7) {
+        this.$emit('draw', { x1: x, y1: y, x2, y2 })
       }
     }
   }

@@ -6,22 +6,22 @@
     ref="canvas"
     :width="width"
     :height="height"
-    @mousedown.left="mousedown"
+    @mousedown.left="mousedown($event, 'm')"
   )
   //- 边框
-  .rectangle-border.rectangle-border-top
-  .rectangle-border.rectangle-border-right
-  .rectangle-border.rectangle-border-bottom
-  .rectangle-border.rectangle-border-left
+  .rectangle-border.rectangle-border-n
+  .rectangle-border.rectangle-border-e
+  .rectangle-border.rectangle-border-s
+  .rectangle-border.rectangle-border-w
   //- 拖拽点
-  .rectangle-pointer.rectangle-pointer-top-center
-  .rectangle-pointer.rectangle-pointer-top-right
-  .rectangle-pointer.rectangle-pointer-right-center
-  .rectangle-pointer.rectangle-pointer-right-bottom
-  .rectangle-pointer.rectangle-pointer-bottom-center
-  .rectangle-pointer.rectangle-pointer-bottom-left
-  .rectangle-pointer.rectangle-pointer-left-center
-  .rectangle-pointer.rectangle-pointer-left-top
+  .rectangle-pointer.rectangle-pointer-n(@mousedown.left="mousedown($event, 'n')")
+  .rectangle-pointer.rectangle-pointer-ne(@mousedown.left="mousedown($event, 'ne')")
+  .rectangle-pointer.rectangle-pointer-e(@mousedown.left="mousedown($event, 'e')")
+  .rectangle-pointer.rectangle-pointer-se(@mousedown.left="mousedown($event, 'se')")
+  .rectangle-pointer.rectangle-pointer-s(@mousedown.left="mousedown($event, 's')")
+  .rectangle-pointer.rectangle-pointer-sw(@mousedown.left="mousedown($event, 'sw')")
+  .rectangle-pointer.rectangle-pointer-w(@mousedown.left="mousedown($event, 'w')")
+  .rectangle-pointer.rectangle-pointer-nw(@mousedown.left="mousedown($event, 'nw')")
 
 </template>
 
@@ -32,15 +32,11 @@ export default {
     rect: {
       type: Object,
       default: () => ({ x1: 0, y1: 0, x2: 0, y2: 0 })
-    },
-    bounds: {
-      type: Object,
-      default: () => ({ x: 0, y: 0, width: 0, height: 0 })
     }
   },
   data () {
     return {
-      is: false,
+      is: null,
       point: { x: 0, y: 0 },
       oRect: { x1: 0, y1: 0, x2: 0, y2: 0 },
       ctx: null
@@ -61,12 +57,6 @@ export default {
     height () {
       return Math.abs(this.rect.y2 - this.rect.y1)
     },
-    boundsWidth () {
-      return this.bounds.width
-    },
-    boundsHeight () {
-      return this.bounds.height
-    },
     style () {
       return {
         width: `${this.width}px`,
@@ -79,93 +69,108 @@ export default {
   },
   mounted () {
     this.ctx = this.$refs.canvas.getContext('2d')
-    window.addEventListener('mousemove', e => this.mousemove(e))
-    window.addEventListener('mouseup', e => this.mouseup(e))
+    window.addEventListener('mousemove', this.mousemove)
+    window.addEventListener('mouseup', this.mouseup)
+  },
+  destroyed () {
+    window.removeEventListener('mousemove', this.mousemove)
+    window.removeEventListener('mouseup', this.mouseup)
   },
   methods: {
-    mousedown (e) {
-      this.is = true
+    mousedown (e, is) {
+      this.is = is
       this.point = { x: e.clientX, y: e.clientY }
       this.oRect = this.rect
-      this.shift(e)
+      this.switch(e)
     },
     mousemove (e) {
-      if (this.is) {
-        this.shift(e)
-      }
+      this.switch(e)
     },
     mouseup (e) {
-      if (this.is) {
-        this.shift(e)
+      this.switch(e)
+      this.is = null
+    },
+    switch (e) {
+      switch (this.is) {
+        case 'm':
+          this.shift(e)
+          break
+        case 'n':
+        case 'ne':
+        case 'e':
+        case 'se':
+        case 's':
+        case 'sw':
+        case 'w':
+        case 'nw':
+          this.resize(e)
+          break
+        default:
+          break
       }
-      this.is = false
     },
     shift (e) {
-      const x = e.clientX - this.point.x
-      const y = e.clientY - this.point.y
+      let x = e.clientX - this.point.x
+      let y = e.clientY - this.point.y
       let { x1, y1, x2, y2 } = this.oRect
-      const width = Math.abs(this.rect.x2 - this.rect.x1)
-      const height = Math.abs(this.rect.y2 - this.rect.y1)
       x1 += x
       y1 += y
       x2 += x
       y2 += y
-      if (x1 < x2) {
-        if (x1 < 0) {
-          x1 = 0
-          x2 = width
-        }
-        if (x2 > this.boundsWidth) {
-          x2 = this.boundsWidth
-          x1 = this.boundsWidth - width
-        }
-      }
-      if (x2 < x1) {
-        if (x2 < 0) {
-          x2 = 0
-          x1 = this.oRect.x1 - this.oRect.x2
-        }
-        if (x1 > this.boundsWidth) {
-          x1 = this.boundsWidth
-          x2 = this.boundsWidth - width
-        }
-      }
-
-      if (y1 < y2) {
-        if (y1 < 0) {
-          y1 = 0
-          y2 = height
-        }
-        if (y2 > this.boundsHeight) {
-          y2 = this.boundsHeight
-          y1 = this.boundsHeight - height
-        }
-      }
-      if (y2 < y1) {
-        if (y2 < 0) {
-          y2 = 0
-          y1 = this.oRect.y1 - this.oRect.y2
-        }
-        if (y1 > this.boundsHeight) {
-          y1 = this.boundsHeight
-          y2 = this.boundsHeight - height
-        }
-      }
       this.$emit('shift', { x1, y1, x2, y2 })
+    },
+    resize (e) {
+      let x = e.clientX - this.point.x
+      let y = e.clientY - this.point.y
+      let { x1, y1, x2, y2 } = this.oRect
+      switch (this.is) {
+        case 'n':
+          y1 += y
+          break
+        case 'ne':
+          y1 += y
+          x2 += x
+          break
+        case 'e':
+          x2 += x
+          break
+        case 'se':
+          x2 += x
+          y2 += y
+          break
+        case 's':
+          y2 += y
+          break
+        case 'sw':
+          x1 += x
+          y2 += y
+          break
+        case 'w':
+          x1 += x
+          break
+        case 'nw':
+          x1 += x
+          y1 += y
+          break
+        default:
+          return
+      }
+      this.$emit('resize', { x1, y1, x2, y2 })
     }
   }
 }
 </script>
 
 <style lang="stylus">
-$border = 1px dotted rgba(255,255,255,0.9)
+$border = 1px dotted #fff
 $pointer-size = 8px
-$pointer-bg = rgba(0,0,0,0.3)
+$pointer-bg = rgba(0,0,0,0.9)
 $pointer-border = 1px solid #fff
 .rectangle
   display block
   position absolute
   z-index 100
+  box-shadow 0 0 7px rgba(0,0,0,0.2)
   canvas
     width 100%
     height 100%
@@ -177,22 +182,22 @@ $pointer-border = 1px solid #fff
     cursor move
   &-border
     position absolute
-    &-top
+    &-n
       top 0
       right 0
       left 0
       border-top $border
-    &-right
+    &-e
       top 0
       right 0
       bottom 0
       border-right $border
-    &-bottom
+    &-s
       right 0
       bottom 0
       left 0
       border-bottom $border
-    &-left
+    &-w
       top 0
       bottom 0
       left 0
@@ -202,53 +207,53 @@ $pointer-border = 1px solid #fff
     height $pointer-size
     background-color $pointer-bg
     border $pointer-border
-    &-top-center,
-    &-top-right,
-    &-right-center,
-    &-right-bottom,
-    &-bottom-center,
-    &-bottom-left,
-    &-left-center,
-    &-left-top
+    &-n,
+    &-ne,
+    &-e,
+    &-se,
+    &-s,
+    &-sw,
+    &-w,
+    &-nw
       position absolute
       transform translate3d(-50%, -50%, 0)
-    &-top-center,
-    &-bottom-center
+    &-n,
+    &-s
       cursor n-resize
-    &-right-center,
-    &-left-center
+    &-e,
+    &-w
       cursor e-resize
-    &-top-right
+    &-ne
       cursor ne-resize
-    &-right-bottom
+    &-se
       cursor nw-resize
-    &-bottom-left
+    &-sw
       cursor ne-resize
-    &-left-top
+    &-nw
       cursor nw-resize
 
-    &-top-center
+    &-n
       top 0
       left 50%
-    &-top-right
+    &-ne
       top 0
       left 100%
-    &-right-center
+    &-e
       top 50%
       left 100%
-    &-right-bottom
+    &-se
       top 100%
       left 100%
-    &-bottom-center
+    &-s
       top 100%
       left 50%
-    &-bottom-left
+    &-sw
       top 100%
       left 0
-    &-left-center
+    &-w
       top 50%
       left 0
-    &-left-top
+    &-nw
       top 0
       left 0
 </style>
