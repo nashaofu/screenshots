@@ -47,6 +47,9 @@ new ShortcutCapture({
 | --- | --- | --- | --- |
 | shortcutCapture | 调用截图方法直接截图 | - | - |
 
+## Screenshot
+![screenshot](./screenshot.png)
+
 ## TODOS
 
 - [x] 截图区域移动
