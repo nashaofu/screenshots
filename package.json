@@ -22,10 +22,10 @@
     "registry": "https://registry.npmjs.org/"
   },
   "dependencies": {
-    "electron": "^2.0.1",
-    "electron-debug": "^1.5.0",
+    "electron": "^2.0.7",
+    "electron-debug": "^2.0.0",
     "normalize.css": "^8.0.0",
-    "vue": "^2.5.16"
+    "vue": "^2.5.17"
   },
   "devDependencies": {
     "autoprefixer": "^7.2.6",

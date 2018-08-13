@@ -17,7 +17,7 @@ export default async (displays, bounds) => {
    * 每一个屏幕截一张图是为了让每一张图片都尽可能的清晰
    * 图片经过缩放之后质量损失非常大
    */
-  if (process.platform === 'win32') {
+  if (process.platform === 'win32' || process.platform === 'darwin') {
     return await Promise.all(displays.map((display, index) => {
       return new Promise((resolve, reject) => {
         desktopCapturer.getSources({
