@@ -12,7 +12,7 @@ app.on('ready', () => {
       console.log('Unable to install `vue-devtools`: \n', err)
     })
   const sc = new ShortcutCapture()
-  globalShortcut.register('ctrl+alt+a', () => sc.shortcutCapture())
+  globalShortcut.register('ctrl+shift+a', () => sc.shortcutCapture())
   console.log(sc)
 })
 

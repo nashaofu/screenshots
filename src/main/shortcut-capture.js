@@ -34,7 +34,7 @@ export default class ShortcutCapture {
       menu: false,
       transparent: true,
       resizable: false,
-      alwaysOnTop: process.env.NODE_ENV === 'production',
+      alwaysOnTop: process.platform === 'darwin' || process.env.NODE_ENV === 'production',
       enableLargerThanScreen: true,
       skipTaskbar: process.env.NODE_ENV === 'production',
       closable: true,

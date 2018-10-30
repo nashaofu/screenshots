@@ -22,7 +22,7 @@
     "registry": "https://registry.npmjs.org/"
   },
   "dependencies": {
-    "electron": "^2.0.7",
+    "electron": "^3.0.6",
     "electron-debug": "^2.0.0",
     "normalize.css": "^8.0.0",
     "vue": "^2.5.17"
@@ -37,7 +37,7 @@
     "babel-preset-stage-2": "^6.24.1",
     "chalk": "^2.3.0",
     "css-loader": "^0.28.9",
-    "electron-dev-webpack-plugin": "0.0.9",
+    "electron-dev-webpack-plugin": "0.0.10",
     "electron-devtools-installer": "^2.2.3",
     "eslint": "^4.17.0",
     "eslint-config-standard": "^10.2.1",
