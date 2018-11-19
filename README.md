@@ -58,7 +58,7 @@ new ShortcutCapture({
 ## Events
 
 | 名称 | 说明 | 回调参数 |
-| --- | --- | --- | --- |
+| --- | --- | --- |
 | capture | 截图确认后后调 | `dataURL`-图片资源, `bound`-截图区域信息 |
 
 ## Screenshot
