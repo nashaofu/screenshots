@@ -206,7 +206,7 @@ export default {
     done () {
       const ctx = this.$refs.rectangle.ctx
       const dataURL = ctx.canvas.toDataURL('image/png')
-      ipcRenderer.send('ShortcutCapture::CAPTURE', dataURL)
+      ipcRenderer.send('ShortcutCapture::CAPTURE', dataURL, this.rect)
       this.hideWin()
     }
   }

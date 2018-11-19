@@ -1,21 +1,15 @@
-import {
-  app,
-  ipcMain,
-  clipboard,
-  nativeImage,
-  BrowserWindow
-} from 'electron'
+import { app, ipcMain, clipboard, nativeImage, BrowserWindow } from 'electron'
 import path from 'path'
+import Events from 'events'
 
-export default class ShortcutCapture {
-  constructor ({
-    dirname = path.join(app.getAppPath(), 'node_modules/shortcut-capture')
-  } = {}) {
+export default class ShortcutCapture extends Events {
+  constructor ({ dirname = path.join(app.getAppPath(), 'node_modules/shortcut-capture'), isUseClipboard = true } = {}) {
+    super()
     if (!app.isReady()) {
-      throw new Error('Cannot be executed before app\'s ready event')
+      throw new Error("Cannot be executed before app's ready event")
     }
     this.$win = this.initWin(dirname)
-    this.onShortcutCapture()
+    this.onShortcutCapture(isUseClipboard)
     this.onShow()
     this.onHide()
   }
@@ -47,9 +41,10 @@ export default class ShortcutCapture {
       $win.hide()
     })
 
-    const URL = process.env.NODE_ENV === 'development'
-      ? 'http://localhost:8080'
-      : `file://${path.join(dirname, './dist/renderer/index.html')}`
+    const URL =
+      process.env.NODE_ENV === 'development'
+        ? 'http://localhost:8080'
+        : `file://${path.join(dirname, './dist/renderer/index.html')}`
 
     $win.loadURL(URL)
     return $win
@@ -59,9 +54,18 @@ export default class ShortcutCapture {
     this.$win.webContents.send('ShortcutCapture::CAPTURE')
   }
 
-  onShortcutCapture () {
-    ipcMain.on('ShortcutCapture::CAPTURE', (e, dataURL) => {
-      clipboard.writeImage(nativeImage.createFromDataURL(dataURL))
+  destroy () {
+    if (this.$win && !this.$win.isDestroyed()) {
+      this.$win.destroy()
+    }
+  }
+
+  onShortcutCapture (isUseClipboard) {
+    ipcMain.on('ShortcutCapture::CAPTURE', (e, dataURL, bound) => {
+      if (isUseClipboard) {
+        clipboard.writeImage(nativeImage.createFromDataURL(dataURL))
+      }
+      this.emit('capture', { dataURL, bound })
     })
   }
 

@@ -1,4 +1,5 @@
 # shortcut-capture
+
 electron shortcut capture plugin(electron截图模块插件)
 
 ## Install
@@ -6,6 +7,7 @@ electron shortcut capture plugin(electron截图模块插件)
 [![NPM](https://nodei.co/npm/shortcut-capture.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/shortcut-capture/)
 
 ## Usage
+
 ```js
 import { app, globalShortcut } from 'electron'
 import ShortcutCapture from 'shortcut-capture'
@@ -15,6 +17,8 @@ app.on('ready', () => {
   const shortcutCapture = new ShortcutCapture()
   globalShortcut.register('ctrl+alt+a', () => shortcutCapture.shortcutCapture())
   console.log(shortcutCapture)
+  // 拿取截图后返回信息
+  shortcutCapture.on('capture', ({ dataURL, bound }) => console.log(dataURL, bound))
 })
 
 app.on('window-all-closed', () => {
@@ -25,15 +29,18 @@ app.on('window-all-closed', () => {
 ```
 
 ## Options
+
 ```typescript
 new ShortcutCapture({
-  dirname?: string
+  dirname?: string,
+  isUseClipboard?: true
 })
 ```
 
 | 名称 | 类型 | 说明 | 默认值 |
 | --- | --- | --- | --- |
-| dirname | string | 本插件所在文件夹，目的是使得插件能够正确引用资源，如窗口界面 | path.join(app.getAppPath(), 'node_modules/shortcut-capture') |
+| dirname | string | 本插件所在文件夹，目的是使得插件能够正确引用资源，如窗口界面 | `path.join(app.getAppPath(), 'node_modules/shortcut-capture')` |
+| isUseClipboard | boolean | 是否使用剪切板，即是否把图片资源写入剪切板 | `true` |
 
 ## Properties
 
@@ -46,8 +53,16 @@ new ShortcutCapture({
 | 名称 | 说明 | 参数 | 返回值 |
 | --- | --- | --- | --- |
 | shortcutCapture | 调用截图方法直接截图 | - | - |
+| destroy | 销毁截图对象 | - | - |
+
+## Events
+
+| 名称 | 说明 | 回调参数 |
+| --- | --- | --- | --- |
+| capture | 截图确认后后调 | `dataURL`-图片资源, `bound`-截图区域信息 |
 
 ## Screenshot
+
 ![screenshot](./screenshot.png)
 
 ## TODOS
