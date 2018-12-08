@@ -1,6 +1,6 @@
 {
   "name": "shortcut-capture",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "electron shortcut capture plugin",
   "author": "nashaofu <diaocheng@outlook.com>",
   "main": "dist/main.js",
@@ -22,12 +22,12 @@
     "registry": "https://registry.npmjs.org/"
   },
   "peerDependencies": {
-    "electron": "^3.0.9"
+    "electron": "^2.0.14"
   },
   "dependencies": {
     "electron-debug": "^2.0.0",
-    "normalize.css": "^8.0.0",
-    "vue": "^2.5.17"
+    "normalize.css": "^8.0.1",
+    "vue": "^2.5.18"
   },
   "devDependencies": {
     "autoprefixer": "^7.2.6",
@@ -39,7 +39,7 @@
     "babel-preset-stage-2": "^6.24.1",
     "chalk": "^2.3.0",
     "css-loader": "^0.28.9",
-    "electron-dev-webpack-plugin": "0.0.10",
+    "electron-dev-webpack-plugin": "0.0.11",
     "electron-devtools-installer": "^2.2.4",
     "eslint": "^4.17.0",
     "eslint-config-standard": "^10.2.1",
