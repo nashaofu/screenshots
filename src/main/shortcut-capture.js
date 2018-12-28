@@ -3,18 +3,18 @@ import path from 'path'
 import Events from 'events'
 
 export default class ShortcutCapture extends Events {
+  $win = null
+  dirname = undefined
   constructor ({ dirname = path.join(app.getAppPath(), 'node_modules/shortcut-capture'), isUseClipboard = true } = {}) {
     super()
-    if (!app.isReady()) {
-      throw new Error("Cannot be executed before app's ready event")
-    }
-    this.$win = this.initWin(dirname)
+    if (!app.isReady()) throw new Error("Cannot be executed before app's ready event")
+    this.dirname = dirname
     this.onShortcutCapture(isUseClipboard)
     this.onShow()
     this.onHide()
   }
 
-  initWin (dirname) {
+  initWin () {
     const $win = new BrowserWindow({
       title: 'shortcut-capture',
       width: 0,
@@ -26,38 +26,27 @@ export default class ShortcutCapture extends Events {
       frame: false,
       show: false,
       menu: false,
-      transparent: true,
+      transparent: process.platform === 'darwin' || process.platform === 'win32',
       resizable: false,
-      alwaysOnTop: process.platform === 'darwin' || process.env.NODE_ENV === 'production',
+      alwaysOnTop: process.env.NODE_ENV === 'production' || process.platform === 'darwin',
       enableLargerThanScreen: true,
       skipTaskbar: process.env.NODE_ENV === 'production',
-      closable: true,
+      closable: process.env.NODE_ENV !== 'production',
       minimizable: false,
       maximizable: false
-    })
-
-    $win.on('close', e => {
-      e.preventDefault()
-      $win.hide()
     })
 
     const URL =
       process.env.NODE_ENV === 'development'
         ? 'http://localhost:8080'
-        : `file://${path.join(dirname, './dist/renderer/index.html')}`
+        : `file://${path.join(this.dirname, './dist/renderer/index.html')}`
 
     $win.loadURL(URL)
     return $win
   }
 
   shortcutCapture () {
-    this.$win.webContents.send('ShortcutCapture::CAPTURE')
-  }
-
-  destroy () {
-    if (this.$win && !this.$win.isDestroyed()) {
-      this.$win.destroy()
-    }
+    this.$win = this.initWin()
   }
 
   onShortcutCapture (isUseClipboard) {
@@ -71,6 +60,7 @@ export default class ShortcutCapture extends Events {
 
   onShow () {
     ipcMain.on('ShortcutCapture::SHOW', (e, bounds) => {
+      if (!this.$win) return
       this.$win.show()
       this.$win.setBounds(bounds)
       this.$win.focus()
@@ -79,11 +69,9 @@ export default class ShortcutCapture extends Events {
 
   onHide () {
     ipcMain.on('ShortcutCapture::HIDE', (e, bounds) => {
-      this.$win.setBounds(bounds)
-      // 保证页面上原有的内容被清除掉
-      setTimeout(() => {
-        this.$win.hide()
-      }, 200)
+      if (!this.$win) return
+      this.$win.close()
+      this.$win = null
     })
   }
 }

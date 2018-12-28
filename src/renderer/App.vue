@@ -1,5 +1,5 @@
 <template lang="pug">
-.app(v-show="sources.length")
+.app
   background(
     ref="background",
     :bounds="bounds"
@@ -59,33 +59,25 @@ export default {
     this.displays = getDisplays()
   },
   mounted () {
-    screen.on('display-metrics-changed', () => {
-      this.displays = getDisplays()
-    })
-    ipcRenderer.on('ShortcutCapture::CAPTURE', async () => {
-      this.hideWin()
-      this.sources = await getSources(this.displays, this.bounds)
-      this.drawBackground(this.sources)
-      this.showWin()
-    })
+    this.init()
     window.addEventListener('keydown', this.keydown)
+    screen.on('display-metrics-changed', this.displayMetricsChanged)
   },
   destroyed () {
     window.removeEventListener('keydown', this.keydown)
+    screen.off('display-metrics-changed', this.displayMetricsChanged)
   },
   methods: {
-    showWin () {
+    async init () {
+      this.sources = await getSources(this.displays, this.bounds)
+      this.drawBackground(this.sources)
+      this.show()
+    },
+    show () {
       ipcRenderer.send('ShortcutCapture::SHOW', this.bounds)
     },
-    hideWin () {
-      this.reset()
+    hide () {
       ipcRenderer.send('ShortcutCapture::HIDE', this.bounds)
-    },
-    reset () {
-      this.sources = []
-      this.$refs.background.ctx.clearRect(0, 0, this.width, this.height)
-      this.$refs.rectangle.ctx.clearRect(0, 0, this.width, this.height)
-      this.rect = { x1: 0, y1: 0, x2: 0, y2: 0 }
     },
     drawBackground (sources) {
       // 确保dom更新后再更新canvas
@@ -103,9 +95,7 @@ export default {
       })
     },
     drawRectangle (rect) {
-      if (!this.sources.length) {
-        return
-      }
+      if (!this.sources.length) return
       this.rect = this.getRect(rect)
       // 确保dom更新后再更新canvas
       this.$nextTick(() => {
@@ -170,6 +160,9 @@ export default {
       }
       return { x1, y1, x2, y2 }
     },
+    displayMetricsChanged () {
+      this.displays = getDisplays()
+    },
     keydown (e) {
       const { x1, y1, x2, y2 } = this.rect
       const is = Math.abs(x2 - x1) >= 7 && Math.abs(y2 - y1) >= 7
@@ -181,7 +174,7 @@ export default {
           if (is) {
             this.rect = { x1: 0, y1: 0, x2: 0, y2: 0 }
           } else {
-            this.hideWin()
+            this.hide()
           }
           break
         default:
@@ -201,37 +194,38 @@ export default {
       }
     },
     cancel () {
-      this.hideWin()
+      this.hide()
     },
     done () {
       const ctx = this.$refs.rectangle.ctx
       const dataURL = ctx.canvas.toDataURL('image/png')
       ipcRenderer.send('ShortcutCapture::CAPTURE', dataURL, this.rect)
-      this.hideWin()
+      this.hide()
     }
   }
 }
 </script>
 
 <style lang="stylus">
-@import "normalize.css"
-@import "./assets/css/iconfont.styl"
+@import 'normalize.css';
+@import './assets/css/iconfont.styl';
 
-*
-  box-sizing border-box
+* {
+  box-sizing: border-box;
+}
 
-html,
-body,
-.app
-  -webkit-app-region no-drag
-  user-select none
-  overflow hidden
+html, body, .app {
+  -webkit-app-region: no-drag;
+  user-select: none;
+  overflow: hidden;
+}
 
-.app
-  position absolute
-  top 0
-  right 0
-  bottom 0
-  left 0
-  cursor crosshair
+.app {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  cursor: crosshair;
+}
 </style>

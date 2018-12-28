@@ -13,7 +13,6 @@ app.on('ready', () => {
     })
   const sc = new ShortcutCapture()
   globalShortcut.register('ctrl+shift+a', () => sc.shortcutCapture())
-  console.log(sc)
   sc.on('capture', (a, e) => console.log('eeee', e))
 })
 

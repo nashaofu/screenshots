@@ -2,6 +2,9 @@
 
 module.exports = {
   root: true,
+  parserOptions: {
+    parser: 'babel-eslint'
+  },
   env: {
     browser: true,
   },
@@ -18,7 +21,6 @@ module.exports = {
   ],
   // add your custom rules here
   rules: {
-    'no-return-await': 'off',
     // allow async-await
     'generator-star-spacing': 'off',
     // allow debugger during development
