@@ -1,4 +1,4 @@
-import { desktopCapturer } from 'electron'
+import { desktopCapturer, screen } from 'electron'
 
 export default display => {
   return new Promise((resolve, reject) => {
@@ -12,8 +12,8 @@ export default display => {
       },
       (error, sources) => {
         if (error) return reject(error)
-        const index = sources.findIndex(({ id }) => id === `screen:${display.id}`)
-        if (index === -1) return reject(new Error('Not find source'))
+        const index = screen.getAllDisplays().findIndex(({ id }) => id === display.id)
+        if (index === -1) return reject(new Error(`Not find display ${display.id} source`))
         resolve({
           x: 0,
           y: 0,
