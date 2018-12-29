@@ -6,14 +6,15 @@ debug({ showDevTools: 'undocked' })
 
 app.on('ready', () => {
   let installExtension = require('electron-devtools-installer')
-  installExtension.default(installExtension.VUEJS_DEVTOOLS)
-    .then(() => { })
+  installExtension
+    .default(installExtension.VUEJS_DEVTOOLS)
+    .then(() => {})
     .catch(err => {
       console.log('Unable to install `vue-devtools`: \n', err)
     })
   const sc = new ShortcutCapture()
   globalShortcut.register('ctrl+shift+a', () => sc.shortcutCapture())
-  sc.on('capture', (a, e) => console.log('eeee', e))
+  sc.on('capture', ({ dataURL, bound }) => console.log(dataURL, bound))
 })
 
 app.on('window-all-closed', () => {

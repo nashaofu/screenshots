@@ -1,6 +1,6 @@
 # shortcut-capture
 
-electron shortcut capture plugin(electron截图模块插件)
+electron shortcut capture plugin(electron 截图模块插件)
 
 ## Install
 
@@ -18,7 +18,7 @@ app.on('ready', () => {
   globalShortcut.register('ctrl+alt+a', () => shortcutCapture.shortcutCapture())
   console.log(shortcutCapture)
   // 拿取截图后返回信息
-  shortcutCapture.on('capture', ({ dataURL, bound }) => console.log(dataURL, bound))
+  shortcutCapture.on('capture', ({ dataURL, bounds }) => console.log(dataURL, bounds))
 })
 
 app.on('window-all-closed', () => {
@@ -32,34 +32,27 @@ app.on('window-all-closed', () => {
 
 ```typescript
 new ShortcutCapture({
-  dirname?: string,
-  isUseClipboard?: true
+  dirname: string,
+  isUseClipboard: true
 })
 ```
 
 | 名称 | 类型 | 说明 | 默认值 |
 | --- | --- | --- | --- |
-| dirname | string | 本插件所在文件夹，目的是使得插件能够正确引用资源，如窗口界面 | `path.join(app.getAppPath(), 'node_modules/shortcut-capture')` |
-| isUseClipboard | boolean | 是否使用剪切板，即是否把图片资源写入剪切板 | `true` |
-
-## Properties
-
-| 名称 | 类型 | 说明 |
-| --- | --- | --- |
-| $win | Electron.BrowserWindow | 截图窗口对象 |
+| dirname | string  | 本插件所在文件夹，目的是使得插件能够正确引用资源，如窗口界面 | `path.join(app.getAppPath(), 'node_modules/shortcut-capture')` |
+| isUseClipboard | boolean | 是否使用剪切板，即是否把图片资源写入剪切板  | `true` |
 
 ## Methods
 
 | 名称 | 说明 | 参数 | 返回值 |
 | --- | --- | --- | --- |
 | shortcutCapture | 调用截图方法直接截图 | - | - |
-| destroy | 销毁截图对象 | - | - |
 
 ## Events
 
 | 名称 | 说明 | 回调参数 |
 | --- | --- | --- |
-| capture | 截图确认后后调 | `dataURL`-图片资源, `bound`-截图区域信息 |
+| capture | 截图确认后后调 | `dataURL`-图片资源, `bounds`-截图区域信息 |
 
 ## Screenshot
 
@@ -70,9 +63,9 @@ new ShortcutCapture({
 - [x] 截图区域移动
 - [x] 截图区域大小调整
 - [x] 主显示器切换支持，显示器变动支持
-- [ ] 对各个平台进行不同样式的显示，窗口大小等等，windows平台已经完美支持，其他平台还需调整与优化
-- [ ] Mac多显示器截图还存在问题
+- [x] Mac 多显示器截图还存在问题
+- [ ] 对各个平台进行不同样式的显示，窗口大小等等，windows 平台已经完美支持，其他平台还需调整与优化
 
 ## 问题
 
-* 高分屏作为主显示器是截图质量很低，以低分屏作为主显示器时，截图效果较为理想
+- 高分屏作为主显示器是截图质量很低，以低分屏作为主显示器时，截图效果较为理想

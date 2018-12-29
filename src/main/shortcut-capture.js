@@ -3,8 +3,16 @@ import path from 'path'
 import Events from 'events'
 
 export default class ShortcutCapture extends Events {
+  // 截图窗口对象
   $win = null
+  // 插件目录
   dirname = undefined
+
+  /**
+   * dirname 本插件所在目录位置
+   * isUseClipboard是否把内容写入到剪切板
+   * @param {*} params
+   */
   constructor ({ dirname = path.join(app.getAppPath(), 'node_modules/shortcut-capture'), isUseClipboard = true } = {}) {
     super()
     if (!app.isReady()) throw new Error("Cannot be executed before app's ready event")
@@ -14,6 +22,9 @@ export default class ShortcutCapture extends Events {
     this.onHide()
   }
 
+  /**
+   * 初始化窗口
+   */
   initWin () {
     const $win = new BrowserWindow({
       title: 'shortcut-capture',
@@ -32,6 +43,7 @@ export default class ShortcutCapture extends Events {
       movable: false,
       focusable: false,
       fullscreen: true,
+      // 设为true mac全屏窗口不跑到主显示器
       simpleFullscreen: true,
       backgroundColor: '#30000000',
       titleBarStyle: 'hidden',
@@ -52,6 +64,9 @@ export default class ShortcutCapture extends Events {
     return $win
   }
 
+  /**
+   * 调用截图
+   */
   shortcutCapture () {
     if (this.$win) {
       this.$win.close()
@@ -60,15 +75,22 @@ export default class ShortcutCapture extends Events {
     this.$win = this.initWin()
   }
 
+  /**
+   * 绑定截图确定后的时间回调
+   * @param {*} isUseClipboard
+   */
   onShortcutCapture (isUseClipboard) {
-    ipcMain.on('ShortcutCapture::CAPTURE', (e, dataURL, bound) => {
+    ipcMain.on('ShortcutCapture::CAPTURE', (e, dataURL, bounds) => {
       if (isUseClipboard) {
         clipboard.writeImage(nativeImage.createFromDataURL(dataURL))
       }
-      this.emit('capture', { dataURL, bound })
+      this.emit('capture', { dataURL, bounds })
     })
   }
 
+  /**
+   * 绑定窗口显示事件
+   */
   onShow () {
     ipcMain.on('ShortcutCapture::SHOW', (e, bounds) => {
       if (!this.$win) return
@@ -78,6 +100,9 @@ export default class ShortcutCapture extends Events {
     })
   }
 
+  /**
+   * 绑定窗口隐藏事件
+   */
   onHide () {
     ipcMain.on('ShortcutCapture::HIDE', (e, bounds) => {
       if (!this.$win) return
