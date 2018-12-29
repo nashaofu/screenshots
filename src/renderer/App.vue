@@ -25,9 +25,8 @@ import Toolbar from './components/Toolbar'
 import Rectangle from './components/Rectangle'
 import Background from './components/Background'
 
-import getBounds from './assets/js/getBounds'
-import getSources from './assets/js/getSources'
-import getDisplays from './assets/js/getDisplays'
+import getSource from './assets/js/getSource'
+import getDisplay from './assets/js/getDisplay'
 
 export default {
   name: 'App',
@@ -39,14 +38,19 @@ export default {
   },
   data () {
     return {
-      displays: [],
-      sources: [],
+      display: getDisplay(),
+      source: null,
       rect: { x1: 0, y1: 0, x2: 0, y2: 0 }
     }
   },
   computed: {
     bounds () {
-      return getBounds(this.displays)
+      return {
+        x: this.display.x,
+        y: this.display.y,
+        width: this.display.width,
+        height: this.display.height
+      }
     },
     width () {
       return this.bounds.width
@@ -54,9 +58,6 @@ export default {
     height () {
       return this.bounds.height
     }
-  },
-  created () {
-    this.displays = getDisplays()
   },
   mounted () {
     this.init()
@@ -69,8 +70,8 @@ export default {
   },
   methods: {
     async init () {
-      this.sources = await getSources(this.displays, this.bounds)
-      this.drawBackground(this.sources)
+      this.source = await getSource(this.display)
+      this.drawBackground(this.source)
       this.show()
     },
     show () {
@@ -79,23 +80,21 @@ export default {
     hide () {
       ipcRenderer.send('ShortcutCapture::HIDE', this.bounds)
     },
-    drawBackground (sources) {
+    drawBackground ({ x, y, width, height, thumbnail }) {
       // 确保dom更新后再更新canvas
       this.$nextTick(() => {
         const ctx = this.$refs.background.ctx
         ctx.clearRect(0, 0, this.width, this.height)
-        sources.forEach(({ x, y, width, height, thumbnail }) => {
-          const $img = new Image()
-          const blob = new Blob([thumbnail.toPNG()], { type: 'image/png' })
-          $img.src = URL.createObjectURL(blob)
-          $img.addEventListener('load', () => {
-            ctx.drawImage($img, 0, 0, width, height, x, y, width, height)
-          })
+        const $img = new Image()
+        const blob = new Blob([thumbnail.toPNG()], { type: 'image/png' })
+        $img.src = URL.createObjectURL(blob)
+        $img.addEventListener('load', () => {
+          ctx.drawImage($img, 0, 0, width, height, x, y, width, height)
         })
       })
     },
     drawRectangle (rect) {
-      if (!this.sources.length) return
+      if (!this.source) return
       this.rect = this.getRect(rect)
       // 确保dom更新后再更新canvas
       this.$nextTick(() => {
@@ -161,7 +160,7 @@ export default {
       return { x1, y1, x2, y2 }
     },
     displayMetricsChanged () {
-      this.displays = getDisplays()
+      this.display = getDisplay()
     },
     keydown (e) {
       const { x1, y1, x2, y2 } = this.rect

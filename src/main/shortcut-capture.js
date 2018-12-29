@@ -26,8 +26,15 @@ export default class ShortcutCapture extends Events {
       frame: false,
       show: false,
       menu: false,
+      autoHideMenuBar: true,
       transparent: process.platform === 'darwin' || process.platform === 'win32',
       resizable: false,
+      movable: false,
+      focusable: false,
+      fullscreen: true,
+      simpleFullscreen: true,
+      backgroundColor: '#30000000',
+      titleBarStyle: 'hidden',
       alwaysOnTop: process.env.NODE_ENV === 'production' || process.platform === 'darwin',
       enableLargerThanScreen: true,
       skipTaskbar: process.env.NODE_ENV === 'production',
@@ -46,6 +53,10 @@ export default class ShortcutCapture extends Events {
   }
 
   shortcutCapture () {
+    if (this.$win) {
+      this.$win.close()
+      this.$win = null
+    }
     this.$win = this.initWin()
   }
 
