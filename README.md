@@ -1,6 +1,6 @@
 # shortcut-capture
 
-electron shortcut capture plugin(electron 截图模块插件)
+electron shortcut capture plugin(electron 截图模块插件)。注意：1.1.x和1.0.x版本有API的改动，所以会有不兼容的地方，请参考API，1.1.x主要支持了窗口关闭不能结束应用的问题。参考[https://github.com/nashaofu/shortcut-capture/issues/4](https://github.com/nashaofu/shortcut-capture/issues/4)和[https://github.com/nashaofu/shortcut-capture/issues/7](https://github.com/nashaofu/shortcut-capture/issues/7)
 
 ## Install
 
