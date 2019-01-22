@@ -50,7 +50,6 @@ export default class ShortcutCapture extends Events {
       alwaysOnTop: process.env.NODE_ENV === 'production' || process.platform === 'darwin',
       enableLargerThanScreen: true,
       skipTaskbar: process.env.NODE_ENV === 'production',
-      closable: process.env.NODE_ENV !== 'production',
       minimizable: false,
       maximizable: false
     })
