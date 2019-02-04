@@ -105,6 +105,7 @@ export default class ShortcutCapture extends Events {
   onHide () {
     ipcMain.on('ShortcutCapture::HIDE', (e, bounds) => {
       if (!this.$win) return
+      this.$win.hide()
       this.$win.setSimpleFullScreen(false)
       this.$win.close()
       this.$win = null
