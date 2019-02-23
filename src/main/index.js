@@ -1,7 +1,7 @@
 import debug from 'electron-debug'
 import { app, globalShortcut } from 'electron'
 import ShortcutCapture from './shortcut-capture'
-console.log(require('electron'))
+// console.log(require('electron'))
 debug({ showDevTools: 'undocked' })
 
 app.on('ready', () => {

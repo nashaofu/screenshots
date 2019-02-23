@@ -17,7 +17,6 @@ module.exports = {
   },
   target: 'electron-main',
   resolve: {
-    extensions: ['.js', '.json'],
     alias: {
       '@': resolve('src/main')
     }

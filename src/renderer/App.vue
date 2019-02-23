@@ -205,15 +205,17 @@ export default {
 }
 </script>
 
-<style lang="stylus">
-@import 'normalize.css';
-@import './assets/css/iconfont.styl';
+<style lang="less">
+@import "normalize.css";
+@import "./assets/css/iconfont.less";
 
 * {
   box-sizing: border-box;
 }
 
-html, body, .app {
+html,
+body,
+.app {
   -webkit-app-region: no-drag;
   user-select: none;
   overflow: hidden;

@@ -161,99 +161,137 @@ export default {
 }
 </script>
 
-<style lang="stylus">
-$border = 1px dotted #fff
-$pointer-size = 8px
-$pointer-bg = rgba(0,0,0,0.9)
-$pointer-border = 1px solid #fff
-.rectangle
-  display block
-  position absolute
-  z-index 100
-  box-shadow 0 0 7px rgba(0,0,0,0.2)
-  canvas
-    width 100%
-    height 100%
-    position absolute
-    top 0
-    right 0
-    bottom 0
-    left 0
-    cursor move
-  &-border
-    position absolute
-    &-n
-      top 0
-      right 0
-      left 0
-      border-top $border
-    &-e
-      top 0
-      right 0
-      bottom 0
-      border-right $border
-    &-s
-      right 0
-      bottom 0
-      left 0
-      border-bottom $border
-    &-w
-      top 0
-      bottom 0
-      left 0
-      border-left $border
-  &-pointer
-    width $pointer-size
-    height $pointer-size
-    background-color $pointer-bg
-    border $pointer-border
-    &-n,
-    &-ne,
-    &-e,
-    &-se,
-    &-s,
-    &-sw,
-    &-w,
-    &-nw
-      position absolute
-      transform translate3d(-50%, -50%, 0)
-    &-n,
-    &-s
-      cursor n-resize
-    &-e,
-    &-w
-      cursor e-resize
-    &-ne
-      cursor ne-resize
-    &-se
-      cursor nw-resize
-    &-sw
-      cursor ne-resize
-    &-nw
-      cursor nw-resize
+<style lang="less">
+@border: 1px dotted #fff;
+@pointer-size: 8px;
+@pointer-bg: rgba(0, 0, 0, 0.9);
+@pointer-border: 1px solid #fff;
 
-    &-n
-      top 0
-      left 50%
-    &-ne
-      top 0
-      left 100%
-    &-e
-      top 50%
-      left 100%
-    &-se
-      top 100%
-      left 100%
-    &-s
-      top 100%
-      left 50%
-    &-sw
-      top 100%
-      left 0
-    &-w
-      top 50%
-      left 0
-    &-nw
-      top 0
-      left 0
+.rectangle {
+  display: block;
+  position: absolute;
+  z-index: 100;
+  box-shadow: 0 0 7px rgba(0, 0, 0, 0.2);
+
+  canvas {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    cursor: move;
+  }
+
+  &-border {
+    position: absolute;
+
+    &-n {
+      top: 0;
+      right: 0;
+      left: 0;
+      border-top: @border;
+    }
+
+    &-e {
+      top: 0;
+      right: 0;
+      bottom: 0;
+      border-right: @border;
+    }
+
+    &-s {
+      right: 0;
+      bottom: 0;
+      left: 0;
+      border-bottom: @border;
+    }
+
+    &-w {
+      top: 0;
+      bottom: 0;
+      left: 0;
+      border-left: @border;
+    }
+  }
+
+  &-pointer {
+    width: @pointer-size;
+    height: @pointer-size;
+    background-color: @pointer-bg;
+    border: @pointer-border;
+
+    &-n, &-ne, &-e, &-se, &-s, &-sw, &-w, &-nw {
+      position: absolute;
+      transform: translate3d(-50%, -50%, 0);
+    }
+
+    &-n,
+    &-s {
+      cursor: n-resize;
+    }
+
+    &-e,
+    &-w {
+      cursor: e-resize;
+    }
+
+    &-ne {
+      cursor: ne-resize;
+    }
+
+    &-se {
+      cursor: nw-resize;
+    }
+
+    &-sw {
+      cursor: ne-resize;
+    }
+
+    &-nw {
+      cursor: nw-resize;
+    }
+
+    &-n {
+      top: 0;
+      left: 50%;
+    }
+
+    &-ne {
+      top: 0;
+      left: 100%;
+    }
+
+    &-e {
+      top: 50%;
+      left: 100%;
+    }
+
+    &-se {
+      top: 100%;
+      left: 100%;
+    }
+
+    &-s {
+      top: 100%;
+      left: 50%;
+    }
+
+    &-sw {
+      top: 100%;
+      left: 0;
+    }
+
+    &-w {
+      top: 50%;
+      left: 0;
+    }
+
+    &-nw {
+      top: 0;
+      left: 0;
+    }
+  }
+}
 </style>
