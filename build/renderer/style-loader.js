@@ -2,37 +2,31 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
 // generate loader string to be used with extract text plugin
 function generateLoaders (loader) {
-  return function (options) {
+  return function ({ extract, ...options }) {
     const cssLoader = {
       loader: 'css-loader',
-      options: {
-        sourceMap: options.sourceMap
-      }
+      options
     }
 
     const postcssLoader = {
       loader: 'postcss-loader',
-      options: {
-        sourceMap: options.sourceMap
-      }
+      options
     }
 
     const vueStyleLoader = {
       loader: 'vue-style-loader',
-      options: {
-        sourceMap: options.sourceMap
-      }
+      options
     }
+    const styleLoader = options.extract ? MiniCssExtractPlugin.loader : vueStyleLoader
 
-    const loaders = [cssLoader, postcssLoader]
+    const loaders = [styleLoader, cssLoader, postcssLoader]
     if (loader) {
       loaders.push({
         loader: loader + '-loader',
         options
       })
     }
-
-    return [options.extract ? MiniCssExtractPlugin.loader : vueStyleLoader, ...loaders]
+    return loaders
   }
 }
 
