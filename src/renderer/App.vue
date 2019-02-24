@@ -206,8 +206,8 @@ export default {
 </script>
 
 <style lang="less">
-@import "normalize.css";
-@import "./assets/css/iconfont.less";
+@import "~normalize.css";
+@import "./assets/less/iconfont.less";
 
 * {
   box-sizing: border-box;

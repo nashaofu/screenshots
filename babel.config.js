@@ -1,12 +1,7 @@
-const plugins = [
-  '@babel/plugin-proposal-export-default-from'
-]
-
-if (process.env.NODE_ENV === 'development') {
-  plugins.push('dynamic-import-node')
-}
-
 module.exports = {
-  presets: ['@vue/app'],
-  plugins
+  presets: ['@babel/preset-env'],
+  plugins: [
+    '@babel/plugin-proposal-class-properties',
+    '@babel/plugin-proposal-export-default-from'
+  ]
 }
