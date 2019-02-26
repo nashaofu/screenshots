@@ -1,17 +1,15 @@
 module.exports = {
   root: true,
-  env: {
-    node: true
-  },
-  extends: [
-    'plugin:vue/essential',
-    '@vue/standard'
-  ],
-  rules: {
-    'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off'
-  },
   parserOptions: {
     parser: 'babel-eslint'
+  },
+  env: {
+    node: true,
+    browser: true
+  },
+  extends: ['standard', 'plugin:vue/essential'],
+  rules: {
+    // override/add rules settings here, such as:
+    // 'vue/no-unused-vars': 'error'
   }
 }
