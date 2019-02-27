@@ -11,12 +11,12 @@
   //- )
   //-   i.iconfont-revoke
   .toolbar-button(
-    title="退出",
+    title="退出"
     @click.stop="click('cancel')"
   )
     i.iconfont-cancel
   .toolbar-button(
-    title="完成",
+    title="完成"
     @click.stop="click('done')"
   )
     i.iconfont-done

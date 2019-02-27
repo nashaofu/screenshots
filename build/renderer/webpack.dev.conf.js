@@ -13,6 +13,7 @@ const PORT = process.env.PORT || config.dev.port
 
 module.exports = merge(baseWebpackConfig, {
   mode: 'development',
+  watch: true,
   module: {
     rules: styleLoader({ sourceMap: true })
   },

@@ -1,18 +1,18 @@
 <template lang="pug">
 .app
   background(
-    ref="background",
+    ref="background"
     :bounds="bounds"
   )
   rectangle(
-    ref="rectangle",
-    :rect="rect",
-    :bounds="bounds",
+    ref="rectangle"
+    :rect="rect"
+    :bounds="bounds"
     @shift="shift"
     @resize="resize"
   )
   toolbar(
-    :rect="rect",
+    :rect="rect"
     @click="click"
   )
   layer(@draw="draw")

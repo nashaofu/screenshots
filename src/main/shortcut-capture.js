@@ -43,7 +43,7 @@ export default class ShortcutCapture extends Events {
       movable: false,
       focusable: false,
       fullscreen: true,
-      // 设为true mac全屏窗口不跑到主显示器
+      // 设为true mac全屏窗口没有桌面滚动效果
       simpleFullscreen: true,
       backgroundColor: '#30000000',
       titleBarStyle: 'hidden',
@@ -53,6 +53,9 @@ export default class ShortcutCapture extends Events {
       minimizable: false,
       maximizable: false
     })
+
+    // 清除simpleFullscreen状态
+    $win.on('close', () => $win.setSimpleFullScreen(false))
 
     const URL =
       process.env.NODE_ENV === 'development'
@@ -67,10 +70,7 @@ export default class ShortcutCapture extends Events {
    * 调用截图
    */
   shortcutCapture () {
-    if (this.$win) {
-      this.$win.close()
-      this.$win = null
-    }
+    if (this.$win) this.$win.close()
     this.$win = this.initWin()
   }
 
@@ -96,6 +96,10 @@ export default class ShortcutCapture extends Events {
       this.$win.show()
       this.$win.setBounds(bounds)
       this.$win.focus()
+      this.$win.on('show', () => {
+        this.$win.setBounds(bounds)
+        this.$win.focus()
+      })
     })
   }
 

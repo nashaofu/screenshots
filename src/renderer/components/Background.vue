@@ -1,6 +1,6 @@
 <template lang="pug">
 canvas.background(
-  :width="width",
+  :width="width"
   :height="height"
 )
 </template>
