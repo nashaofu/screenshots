@@ -16,6 +16,6 @@ module.exports = {
     port: 8080
   },
   prod: {
-    sourcemap: true
+    sourcemap: false
   }
 }

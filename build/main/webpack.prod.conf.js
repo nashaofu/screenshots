@@ -16,5 +16,5 @@ module.exports = merge(baseWebpackConfig, {
     libraryExport: 'default',
     libraryTarget: 'commonjs2'
   },
-  devtool: false
+  devtool: config.prod.sourcemap ? '#source-map' : false
 })

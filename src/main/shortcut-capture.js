@@ -1,6 +1,6 @@
-import { app, ipcMain, clipboard, nativeImage, BrowserWindow } from 'electron'
 import path from 'path'
 import Events from 'events'
+import { app, ipcMain, clipboard, nativeImage, BrowserWindow } from 'electron'
 
 export default class ShortcutCapture extends Events {
   // 截图窗口对象

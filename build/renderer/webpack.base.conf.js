@@ -74,5 +74,9 @@ module.exports = {
       }
     ]
   },
-  plugins: [new VueLoaderPlugin()]
+  plugins: [new VueLoaderPlugin()],
+  node: {
+    __dirname: true,
+    __filename: true
+  }
 }

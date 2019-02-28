@@ -8,10 +8,12 @@ webpack(main, (err, stats) => {
 })
 
 const port = renderer.devServer.port
-renderer.entry.renderer = [
-  `webpack-dev-server/client?http://localhost:${port}/`,
-  'webpack/hot/dev-server',
-  renderer.entry.renderer
-]
+
+Object.keys(renderer.entry).forEach(key => {
+  if (!Array.isArray(renderer.entry[key])) renderer.entry[key] = [renderer.entry[key]]
+  renderer.entry[key].unshift('webpack/hot/dev-server')
+  renderer.entry[key].unshift(`webpack-dev-server/client?http://localhost:${port}/`)
+})
+
 const server = new WebpackDevServer(webpack(renderer), renderer.devServer)
 server.listen(port)
