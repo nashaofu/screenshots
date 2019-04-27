@@ -51,7 +51,10 @@ export default class ShortcutCapture extends Events {
       enableLargerThanScreen: true,
       skipTaskbar: process.env.NODE_ENV === 'production',
       minimizable: false,
-      maximizable: false
+      maximizable: false,
+      webPreferences: {
+        nodeIntegration: true
+      }
     })
 
     // 清除simpleFullscreen状态
