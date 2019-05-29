@@ -1,22 +1,25 @@
 import path from 'path'
 import Events from 'events'
-import { app, ipcMain, clipboard, nativeImage, BrowserWindow } from 'electron'
+import { ipcMain, clipboard, nativeImage, BrowserWindow } from 'electron'
 
 export default class ShortcutCapture extends Events {
+  /**
+   * html文件路径地址
+   */
+  static URL =
+    process.env.NODE_ENV === 'development'
+      ? 'http://localhost:8080'
+      : `file://${path.join(__dirname, './renderer/index.html')}`
+
   // 截图窗口对象
   $win = null
-  // 插件目录
-  dirname = undefined
 
   /**
-   * dirname 本插件所在目录位置
    * isUseClipboard是否把内容写入到剪切板
    * @param {*} params
    */
-  constructor ({ dirname = path.join(app.getAppPath(), 'node_modules/shortcut-capture'), isUseClipboard = true } = {}) {
+  constructor ({ isUseClipboard = true } = {}) {
     super()
-    if (!app.isReady()) throw new Error("Cannot be executed before app's ready event")
-    this.dirname = dirname
     this.onShortcutCapture(isUseClipboard)
     this.onShow()
     this.onHide()
@@ -59,13 +62,7 @@ export default class ShortcutCapture extends Events {
 
     // 清除simpleFullscreen状态
     $win.on('close', () => $win.setSimpleFullScreen(false))
-
-    const URL =
-      process.env.NODE_ENV === 'development'
-        ? 'http://localhost:8080'
-        : `file://${path.join(this.dirname, './dist/renderer/index.html')}`
-
-    $win.loadURL(URL)
+    $win.loadURL(ShortcutCapture.URL)
     return $win
   }
 

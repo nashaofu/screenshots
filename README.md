@@ -32,14 +32,12 @@ app.on('window-all-closed', () => {
 
 ```typescript
 new ShortcutCapture({
-  dirname: string,
   isUseClipboard: true
 })
 ```
 
 | 名称 | 类型 | 说明 | 默认值 |
 | --- | --- | --- | --- |
-| dirname | string  | 本插件所在文件夹，目的是使得插件能够正确引用资源，如窗口界面 | `path.join(app.getAppPath(), 'node_modules/shortcut-capture')` |
 | isUseClipboard | boolean | 是否使用剪切板，即是否把图片资源写入剪切板  | `true` |
 
 ## Methods
