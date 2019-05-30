@@ -28,6 +28,16 @@ app.on('window-all-closed', () => {
 })
 ```
 
+**注意**：如果使用了webpack等工具来打包主进程，请在主进程webpack配置中修改如下配置
+
+```js
+{
+  externals: {
+    'shortcut-capture': 'require("shortcut-capture")'
+  }
+}
+```
+
 ## Options
 
 ```typescript
