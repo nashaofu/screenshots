@@ -1,6 +1,6 @@
 {
   "name": "shortcut-capture",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "electron shortcut capture plugin",
   "author": "nashaofu <diaocheng@outlook.com>",
   "main": "dist/main.js",
