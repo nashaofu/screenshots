@@ -110,8 +110,8 @@ export default {
       }
     },
     shift (e) {
-      let x = e.clientX - this.point.x
-      let y = e.clientY - this.point.y
+      const x = e.clientX - this.point.x
+      const y = e.clientY - this.point.y
       let { x1, y1, x2, y2 } = this.oRect
       x1 += x
       y1 += y
@@ -120,8 +120,8 @@ export default {
       this.$emit('shift', { x1, y1, x2, y2 })
     },
     resize (e) {
-      let x = e.clientX - this.point.x
-      let y = e.clientY - this.point.y
+      const x = e.clientX - this.point.x
+      const y = e.clientY - this.point.y
       let { x1, y1, x2, y2 } = this.oRect
       switch (this.is) {
         case 'n':

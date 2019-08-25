@@ -128,8 +128,8 @@ export default {
      * 修正矩形坐标
      */
     getRect ({ x1, y1, x2, y2 }) {
-      let x = x1
-      let y = y1
+      const x = x1
+      const y = y1
       if (x1 > x2) {
         x1 = x2
         x2 = x

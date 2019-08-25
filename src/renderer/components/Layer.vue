@@ -37,7 +37,7 @@ export default {
       this.is = false
     },
     draw (e) {
-      let { x, y } = this.point
+      const { x, y } = this.point
       const x2 = e.clientX
       const y2 = e.clientY
       if (Math.abs(x2 - x) >= 7 && Math.abs(y2 - y) >= 7) {
