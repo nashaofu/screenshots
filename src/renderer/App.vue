@@ -167,7 +167,7 @@ export default {
       const is = Math.abs(x2 - x1) >= 7 && Math.abs(y2 - y1) >= 7
       switch (e.keyCode) {
         case 13:
-          if (is) this.done()
+          if (is) this.ok()
           break
         case 27:
           if (is) {
@@ -185,8 +185,8 @@ export default {
         case 'cancel':
           this.cancel()
           break
-        case 'done':
-          this.done()
+        case 'ok':
+          this.ok()
           break
         default:
           break
@@ -195,7 +195,7 @@ export default {
     cancel () {
       this.hide()
     },
-    done () {
+    ok () {
       const ctx = this.$refs.rectangle.ctx
       const dataURL = ctx.canvas.toDataURL('image/png')
       ipcRenderer.send('ShortcutCapture::CAPTURE', dataURL, this.rect)

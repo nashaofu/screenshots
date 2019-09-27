@@ -162,10 +162,11 @@ export default {
 </script>
 
 <style lang="less">
-@border: 1px dotted #fff;
-@pointer-size: 8px;
-@pointer-bg: rgba(0, 0, 0, 0.9);
+@border: 1px solid #fff;
+@pointer-size: 6px;
+@pointer-bg: #fff;
 @pointer-border: 1px solid #fff;
+@pointer-border-radius: 2px;
 
 .rectangle {
   display: block;
@@ -221,6 +222,7 @@ export default {
     height: @pointer-size;
     background-color: @pointer-bg;
     border: @pointer-border;
+    border-radius: @pointer-border-radius;
 
     &-n, &-ne, &-e, &-se, &-s, &-sw, &-w, &-nw {
       position: absolute;
