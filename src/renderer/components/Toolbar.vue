@@ -1,40 +1,40 @@
 <template lang="pug">
 .toolbar(:style="style")
-  .toolbar-button(
-    title="矩形",
-    @click.stop="click('rect')"
-  )
-    i.scicon.icon-rect
-  .toolbar-button(
-    title="圆形",
-    @click.stop="click('ellipse')"
-  )
-    i.scicon.icon-ellipse
-  .toolbar-button(
-    title="箭头",
-    @click.stop="click('arrow')"
-  )
-    i.scicon.icon-arrow
-  .toolbar-button(
-    title="文本",
-    @click.stop="click('text')"
-  )
-    i.scicon.icon-text
-  .toolbar-button(
-    title="涂鸦",
-    @click.stop="click('brush')"
-  )
-    i.scicon.icon-brush
-  .toolbar-button(
-    title="撤销",
-    @click.stop="click('undo')"
-  )
-    i.scicon.icon-undo
-  .toolbar-divider
-  .toolbar-button(
-    title="保存",
-    @click.stop="click('save')"
-  )
+  //- .toolbar-button(
+  //-   title="矩形",
+  //-   @click.stop="click('rect')"
+  //- )
+  //-   i.scicon.icon-rect
+  //- .toolbar-button(
+  //-   title="圆形",
+  //-   @click.stop="click('ellipse')"
+  //- )
+  //-   i.scicon.icon-ellipse
+  //- .toolbar-button(
+  //-   title="箭头",
+  //-   @click.stop="click('arrow')"
+  //- )
+  //-   i.scicon.icon-arrow
+  //- .toolbar-button(
+  //-   title="文本",
+  //-   @click.stop="click('text')"
+  //- )
+  //-   i.scicon.icon-text
+  //- .toolbar-button(
+  //-   title="涂鸦",
+  //-   @click.stop="click('brush')"
+  //- )
+  //-   i.scicon.icon-brush
+  //- .toolbar-button(
+  //-   title="撤销",
+  //-   @click.stop="click('undo')"
+  //- )
+  //-   i.scicon.icon-undo
+  //- .toolbar-divider
+  //- .toolbar-button(
+  //-   title="保存",
+  //-   @click.stop="click('save')"
+  //- )
     i.scicon.icon-save
   .toolbar-button(
     title="退出"
@@ -86,6 +86,7 @@ export default {
 @button-size: 26px;
 
 .toolbar {
+  width: 77px;
   padding: 4px;
   background-color: #fff;
   display: block;

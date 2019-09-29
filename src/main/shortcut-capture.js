@@ -44,7 +44,7 @@ export default class ShortcutCapture extends Events {
       transparent: process.platform === 'darwin' || process.platform === 'win32',
       resizable: false,
       movable: false,
-      focusable: false,
+      focusable: process.platform === 'win32',
       fullscreen: true,
       // 设为true mac全屏窗口没有桌面滚动效果
       simpleFullscreen: true,

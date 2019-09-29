@@ -170,11 +170,8 @@ export default {
           if (is) this.ok()
           break
         case 27:
-          if (is) {
-            this.rect = { x1: 0, y1: 0, x2: 0, y2: 0 }
-          } else {
-            this.hide()
-          }
+          this.rect = { x1: 0, y1: 0, x2: 0, y2: 0 }
+          this.hide()
           break
         default:
           break
