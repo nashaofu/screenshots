@@ -1,9 +1,9 @@
-import { screen } from 'electron'
+import { remote } from 'electron'
 
 export default () => {
-  const point = screen.getCursorScreenPoint()
-  const primaryDisplay = screen.getPrimaryDisplay()
-  const { id, bounds, workArea, scaleFactor } = screen.getDisplayNearestPoint(point)
+  const point = remote.screen.getCursorScreenPoint()
+  const primaryDisplay = remote.screen.getPrimaryDisplay()
+  const { id, bounds, workArea, scaleFactor } = remote.screen.getDisplayNearestPoint(point)
   // win32 darwin linux平台分别处理
   const scale = process.platform === 'darwin' ? 1 : scaleFactor / primaryDisplay.scaleFactor
   const display = process.platform === 'linux' ? workArea : bounds

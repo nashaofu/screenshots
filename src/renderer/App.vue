@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import { ipcRenderer, screen } from 'electron'
+import { ipcRenderer, remote } from 'electron'
 import Layer from './components/Layer'
 import Toolbar from './components/Toolbar'
 import Rectangle from './components/Rectangle'
@@ -62,11 +62,11 @@ export default {
   mounted () {
     this.init()
     window.addEventListener('keydown', this.keydown)
-    screen.on('display-metrics-changed', this.displayMetricsChanged)
+    remote.screen.on('display-metrics-changed', this.displayMetricsChanged)
   },
   destroyed () {
     window.removeEventListener('keydown', this.keydown)
-    screen.off('display-metrics-changed', this.displayMetricsChanged)
+    remote.screen.off('display-metrics-changed', this.displayMetricsChanged)
   },
   methods: {
     async init () {
