@@ -8,8 +8,8 @@ app.on('ready', () => {
     console.log('Unable to install `vue-devtools`: \n', err)
   })
   const sc = new ShortcutCapture()
-  globalShortcut.register('ctrl+shift+a', () => sc.shortcutCapture())
-  sc.on('capture', ({ dataURL, bounds }) => console.log('capture', bounds))
+  globalShortcut.register('ctrl+shift+a', () => sc.startCapture())
+  sc.on('ok', ({ bounds }) => console.log('capture', bounds))
   debug({ showDevTools: true, devToolsMode: 'undocked' })
 })
 

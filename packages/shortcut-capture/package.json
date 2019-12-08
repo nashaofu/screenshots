@@ -1,0 +1,52 @@
+{
+  "name": "shortcut-capture",
+  "version": "1.0.0",
+  "description": "electron shortcut capture plugin",
+  "main": "lib/index.js",
+  "scripts": {
+    "prepublishOnly": "npm run build",
+    "start": "electron lib/index.js",
+    "dev": "tsc --watch",
+    "build": "npm run lint && npm run clean && tsc",
+    "lint": "eslint . --ext .js,.ts --fix",
+    "clean": "rimraf lib"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nashaofu/shortcut-capture.git"
+  },
+  "keywords": [
+    "electron",
+    "shortcut",
+    "capture",
+    "plugin"
+  ],
+  "author": "nashaofu",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nashaofu/shortcut-capture/issues"
+  },
+  "homepage": "https://github.com/nashaofu/shortcut-capture#readme",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
+  "peerDependencies": {
+    "electron": ">=2"
+  },
+  "devDependencies": {
+    "@types/electron-devtools-installer": "^2.2.0",
+    "@typescript-eslint/eslint-plugin": "^2.2.0",
+    "@typescript-eslint/parser": "^2.2.0",
+    "electron": "6",
+    "electron-debug": "^3.0.1",
+    "electron-devtools-installer": "^2.2.4",
+    "eslint": "^6.4.0",
+    "eslint-config-standard": "^14.1.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-node": "^10.0.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
+    "rimraf": "^3.0.0",
+    "typescript": "^3.7.3"
+  }
+}

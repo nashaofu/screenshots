@@ -2,7 +2,6 @@ import React, { PureComponent } from 'react'
 import { ipcRenderer, remote } from 'electron'
 import Screenshot from '@/components/Screenshot'
 import getSource from './getSource'
-import getDisplay from './getDisplay'
 import './app.less'
 
 export default class App extends PureComponent {
@@ -13,26 +12,13 @@ export default class App extends PureComponent {
   }
 
   source = null
-  display = getDisplay()
 
   componentDidMount () {
-    ipcRenderer.send('ShortcutCapture::READY', this.display)
-    getSource(this.display).then((source) => {
-      this.source = source
-      const blob = new Blob([this.source.thumbnail.toPNG()], { type: 'image/png' })
-      this.setState({
-        width: window.innerWidth,
-        height: window.innerHeight,
-        image: URL.createObjectURL(blob)
-      })
-    })
     window.addEventListener('resize', this.resize)
-    remote.screen.on('display-metrics-changed', this.displayMetricsChanged)
   }
 
   componentWillUnmount () {
     window.addEventListener('resize', this.resize)
-    remote.screen.off('display-metrics-changed', this.displayMetricsChanged)
   }
 
   resize = () => {
@@ -40,10 +26,6 @@ export default class App extends PureComponent {
       width: window.innerWidth,
       height: window.innerHeight
     })
-  }
-
-  displayMetricsChanged = () => {
-    this.display = getDisplay()
   }
 
   onSave = ({ viewer, dataURL }) => {
