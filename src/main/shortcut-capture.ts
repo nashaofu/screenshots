@@ -1,18 +1,16 @@
 import path from 'path'
 import Events from 'events'
-import { ipcMain, clipboard, nativeImage, BrowserWindow } from 'electron'
+import {
+  ipcMain,
+  clipboard,
+  nativeImage,
+  BrowserWindow,
+  IpcMainEvent
+} from 'electron'
 
 export default class ShortcutCapture extends Events {
-  /**
-   * html文件路径地址
-   */
-  static URL =
-    process.env.NODE_ENV === 'development'
-      ? 'http://localhost:8080'
-      : `file://${path.join(__dirname, './renderer/index.html')}`
-
   // 截图窗口对象
-  $win = null
+  $win: BrowserWindow|null = null
 
   /**
    * isUseClipboard是否把内容写入到剪切板
@@ -28,7 +26,7 @@ export default class ShortcutCapture extends Events {
   /**
    * 初始化窗口
    */
-  initWin () {
+  initWin (): BrowserWindow {
     const $win = new BrowserWindow({
       title: 'shortcut-capture',
       width: 0,
@@ -39,9 +37,9 @@ export default class ShortcutCapture extends Events {
       useContentSize: true,
       frame: false,
       show: false,
-      menu: false,
       autoHideMenuBar: true,
-      transparent: process.platform === 'darwin' || process.platform === 'win32',
+      transparent:
+        process.platform === 'darwin' || process.platform === 'win32',
       resizable: false,
       movable: false,
       focusable: process.platform === 'win32',
@@ -50,7 +48,8 @@ export default class ShortcutCapture extends Events {
       simpleFullscreen: true,
       backgroundColor: '#30000000',
       titleBarStyle: 'hidden',
-      alwaysOnTop: process.env.NODE_ENV === 'production' || process.platform === 'darwin',
+      alwaysOnTop:
+        process.env.NODE_ENV === 'production' || process.platform === 'darwin',
       enableLargerThanScreen: true,
       skipTaskbar: process.env.NODE_ENV === 'production',
       minimizable: false,
@@ -62,14 +61,14 @@ export default class ShortcutCapture extends Events {
 
     // 清除simpleFullscreen状态
     $win.on('close', () => $win.setSimpleFullScreen(false))
-    $win.loadURL(ShortcutCapture.URL)
+    $win.loadURL(`file://${path.join(__dirname, './renderer/index.html')}`)
     return $win
   }
 
   /**
    * 调用截图
    */
-  shortcutCapture () {
+  shortcutCapture (): void {
     if (this.$win) this.$win.close()
     this.$win = this.initWin()
   }
@@ -78,7 +77,7 @@ export default class ShortcutCapture extends Events {
    * 绑定截图确定后的时间回调
    * @param {*} isUseClipboard
    */
-  onShortcutCapture (isUseClipboard) {
+  onShortcutCapture (isUseClipboard: boolean): void {
     ipcMain.on('ShortcutCapture::CAPTURE', (e, dataURL, bounds) => {
       if (isUseClipboard) {
         clipboard.writeImage(nativeImage.createFromDataURL(dataURL))
@@ -90,15 +89,17 @@ export default class ShortcutCapture extends Events {
   /**
    * 绑定窗口显示事件
    */
-  onShow () {
+  onShow (): void {
     ipcMain.on('ShortcutCapture::SHOW', (e, bounds) => {
       if (!this.$win) return
       this.$win.show()
       this.$win.setBounds(bounds)
       this.$win.focus()
       this.$win.on('show', () => {
-        this.$win.setBounds(bounds)
-        this.$win.focus()
+        if (this.$win) {
+          this.$win.setBounds(bounds)
+          this.$win.focus()
+        }
       })
     })
   }
@@ -106,8 +107,8 @@ export default class ShortcutCapture extends Events {
   /**
    * 绑定窗口隐藏事件
    */
-  onHide () {
-    ipcMain.on('ShortcutCapture::HIDE', (e, bounds) => {
+  onHide (): void {
+    ipcMain.on('ShortcutCapture::HIDE', (e: IpcMainEvent, bounds) => {
       if (!this.$win) return
       this.$win.hide()
       this.$win.setSimpleFullScreen(false)

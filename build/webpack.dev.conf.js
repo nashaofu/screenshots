@@ -1,19 +1,28 @@
-const webpack = require('webpack')
-const main = require('./main/webpack.dev.conf')
-const WebpackDevServer = require('webpack-dev-server')
-const renderer = require('./renderer/webpack.dev.conf')
+'use strict'
+const path = require('path')
+const config = require('./config')
+const merge = require('webpack-merge')
+const styleLoader = require('./style-loader')
+const baseWebpackConfig = require('./webpack.base.conf')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 
-webpack(main, (err, stats) => {
-  if (err) throw err
+module.exports = merge(baseWebpackConfig, {
+  mode: 'development',
+  watch: true,
+  module: {
+    rules: styleLoader({ sourceMap: true })
+  },
+
+  devtool: 'source-map',
+
+  plugins: [
+    // https://github.com/ampedandwired/html-webpack-plugin
+    new HtmlWebpackPlugin({
+      filename: 'index.html',
+      template: path.join(config.srcRendererDir, 'index.html'),
+      inject: true,
+      chunksSortMode: 'auto',
+      chunks: ['renderer']
+    })
+  ]
 })
-
-const port = renderer.devServer.port
-
-Object.keys(renderer.entry).forEach(key => {
-  if (!Array.isArray(renderer.entry[key])) renderer.entry[key] = [renderer.entry[key]]
-  renderer.entry[key].unshift('webpack/hot/dev-server')
-  renderer.entry[key].unshift(`webpack-dev-server/client?http://localhost:${port}/`)
-})
-
-const server = new WebpackDevServer(webpack(renderer), renderer.devServer)
-server.listen(port)

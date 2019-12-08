@@ -1,7 +1,6 @@
 'use strict'
 const path = require('path')
-const config = require('../config')
-const VueLoaderPlugin = require('vue-loader/lib/plugin')
+const config = require('./config')
 
 function resolve (dir) {
   return path.join(config.baseDir, dir)
@@ -18,34 +17,26 @@ module.exports = {
   },
   target: 'electron-renderer',
   resolve: {
-    extensions: ['.js', '.vue', '.json'],
+    extensions: ['.js', '.jsx', '.json'],
     alias: {
-      vue$: 'vue/dist/vue.esm.js',
       '@': resolve('src/renderer')
     }
   },
   module: {
     rules: [
       {
-        test: /\.(js|vue)$/,
+        test: /\.jsx?$/,
         loader: 'eslint-loader',
         enforce: 'pre',
-        include: [resolve('src/renderer')],
+        exclude: [resolve('node_modules')],
         options: {
-          formatter: require('eslint-friendly-formatter'),
-          emitWarning: true
+          emitWarning: true,
+          formatter: 'eslint/lib/cli-engine/formatters/codeframe'
         }
       },
       {
-        test: /\.pug$/,
-        loader: 'pug-plain-loader'
-      },
-      {
-        test: /\.vue$/,
-        loader: 'vue-loader'
-      },
-      {
         test: /\.js$/,
+        exclude: [resolve('node_modules')],
         loader: 'babel-loader'
       },
       {
@@ -74,7 +65,6 @@ module.exports = {
       }
     ]
   },
-  plugins: [new VueLoaderPlugin()],
   node: {
     __dirname: false,
     __filename: false

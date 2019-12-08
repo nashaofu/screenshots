@@ -10,7 +10,7 @@ app.on('ready', () => {
   const sc = new ShortcutCapture()
   globalShortcut.register('ctrl+shift+a', () => sc.shortcutCapture())
   sc.on('capture', ({ dataURL, bounds }) => console.log('capture', bounds))
-  debug({ showDevTools: 'undocked' })
+  debug({ showDevTools: true, devToolsMode: 'undocked' })
 })
 
 app.on('window-all-closed', () => {

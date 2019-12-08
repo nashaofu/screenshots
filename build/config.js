@@ -11,11 +11,5 @@ module.exports = {
   srcRendererDir: path.resolve(srcDir, './renderer'),
   distDir: path.resolve(baseDir, './dist'),
   distRendererDir: path.resolve(distDir, './renderer'),
-  dev: {
-    host: 'localhost',
-    port: 8080
-  },
-  prod: {
-    sourcemap: false
-  }
+  sourceMap: false
 }
