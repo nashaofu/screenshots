@@ -94,14 +94,8 @@ export default class ScreenshotViewer extends PureComponent {
         actions,
         cursor
       },
-      setContext: (state, callback) => {
-        this.props.setContext(state, callback)
-      },
-      setState: (state, callback) => {
-        this.props.setContext(({ state }, props) => {
-          return { state }
-        }, callback)
-      }
+      setContext: this.props.setContext,
+      emit: this.props.onEmit
     }
   }
 

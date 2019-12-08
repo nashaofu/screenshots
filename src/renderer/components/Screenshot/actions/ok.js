@@ -7,7 +7,11 @@ export default class Ok extends Action {
 
   constructor (props) {
     super(props)
-    const { setContext } = props
+    const { el, setContext, context } = props
+    this.emit('onOk', {
+      viewer: { ...context.viewer },
+      dataURL: el.toDataURL('image/png')
+    })
     setContext({
       viewer: null,
       action: null,

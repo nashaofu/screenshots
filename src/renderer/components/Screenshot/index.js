@@ -2,8 +2,6 @@ import React, { PureComponent } from 'react'
 import ScreenshotViewer from './ScreenshotViewer'
 import ScreenshotCanvas from './ScreenshotCanvas'
 import ScreenshotContext from './ScreenshotContext'
-import './screenshot.less'
-import './icons.less'
 import Ok from './actions/ok'
 import Undo from './actions/undo'
 import Save from './actions/save'
@@ -12,6 +10,8 @@ import Brush from './actions/brush'
 import Arrow from './actions/arrow'
 import Cancel from './actions/cancel'
 import Ellipse from './actions/ellipse'
+import './icons.less'
+import './screenshot.less'
 
 export default class Screenshot extends PureComponent {
   state = {
@@ -97,6 +97,11 @@ export default class Screenshot extends PureComponent {
         return state
       }, callback)
     }
+  }
+
+  onEmit = (event, ...args) => {
+    const fn = this.props[event]
+    if (typeof fn === 'function') fn(...args)
   }
 
   getImage () {
@@ -211,7 +216,7 @@ export default class Screenshot extends PureComponent {
           style={{ width, height }}
         >
           <ScreenshotCanvas onChange={this.onCanvasChange} />
-          <ScreenshotViewer onChange={this.onViewerChange} />
+          <ScreenshotViewer onChange={this.onViewerChange} onEmit={this.onEmit} />
         </div>
       </ScreenshotContext.Provider>
     )
