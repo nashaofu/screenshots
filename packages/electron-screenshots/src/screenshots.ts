@@ -32,7 +32,7 @@ function padStart0(value: number, length = 2): string {
   return string
 }
 
-export default class ShortcutCapture extends Events {
+export default class Screenshots extends Events {
   // 截图窗口对象
   $win: BrowserWindow | null = null
 
@@ -77,7 +77,7 @@ export default class ShortcutCapture extends Events {
    */
   private createWindow({ x, y, width, height }: Rectangle): BrowserWindow {
     const $win = new BrowserWindow({
-      title: 'shortcut-capture',
+      title: 'screenshots',
       x,
       y,
       width,
@@ -109,7 +109,7 @@ export default class ShortcutCapture extends Events {
     })
 
     $win.loadURL(
-      `file://${require.resolve('react-screenshot/dist/index.html')}`
+      `file://${require.resolve('react-screenshots/dist/index.html')}`
     )
     return $win
   }
@@ -121,14 +121,14 @@ export default class ShortcutCapture extends Events {
     /**
      * OK事件
      */
-    ipcMain.on('SHORTCUTCAPTURE::OK', (e, data: OkData) => {
+    ipcMain.on('SCREENSHOTS::OK', (e, data: OkData) => {
       this.emit('ok', data)
       this.endCapture()
     })
     /**
      * CANCEL事件
      */
-    ipcMain.on('SHORTCUTCAPTURE::CANCEL', () => {
+    ipcMain.on('SCREENSHOTS::CANCEL', () => {
       this.emit('CANCEL')
       this.endCapture()
     })
@@ -136,7 +136,7 @@ export default class ShortcutCapture extends Events {
     /**
      * SAVE事件
      */
-    ipcMain.on('SHORTCUTCAPTURE::SAVE', (e, data: SaveData) => {
+    ipcMain.on('SCREENSHOTS::SAVE', (e, data: SaveData) => {
       if (!this.$win) return
       const time = new Date()
       const year = time.getFullYear()

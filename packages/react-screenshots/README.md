@@ -1,4 +1,4 @@
-# react-screenshot
+# react-screenshots
 
 > picture clipping and graffiti tool by react
 

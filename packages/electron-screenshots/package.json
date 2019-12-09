@@ -1,8 +1,8 @@
 {
-  "name": "shortcut-capture",
+  "name": "electron-screenshots",
   "version": "1.0.0",
   "description": "electron shortcut capture plugin",
-  "types": "lib/shortcut-capture.d.ts",
+  "types": "lib/electron-screenshots.d.ts",
   "main": "lib/index.js",
   "files": [
     "lib/**"
@@ -17,7 +17,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nashaofu/shortcut-capture.git"
+    "url": "git+https://github.com/nashaofu/electron-screenshots.git"
   },
   "keywords": [
     "electron",
@@ -28,14 +28,14 @@
   "author": "nashaofu",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/nashaofu/shortcut-capture/issues"
+    "url": "https://github.com/nashaofu/electron-screenshots/issues"
   },
-  "homepage": "https://github.com/nashaofu/shortcut-capture#readme",
+  "homepage": "https://github.com/nashaofu/electron-screenshots#readme",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
   "dependencies": {
-    "react-screenshot": "../react-screenshot"
+    "react-screenshots": "../react-screenshots"
   },
   "peerDependencies": {
     "electron": ">=2"

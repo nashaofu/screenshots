@@ -1612,7 +1612,7 @@ react-is@^16.8.1:
   resolved "https://registry.npm.taobao.org/react-is/download/react-is-16.12.0.tgz#2cc0fe0fba742d97fd527c42a13bec4eeb06241c"
   integrity sha1-LMD+D7p0LZf9UnxCoTvsTusGJBw=
 
-react-screenshot@../react-screenshot:
+react-screenshots@../react-screenshots:
   version "1.0.0"
   dependencies:
     core-js "^3.4.7"

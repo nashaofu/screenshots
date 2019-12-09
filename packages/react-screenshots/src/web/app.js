@@ -26,15 +26,15 @@ export default class App extends PureComponent {
   }
 
   onSave = ({ viewer, dataURL }) => {
-    console.log('SHORTCUTCAPTURE::SAVE', dataURL, viewer)
+    console.log('SCREENSHOTS::SAVE', dataURL, viewer)
   }
 
   onCancel = () => {
-    console.log('SHORTCUTCAPTURE::CANCEL')
+    console.log('SCREENSHOTS::CANCEL')
   }
 
   onOk = ({ dataURL, viewer }) => {
-    console.log('SHORTCUTCAPTURE::OK', dataURL, viewer)
+    console.log('SCREENSHOTS::OK', dataURL, viewer)
   }
 
   render () {

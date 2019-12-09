@@ -32,15 +32,15 @@ export default class App extends PureComponent {
   }
 
   onSave = ({ viewer, dataURL }) => {
-    ipcRenderer.send('SHORTCUTCAPTURE::SAVE', { viewer, dataURL })
+    ipcRenderer.send('SCREENSHOTS::SAVE', { viewer, dataURL })
   }
 
   onCancel = () => {
-    ipcRenderer.send('SHORTCUTCAPTURE::CANCEL')
+    ipcRenderer.send('SCREENSHOTS::CANCEL')
   }
 
   onOk = ({ dataURL, viewer }) => {
-    ipcRenderer.send('SHORTCUTCAPTURE::OK', { viewer, dataURL })
+    ipcRenderer.send('SCREENSHOTS::OK', { viewer, dataURL })
   }
 
   render () {

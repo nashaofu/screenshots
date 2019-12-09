@@ -1,6 +1,12 @@
 {
   "name": "root",
   "private": true,
+  "scripts": {
+    "install": "npm run bootstrap",
+    "bootstrap": "lerna bootstrap",
+    "release": "lerna publish",
+    "alpha": "lerna publish --dist-tag alpha"
+  },
   "devDependencies": {
     "lerna": "^3.19.0"
   }
