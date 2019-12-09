@@ -24,7 +24,7 @@ type SaveData = CaptureData
  * @param value
  * @param length
  */
-function padStart0(value: number, length = 2): string {
+function padStart0 (value: number, length = 2): string {
   let string = String(value)
   while (string.length < length) {
     string = `0${string}`
@@ -36,7 +36,7 @@ export default class Screenshots extends Events {
   // 截图窗口对象
   $win: BrowserWindow | null = null
 
-  constructor() {
+  constructor () {
     super()
     this.listenIpc()
   }
@@ -44,7 +44,7 @@ export default class Screenshots extends Events {
   /**
    * 开始截图
    */
-  public startCapture(): void {
+  public startCapture (): void {
     if (this.$win) this.$win.close()
     const bounds = getDisplay()
     this.$win = this.createWindow(bounds)
@@ -65,7 +65,7 @@ export default class Screenshots extends Events {
   /**
    * 结束截图
    */
-  public endCapture(): void {
+  public endCapture (): void {
     if (!this.$win) return
     this.$win.setSimpleFullScreen(false)
     this.$win.close()
@@ -75,7 +75,7 @@ export default class Screenshots extends Events {
   /**
    * 初始化窗口
    */
-  private createWindow({ x, y, width, height }: Rectangle): BrowserWindow {
+  private createWindow ({ x, y, width, height }: Rectangle): BrowserWindow {
     const $win = new BrowserWindow({
       title: 'screenshots',
       x,
@@ -117,7 +117,7 @@ export default class Screenshots extends Events {
   /**
    * 绑定ipc时间处理
    */
-  private listenIpc(): void {
+  private listenIpc (): void {
     /**
      * OK事件
      */
