@@ -1,6 +1,6 @@
 {
   "name": "electron-screenshots",
-  "version": "1.0.0",
+  "version": "0.0.1-alpha.0",
   "description": "electron shortcut capture plugin",
   "types": "lib/electron-screenshots.d.ts",
   "main": "lib/index.js",
