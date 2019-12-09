@@ -1,25 +1,39 @@
 {
-  "name": "shortcut-capture",
-  "version": "1.2.3",
-  "description": "electron shortcut capture plugin",
-  "author": "nashaofu <diaocheng@outlook.com>",
+  "name": "react-screenshot",
+  "version": "1.0.0",
+  "description": "a picture clipping and graffiti tool by react",
   "main": "dist/index.js",
   "files": [
     "dist/**"
   ],
   "scripts": {
-    "dev": "webpack --config build/webpack.dev.conf.js",
-    "build": "webpack --config build/webpack.prod.conf.js",
-    "lint": "eslint . --ext .js,.jsx --fix",
-    "release": "npm run build && npm publish"
+    "prepublishOnly": "npm run build",
+    "dev": "npm run dev:Web & npm run dev:electron",
+    "dev:web": "webpack-dev-server --config build/webpack.dev.web.js",
+    "dev:electron": "webpack --config build/webpack.dev.electron.js",
+    "build": "npm run build:web & npm run build:electron",
+    "build:web": "webpack --config build/webpack.prod.web.js",
+    "build:electron": "webpack --config build/webpack.prod.electron.js",
+    "lint": "eslint . --ext .js,.jsx --fix"
   },
-  "publishConfig": {
-    "registry": "https://registry.npmjs.org/"
-  },
-  "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/nashaofu/shortcut-capture.git"
+    "url": "git+https://github.com/nashaofu/shortcut-capture.git"
+  },
+  "keywords": [
+    "clipping",
+    "graffiti",
+    "react",
+    "image"
+  ],
+  "author": "nashaofu",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nashaofu/shortcut-capture/issues"
+  },
+  "homepage": "https://github.com/nashaofu/shortcut-capture#readme",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
   },
   "dependencies": {
     "core-js": "^3.4.7",
@@ -62,6 +76,7 @@
     "url-loader": "^3.0.0",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.3.10",
+    "webpack-dev-server": "^3.9.0",
     "webpack-merge": "^4.2.2"
   }
 }

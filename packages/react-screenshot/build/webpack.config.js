@@ -1,22 +1,17 @@
-'use strict'
 const path = require('path')
 const config = require('./config')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 function resolve (dir) {
-  return path.join(config.context, dir)
+  return path.resolve(config.context, dir)
 }
 
 module.exports = {
   context: config.context,
-  entry: {
-    app: config.srcDir
-  },
   output: {
     path: config.distDir,
     filename: '[name].js'
   },
-  target: 'electron-renderer',
+  target: 'web',
   resolve: {
     extensions: ['.js', '.jsx', '.json'],
     alias: {
@@ -66,15 +61,6 @@ module.exports = {
       }
     ]
   },
-  plugins: [
-    new HtmlWebpackPlugin({
-      filename: 'index.html',
-      template: path.join(config.context, 'public/index.html'),
-      inject: true,
-      chunksSortMode: 'auto',
-      chunks: ['renderer']
-    })
-  ],
   node: {
     __dirname: false,
     __filename: false

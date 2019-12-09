@@ -1,7 +1,8 @@
+import { ipcRenderer } from 'electron'
 import React, { PureComponent } from 'react'
-import { ipcRenderer, remote } from 'electron'
 import Screenshot from '@/components/Screenshot'
 import getSource from './getSource'
+import 'normalize.css'
 import './app.less'
 
 export default class App extends PureComponent {
@@ -11,9 +12,11 @@ export default class App extends PureComponent {
     height: window.innerHeight
   }
 
-  source = null
-
   componentDidMount () {
+    getSource()
+      .then(({ thumbnail }) => {
+        this.setState({ image: thumbnail.toDataURL() })
+      })
     window.addEventListener('resize', this.resize)
   }
 
@@ -29,32 +32,29 @@ export default class App extends PureComponent {
   }
 
   onSave = ({ viewer, dataURL }) => {
-    ipcRenderer.send('ShortcutCapture::SAVE', dataURL, viewer)
+    ipcRenderer.send('SHORTCUTCAPTURE::SAVE', { viewer, dataURL })
   }
 
   onCancel = () => {
-    ipcRenderer.send('ShortcutCapture::CANCEL')
+    ipcRenderer.send('SHORTCUTCAPTURE::CANCEL')
   }
 
   onOk = ({ dataURL, viewer }) => {
-    ipcRenderer.send('ShortcutCapture::OK', dataURL, viewer)
+    ipcRenderer.send('SHORTCUTCAPTURE::OK', { viewer, dataURL })
   }
 
   render () {
     const { image, width, height } = this.state
+    if (!image) return null
     return (
-      <div className="app-screenshot">
-        {image && (
-          <Screenshot
-            image={image}
-            width={width}
-            height={height}
-            onSave={this.onSave}
-            onCancel={this.onCancel}
-            onOk={this.onOk}
-          />
-        )}
-      </div>
+      <Screenshot
+        image={image}
+        width={width}
+        height={height}
+        onSave={this.onSave}
+        onCancel={this.onCancel}
+        onOk={this.onOk}
+      />
     )
   }
 }

@@ -305,6 +305,11 @@ contains-path@^0.1.0:
   resolved "https://registry.npm.taobao.org/contains-path/download/contains-path-0.1.0.tgz#fe8cf184ff6670b6baef01a9d4861a5cbec4120a"
   integrity sha1-/ozxhP9mcLa67wGp1IYaXL7EEgo=
 
+core-js@^3.4.7:
+  version "3.4.8"
+  resolved "https://registry.npm.taobao.org/core-js/download/core-js-3.4.8.tgz#e0fc0c61f2ef90cbc10c531dbffaa46dfb7152dd"
+  integrity sha1-4PwMYfLvkMvBDFMdv/qkbftxUt0=
+
 core-util-is@1.0.2, core-util-is@~1.0.0:
   version "1.0.2"
   resolved "https://registry.npm.taobao.org/core-util-is/download/core-util-is-1.0.2.tgz#b5fd54220aa2bc5ab57aab7140c940754503c1a7"
@@ -1092,7 +1097,7 @@ isstream@~0.1.2:
   resolved "https://registry.npm.taobao.org/isstream/download/isstream-0.1.2.tgz#47e63f7af55afa6f92e1500e690eb8b8529c099a"
   integrity sha1-R+Y/evVa+m+S4VAOaQ64uFKcCZo=
 
-js-tokens@^4.0.0:
+"js-tokens@^3.0.0 || ^4.0.0", js-tokens@^4.0.0:
   version "4.0.0"
   resolved "https://registry.npm.taobao.org/js-tokens/download/js-tokens-4.0.0.tgz#19203fb59991df98e3a287050d4647cdeaf32499"
   integrity sha1-GSA/tZmR35jjoocFDUZHzerzJJk=
@@ -1204,6 +1209,13 @@ lodash@^4.17.14, lodash@^4.17.15:
   resolved "https://registry.npm.taobao.org/lodash/download/lodash-4.17.15.tgz#b447f6670a0455bbfeedd11392eff330ea097548"
   integrity sha1-tEf2ZwoEVbv+7dETku/zMOoJdUg=
 
+loose-envify@^1.1.0, loose-envify@^1.4.0:
+  version "1.4.0"
+  resolved "https://registry.npm.taobao.org/loose-envify/download/loose-envify-1.4.0.tgz#71ee51fa7be4caec1a63839f7e682d8132d30caf"
+  integrity sha1-ce5R+nvkyuwaY4OffmgtgTLTDK8=
+  dependencies:
+    js-tokens "^3.0.0 || ^4.0.0"
+
 loud-rejection@^1.0.0:
   version "1.6.0"
   resolved "https://registry.npm.taobao.org/loud-rejection/download/loud-rejection-1.6.0.tgz?cache=0&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Floud-rejection%2Fdownload%2Floud-rejection-1.6.0.tgz#5b46f80147edee578870f086d04821cf998e551f"
@@ -1309,6 +1321,11 @@ normalize-package-data@^2.3.2, normalize-package-data@^2.3.4:
     semver "2 || 3 || 4 || 5"
     validate-npm-package-license "^3.0.1"
 
+normalize.css@^8.0.1:
+  version "8.0.1"
+  resolved "https://registry.npm.taobao.org/normalize.css/download/normalize.css-8.0.1.tgz#9b98a208738b9cc2634caacbc42d131c97487bf3"
+  integrity sha1-m5iiCHOLnMJjTKrLxC0THJdIe/M=
+
 nugget@^2.0.1:
   version "2.0.1"
   resolved "https://registry.npm.taobao.org/nugget/download/nugget-2.0.1.tgz#201095a487e1ad36081b3432fa3cada4f8d071b0"
@@ -1332,7 +1349,7 @@ oauth-sign@~0.9.0:
   resolved "https://registry.npm.taobao.org/oauth-sign/download/oauth-sign-0.9.0.tgz#47a7b016baa68b5fa0ecf3dee08a85c679ac6455"
   integrity sha1-R6ewFrqmi1+g7PPe4IqFxnmsZFU=
 
-object-assign@^4.0.1:
+object-assign@^4.0.1, object-assign@^4.1.1:
   version "4.1.1"
   resolved "https://registry.npm.taobao.org/object-assign/download/object-assign-4.1.1.tgz?cache=0&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fobject-assign%2Fdownload%2Fobject-assign-4.1.1.tgz#2109adc7965887cfc05cbbd442cac8bfbb360863"
   integrity sha1-IQmtx5ZYh8/AXLvUQsrIv7s2CGM=
@@ -1534,6 +1551,15 @@ progress@^2.0.0:
   resolved "https://registry.npm.taobao.org/progress/download/progress-2.0.3.tgz#7e8cf8d8f5b8f239c1bc68beb4eb78567d572ef8"
   integrity sha1-foz42PW48jnBvGi+tOt4Vn1XLvg=
 
+prop-types@^15.6.2:
+  version "15.7.2"
+  resolved "https://registry.npm.taobao.org/prop-types/download/prop-types-15.7.2.tgz#52c41e75b8c87e72b9d9360e0206b99dcbffa6c5"
+  integrity sha1-UsQedbjIfnK52TYOAga5ncv/psU=
+  dependencies:
+    loose-envify "^1.4.0"
+    object-assign "^4.1.1"
+    react-is "^16.8.1"
+
 psl@^1.1.24:
   version "1.6.0"
   resolved "https://registry.npm.taobao.org/psl/download/psl-1.6.0.tgz?cache=0&sync_timestamp=1575592156923&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fpsl%2Fdownload%2Fpsl-1.6.0.tgz#60557582ee23b6c43719d9890fb4170ecd91e110"
@@ -1554,6 +1580,13 @@ qs@~6.5.2:
   resolved "https://registry.npm.taobao.org/qs/download/qs-6.5.2.tgz#cb3ae806e8740444584ef154ce8ee98d403f3e36"
   integrity sha1-yzroBuh0BERYTvFUzo7pjUA/PjY=
 
+raf@^3.4.1:
+  version "3.4.1"
+  resolved "https://registry.npm.taobao.org/raf/download/raf-3.4.1.tgz?cache=0&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fraf%2Fdownload%2Fraf-3.4.1.tgz#0742e99a4a6552f445d73e3ee0328af0ff1ede39"
+  integrity sha1-B0LpmkplUvRF1z4+4DKK8P8e3jk=
+  dependencies:
+    performance-now "^2.1.0"
+
 rc@^1.2.1:
   version "1.2.8"
   resolved "https://registry.npm.taobao.org/rc/download/rc-1.2.8.tgz#cd924bf5200a075b83c188cd6b9e211b7fc0d3ed"
@@ -1563,6 +1596,39 @@ rc@^1.2.1:
     ini "~1.3.0"
     minimist "^1.2.0"
     strip-json-comments "~2.0.1"
+
+react-dom@^16.12.0:
+  version "16.12.0"
+  resolved "https://registry.npm.taobao.org/react-dom/download/react-dom-16.12.0.tgz?cache=0&sync_timestamp=1574324697527&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Freact-dom%2Fdownload%2Freact-dom-16.12.0.tgz#0da4b714b8d13c2038c9396b54a92baea633fe11"
+  integrity sha1-DaS3FLjRPCA4yTlrVKkrrqYz/hE=
+  dependencies:
+    loose-envify "^1.1.0"
+    object-assign "^4.1.1"
+    prop-types "^15.6.2"
+    scheduler "^0.18.0"
+
+react-is@^16.8.1:
+  version "16.12.0"
+  resolved "https://registry.npm.taobao.org/react-is/download/react-is-16.12.0.tgz#2cc0fe0fba742d97fd527c42a13bec4eeb06241c"
+  integrity sha1-LMD+D7p0LZf9UnxCoTvsTusGJBw=
+
+react-screenshot@../react-screenshot:
+  version "1.0.0"
+  dependencies:
+    core-js "^3.4.7"
+    normalize.css "^8.0.1"
+    raf "^3.4.1"
+    react "^16.12.0"
+    react-dom "^16.12.0"
+
+react@^16.12.0:
+  version "16.12.0"
+  resolved "https://registry.npm.taobao.org/react/download/react-16.12.0.tgz#0c0a9c6a142429e3614834d5a778e18aa78a0b83"
+  integrity sha1-DAqcahQkKeNhSDTVp3jhiqeKC4M=
+  dependencies:
+    loose-envify "^1.1.0"
+    object-assign "^4.1.1"
+    prop-types "^15.6.2"
 
 read-pkg-up@^1.0.1:
   version "1.0.1"
@@ -1741,6 +1807,14 @@ safe-buffer@~5.1.0, safe-buffer@~5.1.1:
   version "2.1.2"
   resolved "https://registry.npm.taobao.org/safer-buffer/download/safer-buffer-2.1.2.tgz?cache=0&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fsafer-buffer%2Fdownload%2Fsafer-buffer-2.1.2.tgz#44fa161b0187b9549dd84bb91802f9bd8385cd6a"
   integrity sha1-RPoWGwGHuVSd2Eu5GAL5vYOFzWo=
+
+scheduler@^0.18.0:
+  version "0.18.0"
+  resolved "https://registry.npm.taobao.org/scheduler/download/scheduler-0.18.0.tgz?cache=0&sync_timestamp=1574323591044&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fscheduler%2Fdownload%2Fscheduler-0.18.0.tgz#5901ad6659bc1d8f3fdaf36eb7a67b0d6746b1c4"
+  integrity sha1-WQGtZlm8HY8/2vNut6Z7DWdGscQ=
+  dependencies:
+    loose-envify "^1.1.0"
+    object-assign "^4.1.1"
 
 "semver@2 || 3 || 4 || 5", semver@^5.3.0, semver@^5.4.1, semver@^5.5.0:
   version "5.7.1"

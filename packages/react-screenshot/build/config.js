@@ -8,5 +8,10 @@ module.exports = {
   context,
   srcDir,
   distDir,
+  entry: {
+    web: path.resolve(srcDir, 'web/index.js'),
+    electron: path.resolve(srcDir, 'electron/index.js')
+  },
+  port: 8080,
   sourceMap: false
 }

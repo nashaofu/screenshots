@@ -2,7 +2,11 @@
   "name": "shortcut-capture",
   "version": "1.0.0",
   "description": "electron shortcut capture plugin",
+  "types": "lib/shortcut-capture.d.ts",
   "main": "lib/index.js",
+  "files": [
+    "lib/**"
+  ],
   "scripts": {
     "prepublishOnly": "npm run build",
     "start": "electron lib/index.js",
@@ -29,6 +33,9 @@
   "homepage": "https://github.com/nashaofu/shortcut-capture#readme",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
+  },
+  "dependencies": {
+    "react-screenshot": "../react-screenshot"
   },
   "peerDependencies": {
     "electron": ">=2"

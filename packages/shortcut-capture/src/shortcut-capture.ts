@@ -1,8 +1,7 @@
 import fs from 'fs'
-import path from 'path'
 import Events from 'events'
-import { ipcMain, BrowserWindow, dialog, Rectangle } from 'electron'
 import getDisplay from './getDisplay'
+import { ipcMain, BrowserWindow, dialog, Rectangle } from 'electron'
 
 interface Bounds {
   x1: number
@@ -19,11 +18,25 @@ interface CaptureData {
 type OkData = CaptureData
 type SaveData = CaptureData
 
+/**
+ * 在数字前补0
+ * 以达到指定长度
+ * @param value
+ * @param length
+ */
+function padStart0(value: number, length = 2): string {
+  let string = String(value)
+  while (string.length < length) {
+    string = `0${string}`
+  }
+  return string
+}
+
 export default class ShortcutCapture extends Events {
   // 截图窗口对象
   $win: BrowserWindow | null = null
 
-  constructor () {
+  constructor() {
     super()
     this.listenIpc()
   }
@@ -31,7 +44,7 @@ export default class ShortcutCapture extends Events {
   /**
    * 开始截图
    */
-  public startCapture (): void {
+  public startCapture(): void {
     if (this.$win) this.$win.close()
     const bounds = getDisplay()
     this.$win = this.createWindow(bounds)
@@ -52,7 +65,7 @@ export default class ShortcutCapture extends Events {
   /**
    * 结束截图
    */
-  public endCapture (): void {
+  public endCapture(): void {
     if (!this.$win) return
     this.$win.setSimpleFullScreen(false)
     this.$win.close()
@@ -62,7 +75,7 @@ export default class ShortcutCapture extends Events {
   /**
    * 初始化窗口
    */
-  private createWindow ({ x, y, width, height }: Rectangle): BrowserWindow {
+  private createWindow({ x, y, width, height }: Rectangle): BrowserWindow {
     const $win = new BrowserWindow({
       title: 'shortcut-capture',
       x,
@@ -95,14 +108,16 @@ export default class ShortcutCapture extends Events {
       }
     })
 
-    $win.loadURL(`file://${path.join(__dirname, './renderer/index.html')}`)
+    $win.loadURL(
+      `file://${require.resolve('react-screenshot/dist/index.html')}`
+    )
     return $win
   }
 
   /**
    * 绑定ipc时间处理
    */
-  private listenIpc (): void {
+  private listenIpc(): void {
     /**
      * OK事件
      */
@@ -123,17 +138,31 @@ export default class ShortcutCapture extends Events {
      */
     ipcMain.on('SHORTCUTCAPTURE::SAVE', (e, data: SaveData) => {
       if (!this.$win) return
+      const time = new Date()
+      const year = time.getFullYear()
+      const month = padStart0(time.getMonth() + 1)
+      const date = padStart0(time.getDate())
+      const hours = padStart0(time.getHours())
+      const minutes = padStart0(time.getMinutes())
+      const seconds = padStart0(time.getSeconds())
+      const milliseconds = padStart0(time.getMilliseconds(), 3)
+
       dialog
         .showSaveDialog(this.$win, {
-          title: '保存图片'
+          title: '保存图片',
+          defaultPath: `${year}${month}${date}${hours}${minutes}${seconds}${milliseconds}.png`
         })
         .then(({ canceled, filePath }) => {
           if (canceled || !filePath) return
-          fs.writeFile(filePath, data.dataURL, { encoding: 'base64' }, (err: NodeJS.ErrnoException | null) => {
-            if (err) return
-            this.emit('SAVE', data, filePath)
-            this.endCapture()
-          })
+          fs.writeFile(
+            filePath,
+            Buffer.from(data.dataURL, 'base64'),
+            (err: NodeJS.ErrnoException | null) => {
+              if (err) return
+              this.emit('SAVE', data, filePath)
+              this.endCapture()
+            }
+          )
         })
     })
   }

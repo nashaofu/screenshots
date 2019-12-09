@@ -1,12 +1,14 @@
-'use strict'
 const config = require('./config')
 const merge = require('webpack-merge')
 const styleLoader = require('./style-loader')
-const baseWebpackConfig = require('./webpack.base.conf')
+const webpackConfig = require('./webpack.config')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
-module.exports = merge(baseWebpackConfig, {
+module.exports = merge(webpackConfig, {
   mode: 'production',
+  entry: {
+    app: config.entry.web
+  },
   module: {
     rules: styleLoader({
       sourceMap: config.sourceMap,

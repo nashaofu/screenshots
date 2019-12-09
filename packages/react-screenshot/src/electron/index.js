@@ -4,7 +4,6 @@ import 'raf/polyfill'
 import App from './app'
 import React from 'react'
 import ReactDOM from 'react-dom'
-import 'normalize.css'
 
 function render (App) {
   ReactDOM.render(<App />, document.getElementById('app'))
