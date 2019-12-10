@@ -7,11 +7,13 @@ app.on('ready', () => {
   installExtension(VUEJS_DEVTOOLS).catch(err => {
     console.log('Unable to install `vue-devtools`: \n', err)
   })
-  const screenshots = new Screenshots()
+  const screenshots = new Screenshots({
+    save: true
+  })
   globalShortcut.register('ctrl+shift+a', () => screenshots.startCapture())
-  screenshots.on('ok', ({ bounds }) => console.log('capture', bounds))
+  screenshots.on('ok', ({ viewer }) => console.log('capture', viewer))
   screenshots.on('cancel', () => console.log('capture', 'cancel'))
-  screenshots.on('save', ({ bounds }) => console.log('capture', bounds))
+  screenshots.on('save', ({ viewer }) => console.log('capture', viewer))
   debug({ showDevTools: true, devToolsMode: 'undocked' })
 })
 

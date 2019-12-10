@@ -1,7 +1,20 @@
+import {
+  dialog,
+  ipcMain,
+  Rectangle,
+  clipboard,
+  nativeImage,
+  BrowserWindow
+} from 'electron'
 import fs from 'fs'
 import Events from 'events'
 import getDisplay from './getDisplay'
-import { ipcMain, BrowserWindow, dialog, Rectangle } from 'electron'
+
+interface Options {
+  ok?: boolean
+  cancel?: boolean
+  save?: boolean
+}
 
 interface Bounds {
   x1: number
@@ -34,10 +47,17 @@ function padStart0 (value: number, length = 2): string {
 
 export default class Screenshots extends Events {
   // 截图窗口对象
-  $win: BrowserWindow | null = null
+  public $win: BrowserWindow | null = null
 
-  constructor () {
+  private options: Options = {}
+
+  constructor ({ ok, cancel, save }: Options = {}) {
     super()
+    this.options = {
+      ok,
+      cancel,
+      save
+    }
     this.listenIpc()
   }
 
@@ -53,12 +73,6 @@ export default class Screenshots extends Events {
       if (!this.$win) return
       this.$win.show()
       this.$win.focus()
-    })
-
-    // 清除simpleFullscreen状态
-    this.$win.once('closed', () => {
-      if (!this.$win) return
-      this.$win.setSimpleFullScreen(false)
     })
   }
 
@@ -123,47 +137,59 @@ export default class Screenshots extends Events {
      */
     ipcMain.on('SCREENSHOTS::OK', (e, data: OkData) => {
       this.emit('ok', data)
-      this.endCapture()
+      if (!this.options.ok) {
+        clipboard.writeImage(nativeImage.createFromDataURL(data.dataURL))
+        this.endCapture()
+      }
     })
     /**
      * CANCEL事件
      */
     ipcMain.on('SCREENSHOTS::CANCEL', () => {
-      this.emit('CANCEL')
-      this.endCapture()
+      this.emit('cancel')
+      if (!this.options.cancel) {
+        this.endCapture()
+      }
     })
 
     /**
      * SAVE事件
      */
     ipcMain.on('SCREENSHOTS::SAVE', (e, data: SaveData) => {
-      if (!this.$win) return
-      const time = new Date()
-      const year = time.getFullYear()
-      const month = padStart0(time.getMonth() + 1)
-      const date = padStart0(time.getDate())
-      const hours = padStart0(time.getHours())
-      const minutes = padStart0(time.getMinutes())
-      const seconds = padStart0(time.getSeconds())
-      const milliseconds = padStart0(time.getMilliseconds(), 3)
+      if (!this.options.save) {
+        if (!this.$win) return
+        const time = new Date()
+        const year = time.getFullYear()
+        const month = padStart0(time.getMonth() + 1)
+        const date = padStart0(time.getDate())
+        const hours = padStart0(time.getHours())
+        const minutes = padStart0(time.getMinutes())
+        const seconds = padStart0(time.getSeconds())
+        const milliseconds = padStart0(time.getMilliseconds(), 3)
 
-      dialog
-        .showSaveDialog(this.$win, {
-          title: '保存图片',
-          defaultPath: `${year}${month}${date}${hours}${minutes}${seconds}${milliseconds}.png`
-        })
-        .then(({ canceled, filePath }) => {
-          if (canceled || !filePath) return
-          fs.writeFile(
-            filePath,
-            Buffer.from(data.dataURL, 'base64'),
-            (err: NodeJS.ErrnoException | null) => {
-              if (err) return
-              this.emit('SAVE', data, filePath)
-              this.endCapture()
-            }
-          )
-        })
+        dialog
+          .showSaveDialog(this.$win, {
+            title: '保存图片',
+            defaultPath: `${year}${month}${date}${hours}${minutes}${seconds}${milliseconds}.png`
+          })
+          .then(({ canceled, filePath }) => {
+            if (canceled || !filePath) return
+            fs.writeFile(
+              filePath,
+              Buffer.from(
+                data.dataURL.replace(/^data:image\/\w+;base64,/, ''),
+                'base64'
+              ),
+              (err: NodeJS.ErrnoException | null) => {
+                if (err) return
+                this.emit('save', data, filePath)
+                this.endCapture()
+              }
+            )
+          })
+      } else {
+        this.emit('save', data, undefined)
+      }
     })
   }
 }
