@@ -11,9 +11,19 @@ app.on('ready', () => {
     save: true
   })
   globalShortcut.register('ctrl+shift+a', () => screenshots.startCapture())
-  screenshots.on('ok', ({ viewer }) => console.log('capture', viewer))
-  screenshots.on('cancel', () => console.log('capture', 'cancel'))
-  screenshots.on('save', ({ viewer }) => console.log('capture', viewer))
+  screenshots.on('ok', (e, { viewer }) => {
+    console.log('capture', viewer)
+  })
+  screenshots.on('cancel', () => {
+    console.log('capture', 'cancel1')
+  })
+  screenshots.on('cancel', e => {
+    e.preventDefault()
+    console.log('capture', 'cancel2')
+  })
+  screenshots.on('save', (e, { viewer }) => {
+    console.log('capture', viewer)
+  })
   debug({ showDevTools: true, devToolsMode: 'undocked' })
 })
 

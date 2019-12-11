@@ -7,6 +7,7 @@ import {
   BrowserWindow
 } from 'electron'
 import fs from 'fs'
+import Event from './event'
 import Events from 'events'
 import getDisplay from './getDisplay'
 
@@ -136,8 +137,9 @@ export default class Screenshots extends Events {
      * OK事件
      */
     ipcMain.on('SCREENSHOTS::OK', (e, data: OkData) => {
-      this.emit('ok', data)
-      if (!this.options.ok) {
+      const event = new Event()
+      this.emit('ok', event, data)
+      if (!event.defaultPrevented) {
         clipboard.writeImage(nativeImage.createFromDataURL(data.dataURL))
         this.endCapture()
       }
@@ -146,8 +148,9 @@ export default class Screenshots extends Events {
      * CANCEL事件
      */
     ipcMain.on('SCREENSHOTS::CANCEL', () => {
-      this.emit('cancel')
-      if (!this.options.cancel) {
+      const event = new Event()
+      this.emit('cancel', event)
+      if (!event.defaultPrevented) {
         this.endCapture()
       }
     })
@@ -156,7 +159,9 @@ export default class Screenshots extends Events {
      * SAVE事件
      */
     ipcMain.on('SCREENSHOTS::SAVE', (e, data: SaveData) => {
-      if (!this.options.save) {
+      const event = new Event()
+      this.emit('save', event, data)
+      if (!event.defaultPrevented) {
         if (!this.$win) return
         const time = new Date()
         const year = time.getFullYear()
@@ -182,13 +187,10 @@ export default class Screenshots extends Events {
               ),
               (err: NodeJS.ErrnoException | null) => {
                 if (err) return
-                this.emit('save', data, filePath)
                 this.endCapture()
               }
             )
           })
-      } else {
-        this.emit('save', data, undefined)
       }
     })
   }
