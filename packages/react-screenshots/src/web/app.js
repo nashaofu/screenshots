@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react'
-import Screenshot from '@/components/Screenshot'
+import Screenshot from '@/components/Screenshots'
 import 'normalize.css'
 import './app.less'
 import image from './Battlecry.jpg'

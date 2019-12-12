@@ -2,12 +2,12 @@ import React from 'react'
 import Action from './action'
 import SizeColor from '../SizeColor'
 
-export default class Brush extends Action {
-  static title = '涂鸦'
+export default class Rect extends Action {
+  static title = '矩形'
 
-  static icon = 'screenshot-icon-brush'
+  static icon = 'screenshots-icon-rect'
 
-  line = null
+  rect = null
 
   constructor (props) {
     super(props)
@@ -17,45 +17,57 @@ export default class Brush extends Action {
   mousedown = (e, { el, ctx, context, setContext }) => {
     const { left, top } = el.getBoundingClientRect()
     const { size, color } = this.state
-    this.line = {
+    this.rect = {
       size,
       color,
-      point: [{ x: e.clientX - left, y: e.clientY - top }],
+      x1: e.clientX - left,
+      y1: e.clientY - top,
+      x2: e.clientX - left,
+      y2: e.clientY - top,
       draw: this.draw
     }
     const { stack } = context
-    stack.push(this.line)
+    stack.push(this.rect)
     setContext({ stack: [...stack] })
   }
 
   mousemove = (e, { el, ctx, context, setContext }) => {
-    if (this.line) {
-      const { left, top } = el.getBoundingClientRect()
-      this.line.point.push({ x: e.clientX - left, y: e.clientY - top })
+    if (this.rect) {
+      const { left, top, width, height } = el.getBoundingClientRect()
+      let x = e.clientX - left
+      let y = e.clientY - top
+      if (x < 0) x = 0
+      if (y < 0) y = 0
+      if (x > width) x = width
+      if (y > height) y = height
+      this.rect.x2 = x
+      this.rect.y2 = y
       setContext({ stack: [...context.stack] })
     }
   }
 
   mouseup = (e, { el, ctx, context, setContext }) => {
-    if (this.line) {
-      this.line = null
+    if (this.rect) {
+      this.rect = null
     }
   }
 
-  draw (ctx, { size, color, point }) {
-    ctx.lineCap = 'round'
-    ctx.lineJoin = 'round'
+  draw (ctx, { size, color, x1, x2, y1, y2 }) {
+    ctx.lineCap = 'butt'
+    ctx.lineJoin = 'miter'
     ctx.lineWidth = size
     ctx.strokeStyle = color
-    ctx.beginPath()
-    point.forEach((it, index) => {
-      if (index === 0) {
-        ctx.moveTo(it.x, it.y)
-      } else {
-        ctx.lineTo(it.x, it.y)
-      }
-    })
-    ctx.stroke()
+    if (x1 > x2) {
+      const x = x1
+      x1 = x2
+      x2 = x
+    }
+    if (y1 > y2) {
+      const y = y1
+      y1 = y2
+      y2 = y
+    }
+    ctx.strokeRect(x1, y1, x2 - x1, y2 - y1)
   }
 
   onSizeChange = size => {

@@ -1,9 +1,9 @@
 import React, { PureComponent } from 'react'
-import { withContext } from './ScreenshotContext'
-import ScreenshotViewerBar from './ScreenshotViewerBar'
+import { withContext } from './ScreenshotsContext'
+import ScreenshotsViewerBar from './ScreenshotsViewerBar'
 
 @withContext
-export default class ScreenshotViewer extends PureComponent {
+export default class ScreenshotsViewer extends PureComponent {
   // 画布对象上下文
   ctx = null
 
@@ -241,14 +241,14 @@ export default class ScreenshotViewer extends PureComponent {
     const { x, y, width, height } = this.size
     return (
       <div
-        className="screenshot-viewer"
+        className="screenshots-viewer"
         style={{
           display: this.props.viewer ? 'block' : 'none'
         }}
       >
         <div
           ref={this.viewerRef}
-          className="screenshot-viewer-body"
+          className="screenshots-viewer-body"
           style={{
             left: x,
             top: y,
@@ -258,7 +258,7 @@ export default class ScreenshotViewer extends PureComponent {
         >
           <canvas ref={this.canvasRef} width={width} height={height} />
           <div
-            className="screenshot-viewer-border"
+            className="screenshots-viewer-border"
             style={{
               cursor: this.cursor
             }}
@@ -268,13 +268,13 @@ export default class ScreenshotViewer extends PureComponent {
             return (
               <div
                 key={pointer}
-                className={`screenshot-viewer-pointer-${pointer}`}
+                className={`screenshots-viewer-pointer-${pointer}`}
                 onMouseDown={e => this.onMousedown(e, pointer)}
               />
             )
           })}
         </div>
-        <ScreenshotViewerBar onAction={this.onAction} />
+        <ScreenshotsViewerBar onAction={this.onAction} />
       </div>
     )
   }

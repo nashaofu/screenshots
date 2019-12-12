@@ -3,11 +3,11 @@ import React from 'react'
 export default ({ value, onChange }) => {
   const sizes = [3, 6, 9]
   return (
-    <div className="screenshot-size">
+    <div className="screenshots-size">
       {sizes.map(size => {
-        const classNames = ['screenshot-size-item']
+        const classNames = ['screenshots-size-item']
         if (size === value) {
-          classNames.push('screenshot-size-active')
+          classNames.push('screenshots-size-active')
         }
         return (
           <div
@@ -16,7 +16,7 @@ export default ({ value, onChange }) => {
             onClick={() => onChange && onChange(size)}
           >
             <div
-              className="screenshot-size-pointer"
+              className="screenshots-size-pointer"
               style={{
                 width: size * 1.8,
                 height: size * 1.8

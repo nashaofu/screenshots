@@ -3,7 +3,7 @@ import Action from './action'
 export default class Cancel extends Action {
   static title = '取消'
 
-  static icon = 'screenshot-icon-cancel'
+  static icon = 'screenshots-icon-cancel'
 
   constructor (props) {
     super(props)

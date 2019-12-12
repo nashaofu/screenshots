@@ -5,7 +5,7 @@ import SizeColor from '../SizeColor'
 export default class Arrow extends Action {
   static title = '箭头'
 
-  static icon = 'screenshot-icon-arrow'
+  static icon = 'screenshots-icon-arrow'
 
   arrow = null
 

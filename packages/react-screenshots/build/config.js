@@ -10,7 +10,8 @@ module.exports = {
   distDir,
   entry: {
     web: path.resolve(srcDir, 'web/index.js'),
-    electron: path.resolve(srcDir, 'electron/index.js')
+    electron: path.resolve(srcDir, 'electron/index.js'),
+    prodWeb: path.resolve(srcDir, '../src/components/Screenshots/index.js')
   },
   port: 8080,
   sourceMap: false

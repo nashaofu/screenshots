@@ -1,7 +1,7 @@
 export default class Undo {
   static title = '撤销'
 
-  static icon = 'screenshot-icon-undo'
+  static icon = 'screenshots-icon-undo'
 
   constructor ({ el, ctx, context, setContext }) {
     const { action, stack } = context

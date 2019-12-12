@@ -1,8 +1,8 @@
 import React, { PureComponent } from 'react'
-import { withContext } from './ScreenshotContext'
+import { withContext } from './ScreenshotsContext'
 
 @withContext
-export default class ScreenshotCanvas extends PureComponent {
+export default class ScreenshotsCanvas extends PureComponent {
   // 画布对象上下文
   ctx = null
 
@@ -35,7 +35,17 @@ export default class ScreenshotCanvas extends PureComponent {
     const { image, width, height } = this.props
     if (!image) return
     this.ctx.clearRect(0, 0, width, height)
-    this.ctx.drawImage(image.el, 0, 0, image.width, image.height, 0, 0, width, height)
+    this.ctx.drawImage(
+      image.el,
+      0,
+      0,
+      image.width,
+      image.height,
+      0,
+      0,
+      width,
+      height
+    )
   }
 
   onMousedown = e => {
@@ -78,9 +88,9 @@ export default class ScreenshotCanvas extends PureComponent {
   render () {
     const { width, height } = this.props
     return (
-      <div className="screenshot-canvas" onMouseDown={this.onMousedown}>
+      <div className="screenshots-canvas" onMouseDown={this.onMousedown}>
         <canvas ref={this.canvasRef} width={width} height={height} />
-        <div className="screenshot-canvas-mask" />
+        <div className="screenshots-canvas-mask" />
       </div>
     )
   }

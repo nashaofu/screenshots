@@ -1,14 +1,14 @@
 import Action from './action'
 
-export default class Save extends Action {
-  static title = '保存'
+export default class Ok extends Action {
+  static title = '确定'
 
-  static icon = 'screenshot-icon-save'
+  static icon = 'screenshots-icon-ok'
 
   constructor (props) {
     super(props)
-    const { el, context, setContext } = props
-    this.emit('onSave', {
+    const { el, setContext, context } = props
+    this.emit('onOk', {
       viewer: { ...context.viewer },
       dataURL: el.toDataURL('image/png')
     })

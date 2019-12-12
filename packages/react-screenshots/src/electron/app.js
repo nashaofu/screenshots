@@ -1,6 +1,6 @@
 import { ipcRenderer } from 'electron'
 import React, { PureComponent } from 'react'
-import Screenshot from '@/components/Screenshot'
+import Screenshot from '@/components/Screenshots'
 import getSource from './getSource'
 import 'normalize.css'
 import './app.less'

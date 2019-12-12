@@ -12,7 +12,7 @@ function RenderTextarea ({ x, y, value, color, size, onChange }) {
   return (
     <textarea
       ref={textareaEl}
-      className="screenshot-textarea"
+      className="screenshots-textarea"
       style={{ left: x, top: y, color, fontSize: size * 3 }}
       value={value}
       onBlur={onChange}
@@ -23,7 +23,7 @@ function RenderTextarea ({ x, y, value, color, size, onChange }) {
 export default class Text extends Action {
   static title = '文本'
 
-  static icon = 'screenshot-icon-text'
+  static icon = 'screenshots-icon-text'
 
   text = null
 

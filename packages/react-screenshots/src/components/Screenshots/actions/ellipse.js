@@ -5,7 +5,7 @@ import SizeColor from '../SizeColor'
 export default class Ellipse extends Action {
   static title = '圆形'
 
-  static icon = 'screenshot-icon-ellipse'
+  static icon = 'screenshots-icon-ellipse'
 
   ellipse = null
 

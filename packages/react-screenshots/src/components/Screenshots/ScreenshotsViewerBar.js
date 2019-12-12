@@ -1,8 +1,8 @@
 import React, { PureComponent } from 'react'
-import { withContext } from './ScreenshotContext'
+import { withContext } from './ScreenshotsContext'
 
 @withContext
-export default class ScreenshotViewerBar extends PureComponent {
+export default class ScreenshotsViewerBar extends PureComponent {
   state = {
     x: 0,
     y: 0
@@ -13,7 +13,7 @@ export default class ScreenshotViewerBar extends PureComponent {
     if (!action) return null
     if (typeof action.render !== 'function') return null
     return (
-      <div className="screenshot-viewer-bar-options">{action.render()}</div>
+      <div className="screenshots-viewer-bar-options">{action.render()}</div>
     )
   }
 
@@ -61,26 +61,26 @@ export default class ScreenshotViewerBar extends PureComponent {
     const { action, actions } = this.props
     return (
       <div
-        className="screenshot-viewer-bar"
+        className="screenshots-viewer-bar"
         ref={this.barRef}
         style={{
           left: x,
           top: y
         }}
       >
-        <div className="screenshot-viewer-bar-container">
-          <div className="screenshot-viewer-bar-icons">
+        <div className="screenshots-viewer-bar-container">
+          <div className="screenshots-viewer-bar-icons">
             {actions.map((item, index) => {
               const { type, key } = item
               if (type === 'divider') {
                 return (
-                  <div key={index} className="screenshot-viewer-bar-divider" />
+                  <div key={index} className="screenshots-viewer-bar-divider" />
                 )
               } else {
-                const classNames = ['screenshot-viewer-bar-button']
+                const classNames = ['screenshots-viewer-bar-button']
                 const { title, icon } = key
                 if (action instanceof key) {
-                  classNames.push('screenshot-viewer-bar-button-active')
+                  classNames.push('screenshots-viewer-bar-button-active')
                 }
                 return (
                   <div
@@ -96,7 +96,7 @@ export default class ScreenshotViewerBar extends PureComponent {
             })}
           </div>
         </div>
-        <div className="screenshot-viewer-bar-container">{this.option}</div>
+        <div className="screenshots-viewer-bar-container">{this.option}</div>
       </div>
     )
   }

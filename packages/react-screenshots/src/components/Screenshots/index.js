@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react'
-import ScreenshotViewer from './ScreenshotViewer'
-import ScreenshotCanvas from './ScreenshotCanvas'
-import ScreenshotContext from './ScreenshotContext'
+import ScreenshotsViewer from './ScreenshotsViewer'
+import ScreenshotsCanvas from './ScreenshotsCanvas'
+import ScreenshotsContext from './ScreenshotsContext'
 import Ok from './actions/ok'
 import Undo from './actions/undo'
 import Save from './actions/save'
@@ -11,9 +11,9 @@ import Arrow from './actions/arrow'
 import Cancel from './actions/cancel'
 import Ellipse from './actions/ellipse'
 import './icons.less'
-import './screenshot.less'
+import './screenshots.less'
 
-export default class Screenshot extends PureComponent {
+export default class Screenshots extends PureComponent {
   state = {
     image: null,
     viewer: null,
@@ -191,13 +191,13 @@ export default class Screenshot extends PureComponent {
   }
 
   render () {
-    const classNames = ['screenshot']
+    const classNames = ['screenshots']
     const { image, viewer, action, actions, stack, cursor } = this.state
     const { className, width, height } = this.props
     if (className) classNames.push(className)
 
     return (
-      <ScreenshotContext.Provider
+      <ScreenshotsContext.Provider
         value={{
           image,
           viewer,
@@ -215,10 +215,10 @@ export default class Screenshot extends PureComponent {
           ref={this.bodyRef}
           style={{ width, height }}
         >
-          <ScreenshotCanvas onChange={this.onCanvasChange} />
-          <ScreenshotViewer onChange={this.onViewerChange} onEmit={this.onEmit} />
+          <ScreenshotsCanvas onChange={this.onCanvasChange} />
+          <ScreenshotsViewer onChange={this.onViewerChange} onEmit={this.onEmit} />
         </div>
-      </ScreenshotContext.Provider>
+      </ScreenshotsContext.Provider>
     )
   }
 }

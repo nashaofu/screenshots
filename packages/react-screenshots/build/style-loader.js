@@ -13,9 +13,7 @@ function generateLoaders (loader) {
       options
     }
 
-    const styleLoader = options.extract
-      ? MiniCssExtractPlugin.loader
-      : 'style-loader'
+    const styleLoader = extract ? MiniCssExtractPlugin.loader : 'style-loader'
 
     const loaders = [styleLoader, cssLoader, postcssLoader]
     if (loader) {

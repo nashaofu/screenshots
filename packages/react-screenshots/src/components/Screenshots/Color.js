@@ -10,11 +10,11 @@ export default ({ value, onChange }) => {
     '#ffffff'
   ]
   return (
-    <div className="screenshot-color">
+    <div className="screenshots-color">
       {colors.map(color => {
-        const classNames = ['screenshot-color-item']
+        const classNames = ['screenshots-color-item']
         if (color === value) {
-          classNames.push('screenshot-color-active')
+          classNames.push('screenshots-color-active')
         }
         return (
           <div
@@ -23,8 +23,8 @@ export default ({ value, onChange }) => {
             style={{ backgroundColor: color }}
             onClick={() => onChange && onChange(color)}
           >
-            <div className="screenshot-color-hook">
-              <div className="screenshot-color-hook-symbol" />
+            <div className="screenshots-color-hook">
+              <div className="screenshots-color-hook-symbol" />
             </div>
           </div>
         )
