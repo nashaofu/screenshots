@@ -2,7 +2,7 @@
   "name": "electron-screenshots",
   "version": "0.0.1-alpha.0",
   "description": "electron shortcut capture plugin",
-  "types": "lib/electron-screenshots.d.ts",
+  "types": "lib/screenshots.d.ts",
   "main": "lib/index.js",
   "files": [
     "lib/**"
@@ -10,7 +10,7 @@
   "scripts": {
     "prepublishOnly": "npm run build",
     "start": "electron lib/index.js",
-    "dev": "tsc --watch",
+    "dev": "tsc --sourceMap --watch",
     "build": "npm run lint && npm run clean && tsc",
     "lint": "eslint . --ext .js,.ts --fix",
     "clean": "rimraf lib"
