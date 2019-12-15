@@ -1,12 +1,8 @@
 import debug from 'electron-debug'
 import { app, globalShortcut } from 'electron'
 import Screenshots from './screenshots'
-import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 
 app.on('ready', () => {
-  installExtension(VUEJS_DEVTOOLS).catch(err => {
-    console.log('Unable to install `vue-devtools`: \n', err)
-  })
   const screenshots = new Screenshots({
     save: true
   })
