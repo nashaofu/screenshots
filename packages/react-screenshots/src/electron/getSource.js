@@ -1,27 +1,21 @@
 import { desktopCapturer, remote } from 'electron'
 
-export default async () => {
-  const $win = remote.getCurrentWindow()
-  const bounds = $win.getBounds()
+export default async display => {
   const allDisplay = remote.screen.getAllDisplays()
-  const display = remote.screen.getDisplayMatching(bounds)
   const sources = await desktopCapturer.getSources({
     types: ['screen'],
     thumbnailSize: {
-      width: display.size.width,
-      height: display.size.height
+      width: display.width,
+      height: display.height
     }
   })
 
-  const source = sources.find(
-    source => source.display_id === display.id.toString()
-  )
-  if (source) {
-    return source
-  } else {
+  let source = sources.find(source => source.display_id === display.id.toString())
+  if (!source) {
     const index = allDisplay.findIndex(({ id }) => id === display.id)
     if (index !== -1) {
-      return sources[index]
+      source = sources[index]
     }
   }
+  return source
 }

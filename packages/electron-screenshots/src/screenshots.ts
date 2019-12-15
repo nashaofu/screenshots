@@ -11,12 +11,6 @@ import Event from './event'
 import Events from 'events'
 import getDisplay from './getDisplay'
 
-interface Options {
-  ok?: boolean
-  cancel?: boolean
-  save?: boolean
-}
-
 interface Bounds {
   x1: number
   y1: number
@@ -50,15 +44,8 @@ export default class Screenshots extends Events {
   // 截图窗口对象
   public $win: BrowserWindow | null = null
 
-  private options: Options = {}
-
-  constructor ({ ok, cancel, save }: Options = {}) {
+  constructor () {
     super()
-    this.options = {
-      ok,
-      cancel,
-      save
-    }
     this.listenIpc()
   }
 
@@ -67,10 +54,14 @@ export default class Screenshots extends Events {
    */
   public startCapture (): void {
     if (this.$win) this.$win.close()
-    const bounds = getDisplay()
-    this.$win = this.createWindow(bounds)
+    const display = getDisplay()
+    this.$win = this.createWindow(display)
+    ipcMain.once('SCREENSHOTS::DOM-READY', () => {
+      if (!this.$win) return
+      this.$win.webContents.send('SCREENSHOTS::SEND-DISPLAY-DATA', display)
+    })
 
-    this.$win.once('ready-to-show', () => {
+    ipcMain.once('SCREENSHOTS::SHOW-WINDOW', () => {
       if (!this.$win) return
       this.$win.show()
       this.$win.focus()

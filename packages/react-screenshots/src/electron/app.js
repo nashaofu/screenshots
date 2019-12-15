@@ -13,15 +13,24 @@ export default class App extends PureComponent {
   }
 
   componentDidMount () {
-    getSource()
-      .then(({ thumbnail }) => {
-        this.setState({ image: thumbnail.toDataURL() })
-      })
+    // 告诉主进程页面准备完成
+    ipcRenderer.send('SCREENSHOTS::DOM-READY')
     window.addEventListener('resize', this.resize)
+    ipcRenderer.on('SCREENSHOTS::SEND-DISPLAY-DATA', this.getSource)
   }
 
   componentWillUnmount () {
     window.addEventListener('resize', this.resize)
+    ipcRenderer.off('SCREENSHOTS::SEND-DISPLAY-DATA', this.getSource)
+  }
+
+  getSource = (e, display) => {
+    getSource(display).then(({ thumbnail }) => {
+      this.setState({ image: thumbnail.toDataURL() }, () => {
+        // 显示页面
+        ipcRenderer.send('SCREENSHOTS::SHOW-WINDOW')
+      })
+    })
   }
 
   resize = () => {

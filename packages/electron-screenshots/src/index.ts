@@ -3,9 +3,7 @@ import { app, globalShortcut } from 'electron'
 import Screenshots from './screenshots'
 
 app.on('ready', () => {
-  const screenshots = new Screenshots({
-    save: true
-  })
+  const screenshots = new Screenshots()
   globalShortcut.register('ctrl+shift+a', () => screenshots.startCapture())
   screenshots.on('ok', (e, { viewer }) => {
     console.log('capture', viewer)
