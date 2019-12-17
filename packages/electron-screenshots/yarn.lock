@@ -444,10 +444,10 @@ electron-localshortcut@^3.1.0:
     keyboardevent-from-electron-accelerator "^2.0.0"
     keyboardevents-areequal "^0.2.1"
 
-electron@^5.0.12:
-  version "5.0.12"
-  resolved "https://registry.npm.taobao.org/electron/download/electron-5.0.12.tgz#2d5438f8e2b8b99ea99848b61238fc66c283e861"
-  integrity sha1-LVQ4+OK4uZ6pmEi2Ejj8ZsKD6GE=
+electron@6:
+  version "6.1.6"
+  resolved "https://registry.npm.taobao.org/electron/download/electron-6.1.6.tgz?cache=0&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Felectron%2Fdownload%2Felectron-6.1.6.tgz#d63ea9c89b85b981a29eb3088bf391bf52bd8d73"
+  integrity sha1-1j6pyJuFuYGinrMIi/ORv1K9jXM=
   dependencies:
     "@types/node" "^10.12.18"
     electron-download "^4.1.0"
@@ -1587,7 +1587,7 @@ react-is@^16.8.1:
   resolved "https://registry.npm.taobao.org/react-is/download/react-is-16.12.0.tgz#2cc0fe0fba742d97fd527c42a13bec4eeb06241c"
   integrity sha1-LMD+D7p0LZf9UnxCoTvsTusGJBw=
 
-react-screenshots@^0.0.1:
+react-screenshots@^0.0.2:
   version "0.0.1"
   resolved "https://registry.npm.taobao.org/react-screenshots/download/react-screenshots-0.0.1.tgz#4a0dc2cf4dfd05cc28e6113b2a0391f3fb0c713a"
   integrity sha1-Sg3Cz039Bcwo5hE7KgOR8/sMcTo=

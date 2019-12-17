@@ -35,7 +35,7 @@
     "registry": "https://registry.npmjs.org/"
   },
   "dependencies": {
-    "react-screenshots": "^0.0.2"
+    "react-screenshots": "^0.0.1"
   },
   "peerDependencies": {
     "electron": ">=2"
@@ -43,7 +43,7 @@
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^2.2.0",
     "@typescript-eslint/parser": "^2.2.0",
-    "electron": "^5.0.12",
+    "electron": "^6.1.6",
     "electron-debug": "^3.0.1",
     "eslint": "^6.4.0",
     "eslint-config-standard": "^14.1.0",
