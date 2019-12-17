@@ -35,7 +35,7 @@
     "registry": "https://registry.npmjs.org/"
   },
   "dependencies": {
-    "react-screenshots": "^0.0.1"
+    "react-screenshots": "^0.0.2"
   },
   "peerDependencies": {
     "electron": ">=2"
