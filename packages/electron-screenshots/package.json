@@ -1,6 +1,6 @@
 {
   "name": "electron-screenshots",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "electron shortcut capture plugin",
   "types": "lib/screenshots.d.ts",
   "main": "lib/screenshots.js",
@@ -35,7 +35,7 @@
     "registry": "https://registry.npmjs.org/"
   },
   "dependencies": {
-    "react-screenshots": "^0.0.1"
+    "react-screenshots": "^0.0.2"
   },
   "peerDependencies": {
     "electron": ">=2"
