@@ -26,10 +26,9 @@ export default class App extends PureComponent {
 
   getSource = (e, display) => {
     getSource(display).then(({ thumbnail }) => {
-      this.setState({ image: thumbnail.toDataURL() }, () => {
-        // 显示页面
-        ipcRenderer.send('SCREENSHOTS::SHOW-WINDOW')
-      })
+      // 捕捉完桌面后通知主进程
+      ipcRenderer.send('SCREENSHOTS::CAPTURED')
+      this.setState({ image: thumbnail.toDataURL() })
     })
   }
 

@@ -9,6 +9,7 @@ import {
 import fs from 'fs'
 import Event from './event'
 import Events from 'events'
+import padStart0 from './padStart0'
 import getDisplay from './getDisplay'
 
 interface Bounds {
@@ -19,26 +20,12 @@ interface Bounds {
 }
 
 interface CaptureData {
-  dataURL: string
-  bounds: Bounds
+  dataURL: string // 图片资源base64
+  bounds: Bounds // 截图区域坐标信息
 }
 
 type OkData = CaptureData
 type SaveData = CaptureData
-
-/**
- * 在数字前补0
- * 以达到指定长度
- * @param value
- * @param length
- */
-function padStart0 (value: number, length = 2): string {
-  let string = String(value)
-  while (string.length < length) {
-    string = `0${string}`
-  }
-  return string
-}
 
 export default class Screenshots extends Events {
   // 截图窗口对象
@@ -61,7 +48,9 @@ export default class Screenshots extends Events {
       this.$win.webContents.send('SCREENSHOTS::SEND-DISPLAY-DATA', display)
     })
 
-    ipcMain.once('SCREENSHOTS::SHOW-WINDOW', () => {
+    // 捕捉桌面之后显示窗口
+    // 避免截图窗口自己被截图
+    ipcMain.once('SCREENSHOTS::CAPTURED', () => {
       if (!this.$win) return
       this.$win.show()
       this.$win.focus()
