@@ -1,0 +1,57 @@
+{
+  "name": "electron-screenshots",
+  "version": "0.0.3",
+  "description": "electron 截图插件",
+  "types": "lib/screenshots.d.ts",
+  "main": "lib/screenshots.js",
+  "files": [
+    "lib/**"
+  ],
+  "scripts": {
+    "prepublishOnly": "npm run build",
+    "start": "electron lib/index.js",
+    "dev": "tsc --sourceMap --watch",
+    "build": "npm run lint && npm run clean && tsc",
+    "lint": "eslint . --ext .js,.ts --fix",
+    "clean": "rimraf lib"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nashaofu/screenshots.git"
+  },
+  "keywords": [
+    "electron",
+    "shortcut",
+    "capture",
+    "plugin"
+  ],
+  "author": "nashaofu",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nashaofu/screenshots/issues"
+  },
+  "homepage": "https://github.com/nashaofu/screenshots#readme",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
+  "dependencies": {
+    "react-screenshots": "^0.0.3"
+  },
+  "peerDependencies": {
+    "electron": ">=6"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^2.2.0",
+    "@typescript-eslint/parser": "^2.2.0",
+    "electron": "^6.1.7",
+    "electron-debug": "^3.0.1",
+    "eslint": "^6.4.0",
+    "eslint-config-standard": "^14.1.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-node": "^10.0.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
+    "rimraf": "^3.0.0",
+    "typescript": "^3.7.3"
+  }
+}
