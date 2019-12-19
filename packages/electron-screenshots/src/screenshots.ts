@@ -82,20 +82,18 @@ export default class Screenshots extends Events {
       frame: false,
       show: false,
       autoHideMenuBar: true,
-      transparent:
-        process.platform === 'darwin' || process.platform === 'win32',
+      transparent: true,
       resizable: false,
       movable: false,
-      focusable: process.platform === 'win32',
+      focusable: true,
       fullscreen: true,
       // 设为true mac全屏窗口没有桌面滚动效果
       simpleFullscreen: true,
       backgroundColor: '#30000000',
       titleBarStyle: 'hidden',
-      alwaysOnTop:
-        process.env.NODE_ENV === 'production' || process.platform === 'darwin',
+      alwaysOnTop: true,
       enableLargerThanScreen: true,
-      skipTaskbar: process.env.NODE_ENV === 'production',
+      skipTaskbar: true,
       minimizable: false,
       maximizable: false,
       webPreferences: {

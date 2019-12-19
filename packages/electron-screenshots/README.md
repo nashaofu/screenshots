@@ -106,4 +106,4 @@ screenshots.startCapture()
 
 ## Screenshot
 
-![screenshot](./screenshot.jpg)
+![screenshot](https://raw.githubusercontent.com/nashaofu/screenshots/master/packages/electron-screenshots/screenshot.jpg)

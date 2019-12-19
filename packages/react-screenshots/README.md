@@ -133,4 +133,4 @@ function App() {
 
 ## Screenshot
 
-![screenshot](./screenshot.jpg)
+![screenshot](https://raw.githubusercontent.com/nashaofu/screenshots/master/packages/react-screenshots/screenshot.jpg)

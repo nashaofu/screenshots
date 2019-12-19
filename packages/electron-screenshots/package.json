@@ -30,7 +30,7 @@
   "bugs": {
     "url": "https://github.com/nashaofu/screenshots/issues"
   },
-  "homepage": "https://github.com/nashaofu/screenshots#readme",
+  "homepage": "https://github.com/nashaofu/screenshots/tree/master/packages/electron-screenshots#readme",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
