@@ -157,6 +157,7 @@ export default class Screenshots extends Events {
             defaultPath: `${year}${month}${date}${hours}${minutes}${seconds}${milliseconds}.png`
           })
           .then(({ canceled, filePath }) => {
+            if (!this.$win) return
             this.$win.setAlwaysOnTop(true)
             if (canceled || !filePath) return
             fs.writeFile(
