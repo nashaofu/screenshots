@@ -150,12 +150,14 @@ export default class Screenshots extends Events {
         const seconds = padStart0(time.getSeconds())
         const milliseconds = padStart0(time.getMilliseconds(), 3)
 
+        this.$win.setAlwaysOnTop(false)
         dialog
           .showSaveDialog(this.$win, {
             title: '保存图片',
             defaultPath: `${year}${month}${date}${hours}${minutes}${seconds}${milliseconds}.png`
           })
           .then(({ canceled, filePath }) => {
+            this.$win.setAlwaysOnTop(true)
             if (canceled || !filePath) return
             fs.writeFile(
               filePath,
