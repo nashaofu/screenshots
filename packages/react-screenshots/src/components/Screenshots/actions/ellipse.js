@@ -71,17 +71,16 @@ export default class Ellipse extends Action {
     const y = (y1 + y2) / 2
     const a = (x2 - x1) / 2
     const b = (y2 - y1) / 2
-    const r = a < b ? a : b
-    // 横轴缩放比率
-    const rx = a / r
-    // 纵轴缩放比率
-    const ry = b / r
-    ctx.save()
+    const k = 0.5522848
+    const ox = a * k // 水平控制点偏移量
+    const oy = b * k // 垂直控制点偏移量
+    // 从椭圆的左端点开始顺时针绘制四条三次贝塞尔曲线
     ctx.beginPath()
-    // 把圆形缩放为椭圆
-    ctx.scale(rx, ry)
-    ctx.arc(x / rx, y / ry, r, 0, 2 * Math.PI)
-    ctx.restore()
+    ctx.moveTo(x - a, y)
+    ctx.bezierCurveTo(x - a, y - oy, x - ox, y - b, x, y - b)
+    ctx.bezierCurveTo(x + ox, y - b, x + a, y - oy, x + a, y)
+    ctx.bezierCurveTo(x + a, y + oy, x + ox, y + b, x, y + b)
+    ctx.bezierCurveTo(x - ox, y + b, x - a, y + oy, x - a, y)
     ctx.closePath()
     ctx.stroke()
   }

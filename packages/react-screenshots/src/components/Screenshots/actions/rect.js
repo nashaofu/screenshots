@@ -67,7 +67,9 @@ export default class Rect extends Action {
       y1 = y2
       y2 = y
     }
-    ctx.strokeRect(x1, y1, x2 - x1, y2 - y1)
+    ctx.beginPath()
+    ctx.rect(x1, y1, x2 - x1, y2 - y1)
+    ctx.stroke()
   }
 
   onSizeChange = size => {

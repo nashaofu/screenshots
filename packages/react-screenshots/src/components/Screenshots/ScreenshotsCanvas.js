@@ -34,6 +34,8 @@ export default class ScreenshotsCanvas extends PureComponent {
   draw = () => {
     const { image, width, height } = this.props
     if (!image) return
+    this.ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0)
+
     this.ctx.clearRect(0, 0, width, height)
     this.ctx.drawImage(
       image.el,
@@ -48,7 +50,7 @@ export default class ScreenshotsCanvas extends PureComponent {
     )
   }
 
-  onMousedown = e => {
+  onMousedown = (e) => {
     const { viewer } = this.props
     if (viewer || e.button !== 0) return
     this.props.setContext({
@@ -63,19 +65,19 @@ export default class ScreenshotsCanvas extends PureComponent {
     this.update(e)
   }
 
-  onMousemove = e => {
+  onMousemove = (e) => {
     if (!this.is) return
     this.update(e)
   }
 
-  onMouseup = e => {
+  onMouseup = (e) => {
     if (this.is) {
       this.update(e)
       this.is = false
     }
   }
 
-  update = e => {
+  update = (e) => {
     const { x, y } = this.point
     this.props.onChange({
       x1: x,
@@ -89,7 +91,15 @@ export default class ScreenshotsCanvas extends PureComponent {
     const { width, height } = this.props
     return (
       <div className="screenshots-canvas" onMouseDown={this.onMousedown}>
-        <canvas ref={this.canvasRef} width={width} height={height} />
+        <canvas
+          ref={this.canvasRef}
+          width={width * devicePixelRatio}
+          height={height * devicePixelRatio}
+          style={{
+            width,
+            height
+          }}
+        />
         <div className="screenshots-canvas-mask" />
       </div>
     )

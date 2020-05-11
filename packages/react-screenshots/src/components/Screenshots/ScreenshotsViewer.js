@@ -121,9 +121,12 @@ export default class ScreenshotsViewer extends PureComponent {
     const { x, y, width: w, height: h } = this.size
     const rx = image.width / width
     const ry = image.height / height
+
+    this.ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0)
+
     this.ctx.clearRect(0, 0, w, h)
     this.ctx.drawImage(image.el, x * rx, y * ry, w * rx, h * ry, 0, 0, w, h)
-    stack.forEach(item => item.draw(this.ctx, item))
+    stack.forEach((item) => item.draw(this.ctx, item))
   }
 
   onMousedown = (e, type) => {
@@ -141,7 +144,7 @@ export default class ScreenshotsViewer extends PureComponent {
     }
   }
 
-  onMousemove = e => {
+  onMousemove = (e) => {
     const { viewer, action } = this.props
     if (!viewer) return
     if (!action) {
@@ -157,7 +160,7 @@ export default class ScreenshotsViewer extends PureComponent {
     }
   }
 
-  onMouseup = e => {
+  onMouseup = (e) => {
     const { viewer, action } = this.props
     if (!viewer) return
     if (!action) {
@@ -173,7 +176,7 @@ export default class ScreenshotsViewer extends PureComponent {
     }
   }
 
-  move = e => {
+  move = (e) => {
     if (!this.viewer) return
     const x = e.clientX - this.point.x
     const y = e.clientY - this.point.y
@@ -186,7 +189,7 @@ export default class ScreenshotsViewer extends PureComponent {
     })
   }
 
-  resize = e => {
+  resize = (e) => {
     if (!this.viewer) return
     const x = e.clientX - this.point.x
     const y = e.clientY - this.point.y
@@ -231,7 +234,7 @@ export default class ScreenshotsViewer extends PureComponent {
     })
   }
 
-  onAction = Action => {
+  onAction = (Action) => {
     this.props.setContext({
       action: new Action(this.actionArgs)
     })
@@ -256,20 +259,28 @@ export default class ScreenshotsViewer extends PureComponent {
             height
           }}
         >
-          <canvas ref={this.canvasRef} width={width} height={height} />
+          <canvas
+            ref={this.canvasRef}
+            width={width * devicePixelRatio}
+            height={height * devicePixelRatio}
+            style={{
+              width,
+              height
+            }}
+          />
           <div
             className="screenshots-viewer-border"
             style={{
               cursor: this.cursor
             }}
-            onMouseDown={e => this.onMousedown(e, 'move')}
+            onMouseDown={(e) => this.onMousedown(e, 'move')}
           />
-          {this.pointers.map(pointer => {
+          {this.pointers.map((pointer) => {
             return (
               <div
                 key={pointer}
                 className={`screenshots-viewer-pointer-${pointer}`}
-                onMouseDown={e => this.onMousedown(e, pointer)}
+                onMouseDown={(e) => this.onMousedown(e, pointer)}
               />
             )
           })}
