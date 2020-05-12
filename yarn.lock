@@ -830,7 +830,7 @@
 
 "@octokit/plugin-rest-endpoint-methods@2.4.0":
   version "2.4.0"
-  resolved "https://registry.npm.taobao.org/@octokit/plugin-rest-endpoint-methods/download/@octokit/plugin-rest-endpoint-methods-2.4.0.tgz#3288ecf5481f68c494dd0602fc15407a59faf61e"
+  resolved "https://registry.npm.taobao.org/@octokit/plugin-rest-endpoint-methods/download/@octokit/plugin-rest-endpoint-methods-2.4.0.tgz?cache=0&sync_timestamp=1589236313082&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40octokit%2Fplugin-rest-endpoint-methods%2Fdownload%2F%40octokit%2Fplugin-rest-endpoint-methods-2.4.0.tgz#3288ecf5481f68c494dd0602fc15407a59faf61e"
   integrity sha1-Mojs9UgfaMSU3QYC/BVAeln69h4=
   dependencies:
     "@octokit/types" "^2.0.1"
@@ -870,7 +870,7 @@
 
 "@octokit/rest@^16.28.4":
   version "16.43.1"
-  resolved "https://registry.npm.taobao.org/@octokit/rest/download/@octokit/rest-16.43.1.tgz?cache=0&sync_timestamp=1588796011941&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40octokit%2Frest%2Fdownload%2F%40octokit%2Frest-16.43.1.tgz#3b11e7d1b1ac2bbeeb23b08a17df0b20947eda6b"
+  resolved "https://registry.npm.taobao.org/@octokit/rest/download/@octokit/rest-16.43.1.tgz?cache=0&sync_timestamp=1589236316727&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40octokit%2Frest%2Fdownload%2F%40octokit%2Frest-16.43.1.tgz#3b11e7d1b1ac2bbeeb23b08a17df0b20947eda6b"
   integrity sha1-OxHn0bGsK77rI7CKF98LIJR+2ms=
   dependencies:
     "@octokit/auth-token" "^2.4.0"
@@ -891,9 +891,9 @@
     universal-user-agent "^4.0.0"
 
 "@octokit/types@^2.0.0", "@octokit/types@^2.0.1", "@octokit/types@^2.11.1":
-  version "2.15.0"
-  resolved "https://registry.npm.taobao.org/@octokit/types/download/@octokit/types-2.15.0.tgz#b2070520207727bc6ab3a9caa1e4f60b0434bfa8"
-  integrity sha1-sgcFICB3J7xqs6nKoeT2CwQ0v6g=
+  version "2.16.0"
+  resolved "https://registry.npm.taobao.org/@octokit/types/download/@octokit/types-2.16.0.tgz?cache=0&sync_timestamp=1589235995521&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40octokit%2Ftypes%2Fdownload%2F%40octokit%2Ftypes-2.16.0.tgz#e793563d67d6ba3675462839b156e2799146128d"
+  integrity sha1-55NWPWfWujZ1Rig5sVbieZFGEo0=
   dependencies:
     "@types/node" ">= 8"
 
@@ -1910,7 +1910,7 @@ esprima@^4.0.0:
 
 eventemitter3@^3.1.0:
   version "3.1.2"
-  resolved "https://registry.npm.taobao.org/eventemitter3/download/eventemitter3-3.1.2.tgz#2d3d48f9c346698fce83a85d7d664e98535df6e7"
+  resolved "https://registry.npm.taobao.org/eventemitter3/download/eventemitter3-3.1.2.tgz?cache=0&sync_timestamp=1589283150629&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Feventemitter3%2Fdownload%2Feventemitter3-3.1.2.tgz#2d3d48f9c346698fce83a85d7d664e98535df6e7"
   integrity sha1-LT1I+cNGaY/Og6hdfWZOmFNd9uc=
 
 execa@^1.0.0:
