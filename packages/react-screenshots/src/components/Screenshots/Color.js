@@ -3,9 +3,9 @@ import React from 'react'
 export default ({ value, onChange }) => {
   const colors = [
     '#ee5126',
-    '#51c0fa',
-    '#90e746',
     '#fceb4d',
+    '#90e746',
+    '#51c0fa',
     '#7a7a7a',
     '#ffffff'
   ]

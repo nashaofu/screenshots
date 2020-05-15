@@ -58,12 +58,13 @@ export default class ScreenshotsViewerBar extends PureComponent {
 
   render () {
     const { x, y } = this.state
-    const { action, actions } = this.props
+    const { action, actions, viewer, stack } = this.props
     return (
       <div
         className="screenshots-viewer-bar"
         ref={this.barRef}
         style={{
+          display: viewer && !viewer.resizing && !viewer.moving ? 'block' : 'none',
           left: x,
           top: y
         }}
@@ -81,6 +82,9 @@ export default class ScreenshotsViewerBar extends PureComponent {
                 const { title, icon } = key
                 if (action instanceof key) {
                   classNames.push('screenshots-viewer-bar-button-active')
+                }
+                if (title === '撤销' && !stack.length) {
+                  classNames.push('screenshots-viewer-bar-button-disabled')
                 }
                 return (
                   <div

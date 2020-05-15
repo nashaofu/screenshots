@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react'
 import { withContext } from './ScreenshotsContext'
 import ScreenshotsViewerBar from './ScreenshotsViewerBar'
+import ScreenshotsViewerEditPoint from './ScreenshotsViewerEditPoint'
 
 @withContext
 export default class ScreenshotsViewer extends PureComponent {
@@ -51,7 +52,7 @@ export default class ScreenshotsViewer extends PureComponent {
       return 'default'
     }
 
-    return 'move'
+    return 'grab'
   }
 
   get pointers () {
@@ -78,7 +79,11 @@ export default class ScreenshotsViewer extends PureComponent {
       stack,
       action,
       actions,
-      cursor
+      border,
+      font,
+      color,
+      cursor,
+      editPointers
     } = this.props
     return {
       viewer: this.viewerRef.current,
@@ -92,7 +97,11 @@ export default class ScreenshotsViewer extends PureComponent {
         stack,
         action,
         actions,
-        cursor
+        border,
+        font,
+        color,
+        cursor,
+        editPointers
       },
       setContext: this.props.setContext,
       emit: this.props.onEmit
@@ -126,20 +135,45 @@ export default class ScreenshotsViewer extends PureComponent {
 
     this.ctx.clearRect(0, 0, w, h)
     this.ctx.drawImage(image.el, x * rx, y * ry, w * rx, h * ry, 0, 0, w, h)
-    stack.forEach((item) => item.draw(this.ctx, item))
+    stack.forEach(item => item.draw(this.ctx, item.history[0], item)) // action draw
   }
 
   onMousedown = (e, type) => {
-    const { viewer, action } = this.props
+    const { viewer, action, actions } = this.props
     if (!viewer) return
     if (!action) {
       if (!type || e.button !== 0) return
       this.actionType = type
       this.point = { x: e.clientX, y: e.clientY }
       this.viewer = { ...this.props.viewer }
+      if (this.actionType === 'move') {
+        this.props.setContext(state => ({
+          viewer: { ...state.viewer, moving: true },
+          cursor: 'grabbing'
+        }))
+      } else {
+        this.props.setContext(state => ({
+          viewer: { ...state.viewer, resizing: true }
+        }))
+      }
     } else {
-      if (typeof action.mousedown === 'function') {
-        action.mousedown(e, this.actionArgs)
+      const current = this.handlePointInRecord(e)
+      if (current.type && (current.type !== Object.getPrototypeOf(action).constructor.type)) {
+        // 根据路径更改action
+        const Action = actions.find(t => t.key.type === current.type).key
+        const nextAction = this.onAction(Action)
+
+        // 模拟新action操作
+        if (typeof nextAction.mousemove === 'function') {
+          nextAction.mousemove(e, this.actionArgs, current)
+        }
+        if (typeof nextAction.mousedown === 'function') {
+          nextAction.mousedown(e, this.actionArgs)
+        }
+      } else {
+        if (typeof action.mousedown === 'function') {
+          action.mousedown(e, this.actionArgs)
+        }
       }
     }
   }
@@ -155,7 +189,7 @@ export default class ScreenshotsViewer extends PureComponent {
       }
     } else {
       if (typeof action.mousemove === 'function') {
-        action.mousemove(e, this.actionArgs)
+        action.mousemove(e, this.actionArgs, this.handlePointInRecord(e))
       }
     }
   }
@@ -165,6 +199,12 @@ export default class ScreenshotsViewer extends PureComponent {
     if (!viewer) return
     if (!action) {
       if (this.actionType) {
+        if (this.actionType === 'move') {
+          this.props.setContext({ cursor: null })
+        }
+        this.props.setContext(state => ({
+          viewer: { ...state.viewer, resizing: false, moving: false }
+        }))
         this.actionType = null
         this.point = null
         this.viewer = null
@@ -176,7 +216,53 @@ export default class ScreenshotsViewer extends PureComponent {
     }
   }
 
-  move = (e) => {
+  handlePointInRecord = e => {
+    const { left, top } = this.canvasRef.current.getBoundingClientRect()
+    const x = e.clientX - left
+    const y = e.clientY - top
+
+    let action = null
+    let type = ''
+    let index = -1
+    this.props.stack.some((t, i) => {
+      const recent = t.history[0]
+
+      if (['rect', 'ellipse', 'brush'].includes(t.type)) {
+        if (this.ctx.isPointInStroke(recent.path, x, y)) {
+          action = recent
+          type = t.type
+          index = i
+          return true
+        }
+      }
+
+      if (['arrow'].includes(t.type)) {
+        if (this.ctx.isPointInStroke(recent.path, x, y) || this.ctx.isPointInPath(recent.path, x, y)) {
+          action = recent
+          type = t.type
+          index = i
+          return true
+        }
+      }
+
+      if (t.type === 'text') {
+        const textRect = recent.domClientRect
+        const textX = textRect.left - left
+        const textY = textRect.top - top
+        const assertX = x >= textX && x <= (textX + textRect.width)
+        const assertY = y >= textY && y <= (textY + textRect.height)
+        if (assertX && assertY) {
+          action = recent
+          type = t.type
+          index = i
+          return true
+        }
+      }
+    })
+    return { action, index, type }
+  }
+
+  move = e => {
     if (!this.viewer) return
     const x = e.clientX - this.point.x
     const y = e.clientY - this.point.y
@@ -234,19 +320,31 @@ export default class ScreenshotsViewer extends PureComponent {
     })
   }
 
-  onAction = (Action) => {
+  onAction = Action => {
+    const lastAction = this.props.action
+    if (
+      Action.type !== 'undo' && // 撤销action不执行
+      lastAction &&
+      (Action.prototype !== Object.getPrototypeOf(lastAction))
+    ) {
+      lastAction.beforeUnMount && lastAction.beforeUnMount()
+    }
+    const nextAction = new Action(this.actionArgs, this.context)
+    const action = Object.keys(nextAction).length ? nextAction : null
     this.props.setContext({
-      action: new Action(this.actionArgs)
+      action
     })
+    return action
   }
 
   render () {
     const { x, y, width, height } = this.size
+    const { viewer, action, editPointers } = this.props
     return (
       <div
         className="screenshots-viewer"
         style={{
-          display: this.props.viewer ? 'block' : 'none'
+          display: viewer ? 'block' : 'none'
         }}
       >
         <div
@@ -256,7 +354,8 @@ export default class ScreenshotsViewer extends PureComponent {
             left: x,
             top: y,
             width,
-            height
+            height,
+            overflow: action ? 'hidden' : 'inherit'
           }}
         >
           <canvas
@@ -284,6 +383,7 @@ export default class ScreenshotsViewer extends PureComponent {
               />
             )
           })}
+          {action ? <ScreenshotsViewerEditPoint pointers={editPointers} /> : null}
         </div>
         <ScreenshotsViewerBar onAction={this.onAction} />
       </div>

@@ -15,7 +15,7 @@ export default class App extends PureComponent {
   }
 
   componentWillUnmount () {
-    window.addEventListener('resize', this.resize)
+    window.removeEventListener('resize', this.resize)
   }
 
   resize = () => {

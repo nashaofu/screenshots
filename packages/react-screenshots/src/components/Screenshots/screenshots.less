@@ -33,6 +33,55 @@
       right: 0;
       bottom: 0;
       left: 0;
+      background-color: rgba(0, 0, 0, 0.4);
+    }
+  }
+  &-magnifier {
+    position: absolute;
+    left: 0;
+    top: 0;
+    box-shadow: 0 0 8px 0px #000;
+
+    &-canvas {
+      position: relative;
+      background-color: #fff;
+
+      canvas {
+        display: block;
+      }
+
+      &-crosshair {
+        &::before {
+          content: '';
+          background-color: rgb(10, 114, 161);
+          position: absolute;
+          top: 50%;
+          left: 0;
+          width: 100%;
+          height: 1px;
+        }
+        &::after {
+          content: '';
+          background-color: rgb(10, 114, 161);
+          position: absolute;
+          top: 0;
+          left: 50%;
+          width: 1px;
+          height: 100%;
+        }
+      }
+    }
+    &-explain {
+      width: 120px;
+      height: 40px;
+      color: #fff;
+      font-size: 10px;
+      background-color: rgb(95, 94, 94);
+      padding: 7px 8px;
+
+      &-rgb {
+        margin-bottom: 4px;
+      }
     }
   }
   &-viewer {
@@ -43,9 +92,13 @@
     right: 0;
     bottom: 0;
     left: 0;
-    background-color: rgba(0, 0, 0, 0.4);
     &-body {
       position: absolute;
+      overflow: hidden;
+
+      canvas {
+        display: block;
+      }
     }
     &-border {
       width: 100%;
@@ -55,7 +108,7 @@
       right: 0;
       bottom: 0;
       left: 0;
-      outline: 1px solid @border-color;
+      border: 1px solid @border-color;
     }
 
     each(@pointer, {
@@ -71,6 +124,15 @@
         cursor: extract(@value, 3);
       }
     })
+    &-edit-pointer {
+      position: absolute;
+      left: 0;
+      top: 0;
+      background-color: #fff;
+      border: 1px solid;
+      border-radius: 50%;
+      pointer-events: none;
+    }
     &-bar {
       position: absolute;
       &-container {
@@ -113,6 +175,14 @@
         &:hover {
           background-color: #eee;
           outline: 1px solid #777;
+        }
+        &-disabled {
+          color: #ccc;
+          cursor: not-allowed;
+          &:hover {
+            background-color: #fff;
+            outline: none;
+          }
         }
       }
       &-options {
@@ -183,6 +253,13 @@
     &-active > &-pointer {
       background-color: #39f;
     }
+    &-font {
+      padding: 0 5px;
+      transform: translateY(-8px);
+      select {
+        font-size: 12px;
+      }
+    }
   }
   &-sizecolor {
     height: @sizecolor-size + 3 * 2;
@@ -191,6 +268,20 @@
   &-textarea {
     background-color: transparent;
     position: absolute;
-    border: 1px solid #ccc;
+    left: 0;
+    top: 0;
+    width: 300px;
+    border: 2px solid #bbb;
+    font-family: 'Microsoft YaHei';
+    outline: none;
+    padding: 8px 10px;
+    border-radius: 8px;
+    caret-color: #333;
+    word-break: break-all;
+    -webkit-user-modify: read-write-plaintext-only;
+    // 描边效果不是很满意
+    text-shadow: 0 2px #fff, 2px 0 #fff, -2px 0 #fff, 0 -2px #fff,
+    0 3px 1px #ccc, 3px 0 1px #ccc, -3px 0 1px #ccc, 0 -3px 1px #ccc;
+    line-height: 1;
   }
 }
