@@ -3,29 +3,8 @@ export default class Action {
     this.props = props
   }
 
-  get state () {
-    const {
-      context: { actions }
-    } = this.props
-    const index = actions.findIndex(({ key }) => this instanceof key)
-    if (index === -1) return
-    return actions[index].value
-  }
-
-  setState (state) {
-    const {
-      context: { actions },
-      setContext
-    } = this.props
-    const index = actions.findIndex(({ key }) => this instanceof key)
-    if (index === -1) return
-    actions[index].value = {
-      ...actions[index].value,
-      ...state
-    }
-    setContext({
-      actions: [...actions]
-    })
+  setUndoPriority (context) {
+    return Math.max.apply(null, [...context.stack.map(t => t.history[0].undoPriority), 0]) + 1
   }
 
   emit (event, ...args) {

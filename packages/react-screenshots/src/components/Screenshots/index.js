@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react'
 import ScreenshotsViewer from './ScreenshotsViewer'
 import ScreenshotsCanvas from './ScreenshotsCanvas'
+import ScreenshotsMagnifier from './ScreenshotsMagnifier'
 import ScreenshotsContext from './ScreenshotsContext'
 import Ok from './actions/ok'
 import Undo from './actions/undo'
@@ -10,6 +11,8 @@ import Brush from './actions/brush'
 import Arrow from './actions/arrow'
 import Cancel from './actions/cancel'
 import Ellipse from './actions/ellipse'
+import Text from './actions/text'
+import Mosaic from './actions/mosaic'
 import './icons.less'
 import './screenshots.less'
 
@@ -21,41 +24,38 @@ export default class Screenshots extends PureComponent {
     actions: [
       {
         key: Ellipse,
-        value: {
-          size: 3,
-          color: '#ee5126'
-        }
+        value: {}
       },
       {
         key: Rect,
-        value: {
-          size: 3,
-          color: '#ee5126'
-        }
+        value: {}
       },
       {
         key: Arrow,
-        value: {
-          size: 3,
-          color: '#ee5126'
-        }
+        value: {}
       },
       {
         key: Brush,
-        value: {
-          size: 3,
-          color: '#ee5126'
-        }
+        value: {}
       },
       {
-        key: Undo,
+        key: Mosaic,
+        value: {}
+      },
+      {
+        key: Text,
         value: {}
       },
       { type: 'divider' },
       {
+        key: Undo,
+        value: {}
+      },
+      {
         key: Save,
         value: {}
       },
+      { type: 'divider' },
       {
         key: Cancel,
         value: {}
@@ -66,7 +66,12 @@ export default class Screenshots extends PureComponent {
       }
     ],
     stack: [],
-    cursor: null
+    border: 6,
+    font: 23,
+    color: '#ee5126',
+    cursor: null,
+    magnifyPoint: {},
+    editPointers: []
   }
 
   constructor (props) {
@@ -143,6 +148,19 @@ export default class Screenshots extends PureComponent {
     this.setViewer({ x1, y1, x2, y2 })
   }
 
+  onMagnifyChange = ({ x, y }) => {
+    const { left, top, width, height } = this.bodyRef.current.getBoundingClientRect()
+
+    if (x >= left && x <= left + width && y >= top && y <= top + height) {
+      this.setState({
+        magnifyPoint: {
+          x: x - left,
+          y: y - top
+        }
+      })
+    }
+  }
+
   onViewerChange = ({ x1, y1, x2, y2 }) => {
     this.setViewer({ x1, y1, x2, y2 })
   }
@@ -185,14 +203,14 @@ export default class Screenshots extends PureComponent {
       y1 = viewer.y1
     }
 
-    this.setState({
-      viewer: { x1, y1, x2, y2 }
-    })
+    this.setState(state => ({
+      viewer: { ...state.viewer, x1, y1, x2, y2 }
+    }))
   }
 
   render () {
     const classNames = ['screenshots']
-    const { image, viewer, action, actions, stack, cursor } = this.state
+    const { image, viewer, action, actions, stack, border, font, color, cursor, magnifyPoint, editPointers } = this.state
     const { className, width, height } = this.props
     if (className) classNames.push(className)
 
@@ -203,10 +221,15 @@ export default class Screenshots extends PureComponent {
           viewer,
           width,
           height,
-          stack,
           action,
           actions,
+          stack,
+          border,
+          font,
+          color,
           cursor,
+          magnifyPoint,
+          editPointers,
           setContext: this.setContext
         }}
       >
@@ -215,7 +238,12 @@ export default class Screenshots extends PureComponent {
           ref={this.bodyRef}
           style={{ width, height }}
         >
-          <ScreenshotsCanvas onChange={this.onCanvasChange} />
+          <ScreenshotsCanvas onChange={this.onCanvasChange} onMagnify={this.onMagnifyChange} />
+          {
+            !viewer || (viewer && viewer.resizing)
+              ? <ScreenshotsMagnifier />
+              : null
+          }
           <ScreenshotsViewer onChange={this.onViewerChange} onEmit={this.onEmit} />
         </div>
       </ScreenshotsContext.Provider>

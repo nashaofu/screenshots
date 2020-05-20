@@ -14,7 +14,8 @@ export default class Cancel extends Action {
       action: null,
       stack: [],
       state: {},
-      cursor: null
+      cursor: null,
+      editPointers: []
     })
   }
 }
