@@ -155,7 +155,9 @@ export default class Screenshots extends PureComponent {
       this.setState({
         magnifyPoint: {
           x: x - left,
-          y: y - top
+          y: y - top,
+          right: left + width,
+          bottom: top + height
         }
       })
     }

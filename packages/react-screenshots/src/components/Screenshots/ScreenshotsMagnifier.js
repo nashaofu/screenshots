@@ -9,6 +9,11 @@ export default class ScreenshotsMagnifier extends PureComponent {
     rgb: ''
   }
 
+  explain = {
+    width: 120,
+    height: 40
+  }
+
   ctx = null
 
   magnifyRate = 3
@@ -55,11 +60,11 @@ export default class ScreenshotsMagnifier extends PureComponent {
   }
 
   render () {
-    const { magnifyPoint } = this.props
-    const { x, y } = magnifyPoint
-
-    const left = x && (x + 5)
-    const top = y && (y + 5)
+    const { width, height, rgb } = this.state
+    const { x, y, right, bottom } = this.props.magnifyPoint
+    const bias = 5
+    const left = x + width + bias >= right ? x - width - bias : x + bias
+    const top = y + height + this.explain.height + bias >= bottom ? y - height - this.explain.height - bias : y + bias
     return (
       <div
         className="screenshots-magnifier"
@@ -68,11 +73,11 @@ export default class ScreenshotsMagnifier extends PureComponent {
         }}
       >
         <div className="screenshots-magnifier-canvas">
-          <canvas ref={this.magnifierRef} width={this.state.width} height={this.state.height} />
+          <canvas ref={this.magnifierRef} width={width} height={height} />
           <div className="screenshots-magnifier-canvas-crosshair" />
         </div>
         <div className="screenshots-magnifier-explain">
-          <div className="screenshots-magnifier-explain-rgb">RGB：{this.state.rgb}</div>
+          <div className="screenshots-magnifier-explain-rgb">RGB：{rgb}</div>
           <div className="screenshots-magnifier-explain-site">坐标：({x},{y})</div>
         </div>
       </div>
