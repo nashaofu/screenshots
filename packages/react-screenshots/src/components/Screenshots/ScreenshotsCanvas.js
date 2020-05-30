@@ -50,7 +50,8 @@ export default class ScreenshotsCanvas extends PureComponent {
     )
   }
 
-  onMousedown = e => { // 初始viewer框
+  onMousedown = (e) => {
+    // 初始viewer框
     const { viewer } = this.props
     if (viewer || e.button !== 0) return // e.button 鼠标左键
     this.props.setContext({
@@ -62,16 +63,16 @@ export default class ScreenshotsCanvas extends PureComponent {
     })
     this.is = true
     this.point = { x: e.clientX, y: e.clientY }
-    this.props.setContext(state => ({
+    this.props.setContext((state) => ({
       viewer: { ...state.viewer, resizing: true }
     }))
     this.update(e)
   }
 
-  onMousemove = e => {
+  onMousemove = (e) => {
     const { viewer } = this.props
     if (!viewer || (viewer && viewer.resizing)) {
-      this.props.onMagnify({
+      this.props.onMagnifyChange({
         x: e.clientX,
         y: e.clientY
       })
@@ -84,9 +85,10 @@ export default class ScreenshotsCanvas extends PureComponent {
     if (this.is) {
       this.update(e)
       this.is = false
-      this.props.setContext(state => ({
+      this.props.setContext((state) => ({
         viewer: { ...state.viewer, resizing: false }
       }))
+      this.props.onMagnifyChange(null)
     }
   }
 

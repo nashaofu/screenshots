@@ -37,14 +37,16 @@ export default class ScreenshotsMagnifier extends PureComponent {
     const { x, y } = magnifyPoint
 
     if (!image || x < 0 || y < 0 || (viewer && !viewer.resizing)) return
-    const magnifyX = image.width * x / width
-    const magnifyY = image.height * y / height
+    const magnifyX = (image.width * x) / width
+    const magnifyY = (image.height * y) / height
     const magnifyW = this.state.width
     const magnifyH = this.state.height
-    const colorData = this.ctx.getImageData(magnifyW / 2, magnifyH / 2, 1, 1).data
+    const colorData = this.ctx.getImageData(magnifyW / 2, magnifyH / 2, 1, 1)
+      .data
     this.setState({
       rgb: `(${colorData[0]},${colorData[1]},${colorData[2]})`
     })
+
     this.ctx.clearRect(0, 0, magnifyW, magnifyH)
     this.ctx.drawImage(
       image.el,
@@ -57,6 +59,15 @@ export default class ScreenshotsMagnifier extends PureComponent {
       magnifyW,
       magnifyH
     )
+
+    // const { width: stateWidth, height: stateHeight } = this.state
+    // this.ctx.lineWidth = 1
+    // this.ctx.strokeStyle = '#0a72a1'
+    // this.ctx.moveTo(stateWidth / 2, 0)
+    // this.ctx.lineTo(stateWidth / 2, stateHeight)
+    // this.ctx.moveTo(0, stateHeight / 2)
+    // this.ctx.lineTo(stateWidth, stateHeight / 2)
+    // this.ctx.stroke()
   }
 
   render () {
@@ -64,7 +75,10 @@ export default class ScreenshotsMagnifier extends PureComponent {
     const { x, y, right, bottom } = this.props.magnifyPoint
     const bias = 5
     const left = x + width + bias >= right ? x - width - bias : x + bias
-    const top = y + height + this.explain.height + bias >= bottom ? y - height - this.explain.height - bias : y + bias
+    const top =
+      y + height + this.explain.height + bias >= bottom
+        ? y - height - this.explain.height - bias
+        : y + bias
     return (
       <div
         className="screenshots-magnifier"
@@ -78,7 +92,9 @@ export default class ScreenshotsMagnifier extends PureComponent {
         </div>
         <div className="screenshots-magnifier-explain">
           <div className="screenshots-magnifier-explain-rgb">RGB：{rgb}</div>
-          <div className="screenshots-magnifier-explain-site">坐标：({x},{y})</div>
+          <div className="screenshots-magnifier-explain-site">
+            坐标：({x},{y})
+          </div>
         </div>
       </div>
     )

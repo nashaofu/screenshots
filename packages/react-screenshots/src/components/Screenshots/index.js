@@ -70,7 +70,7 @@ export default class Screenshots extends PureComponent {
     font: 23,
     color: '#ee5126',
     cursor: null,
-    magnifyPoint: {},
+    magnifyPoint: null,
     editPointers: []
   }
 
@@ -80,7 +80,7 @@ export default class Screenshots extends PureComponent {
   }
 
   componentDidMount () {
-    this.getImage().then(image => {
+    this.getImage().then((image) => {
       this.setState({ image })
     })
   }
@@ -148,17 +148,28 @@ export default class Screenshots extends PureComponent {
     this.setViewer({ x1, y1, x2, y2 })
   }
 
-  onMagnifyChange = ({ x, y }) => {
-    const { left, top, width, height } = this.bodyRef.current.getBoundingClientRect()
-
-    if (x >= left && x <= left + width && y >= top && y <= top + height) {
+  onMagnifyChange = (pointer) => {
+    if (pointer) {
+      const {
+        left,
+        top,
+        width,
+        height
+      } = this.bodyRef.current.getBoundingClientRect()
+      const { x, y } = pointer
+      if (x >= left && x <= left + width && y >= top && y <= top + height) {
+        this.setState({
+          magnifyPoint: {
+            x: x - left,
+            y: y - top,
+            right: left + width,
+            bottom: top + height
+          }
+        })
+      }
+    } else {
       this.setState({
-        magnifyPoint: {
-          x: x - left,
-          y: y - top,
-          right: left + width,
-          bottom: top + height
-        }
+        magnifyPoint: null
       })
     }
   }
@@ -205,14 +216,26 @@ export default class Screenshots extends PureComponent {
       y1 = viewer.y1
     }
 
-    this.setState(state => ({
+    this.setState((state) => ({
       viewer: { ...state.viewer, x1, y1, x2, y2 }
     }))
   }
 
   render () {
     const classNames = ['screenshots']
-    const { image, viewer, action, actions, stack, border, font, color, cursor, magnifyPoint, editPointers } = this.state
+    const {
+      image,
+      viewer,
+      action,
+      actions,
+      stack,
+      border,
+      font,
+      color,
+      cursor,
+      magnifyPoint,
+      editPointers
+    } = this.state
     const { className, width, height } = this.props
     if (className) classNames.push(className)
 
@@ -240,13 +263,17 @@ export default class Screenshots extends PureComponent {
           ref={this.bodyRef}
           style={{ width, height }}
         >
-          <ScreenshotsCanvas onChange={this.onCanvasChange} onMagnify={this.onMagnifyChange} />
-          {
-            !viewer || (viewer && viewer.resizing)
-              ? <ScreenshotsMagnifier />
-              : null
-          }
-          <ScreenshotsViewer onChange={this.onViewerChange} onEmit={this.onEmit} />
+          <ScreenshotsCanvas
+            onChange={this.onCanvasChange}
+            onMagnifyChange={this.onMagnifyChange}
+          />
+          {(!viewer || (viewer && viewer.resizing)) && magnifyPoint && (
+            <ScreenshotsMagnifier />
+          )}
+          <ScreenshotsViewer
+            onChange={this.onViewerChange}
+            onEmit={this.onEmit}
+          />
         </div>
       </ScreenshotsContext.Provider>
     )
