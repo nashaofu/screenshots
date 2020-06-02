@@ -10,6 +10,16 @@ export default (): Display => {
     point
   )
 
+  if (process.platform === 'darwin') {
+    return {
+      id,
+      x: bounds.x,
+      y: bounds.y,
+      width: bounds.width,
+      height: bounds.height
+    }
+  }
+
   // win32 darwin linux平台分别处理
   const display = process.platform === 'linux' ? workArea : bounds
   return {
