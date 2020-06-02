@@ -4,7 +4,8 @@ import {
   Rectangle,
   clipboard,
   nativeImage,
-  BrowserWindow
+  BrowserWindow,
+  BrowserWindowConstructorOptions
 } from 'electron'
 import fs from 'fs'
 import Event from './event'
@@ -71,7 +72,7 @@ export default class Screenshots extends Events {
    * 初始化窗口
    */
   private createWindow ({ x, y, width, height }: Rectangle): BrowserWindow {
-    const $win = new BrowserWindow({
+    const option: BrowserWindowConstructorOptions = {
       title: 'screenshots',
       x,
       y,
@@ -99,7 +100,11 @@ export default class Screenshots extends Events {
       webPreferences: {
         nodeIntegration: true
       }
-    })
+    }
+    if (process.platform === 'darwin') {
+      option.type = 'textured'
+    }
+    const $win = new BrowserWindow(option)
 
     $win.loadURL(
       `file://${require.resolve('react-screenshots/dist/index.html')}`

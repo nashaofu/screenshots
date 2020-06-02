@@ -20,7 +20,7 @@ export default class App extends PureComponent {
   }
 
   componentWillUnmount () {
-    window.addEventListener('resize', this.resize)
+    window.removeEventListener('resize', this.resize)
     ipcRenderer.off('SCREENSHOTS::SEND-DISPLAY-DATA', this.getSource)
   }
 
