@@ -44,12 +44,30 @@ app.on('window-all-closed', () => {
 })
 ```
 
-**注意**：如果使用了 webpack 打包主进程，请在主进程 webpack 配置中修改如下配置，否则可能会出现不能调用截图窗口的情况
+### 注意
+
+* 如果使用了 webpack 打包主进程，请在主进程 webpack 配置中修改如下配置，否则可能会出现不能调用截图窗口的情况
 
 ```js
 {
   externals: {
     'electron-screenshots': 'require("electron-screenshots")'
+  }
+}
+```
+
+* `vue-cli-plugin-electron-builder`配置示例
+https://github.com/nashaofu/vue-cli-plugin-electron-builder-issue/blob/0f774a90b09e10b02f86fcb6b50645058fe1a4e8/vue.config.js#L1-L8
+
+```js
+// vue.config.js
+module.exports = {
+  publicPath: '.',
+  pluginOptions: {
+    electronBuilder: {
+      // 不打包，使用 require 加载
+      externals: ['shortcut-capture']
+    }
   }
 }
 ```
