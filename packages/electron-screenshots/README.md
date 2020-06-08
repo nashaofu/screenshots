@@ -56,8 +56,7 @@ app.on('window-all-closed', () => {
 }
 ```
 
-* `vue-cli-plugin-electron-builder`配置示例
-https://github.com/nashaofu/vue-cli-plugin-electron-builder-issue/blob/0f774a90b09e10b02f86fcb6b50645058fe1a4e8/vue.config.js#L1-L8
+* `vue-cli-plugin-electron-builder`配置示例[vue-cli-plugin-electron-builder-issue](https://github.com/nashaofu/vue-cli-plugin-electron-builder-issue/blob/0f774a90b09e10b02f86fcb6b50645058fe1a4e8/vue.config.js#L1-L8)
 
 ```js
 // vue.config.js
