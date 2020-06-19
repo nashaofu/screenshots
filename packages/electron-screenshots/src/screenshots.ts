@@ -40,7 +40,7 @@ export default class Screenshots extends Events {
    * 开始截图
    */
   public startCapture (): void {
-    if (this.$win) this.$win.close()
+    if (this.$win && !this.$win.isDestroyed()) this.$win.close()
     const display = getDisplay()
     this.$win = this.createWindow(display)
     ipcMain.once('SCREENSHOTS::DOM-READY', () => {
