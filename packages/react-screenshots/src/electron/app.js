@@ -52,10 +52,9 @@ export default class App extends PureComponent {
     ipcRenderer.send('SCREENSHOTS::OK', { viewer, dataURL })
   }
 
-  onKeyUp=(event) => {
-    const x = event.which || event.keyCode
-    if (x === 27) {
-      ipcRenderer.send('SCREENSHOTS::CANCEL')
+  onKeyUp = ({ code }) => {
+    if (code === 'Escape') {
+      this.onCancel()
     }
   }
 
