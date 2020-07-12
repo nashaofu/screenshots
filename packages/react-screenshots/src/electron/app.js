@@ -16,6 +16,7 @@ export default class App extends PureComponent {
     // 告诉主进程页面准备完成
     ipcRenderer.send('SCREENSHOTS::DOM-READY')
     window.addEventListener('resize', this.resize)
+    window.addEventListener('keyup', this.onKeyUp)
     ipcRenderer.on('SCREENSHOTS::SEND-DISPLAY-DATA', this.getSource)
   }
 
@@ -49,6 +50,13 @@ export default class App extends PureComponent {
 
   onOk = ({ dataURL, viewer }) => {
     ipcRenderer.send('SCREENSHOTS::OK', { viewer, dataURL })
+  }
+
+  onKeyUp=(event) => {
+    const x = event.which || event.keyCode
+    if (x === 27) {
+      ipcRenderer.send('SCREENSHOTS::CANCEL')
+    }
   }
 
   render () {
