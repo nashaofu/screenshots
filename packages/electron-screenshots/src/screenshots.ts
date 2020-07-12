@@ -1,11 +1,4 @@
-import {
-  dialog,
-  ipcMain,
-  Rectangle,
-  clipboard,
-  nativeImage,
-  BrowserWindow
-} from 'electron'
+import { dialog, ipcMain, Rectangle, clipboard, nativeImage, BrowserWindow } from 'electron'
 import fs from 'fs'
 import Event from './event'
 import Events from 'events'
@@ -77,7 +70,6 @@ export default class Screenshots extends Events {
       y,
       width,
       height,
-      type: process.platform === 'darwin' ? 'textured' : 'desktop',
       useContentSize: true,
       frame: false,
       show: false,
@@ -101,9 +93,7 @@ export default class Screenshots extends Events {
       }
     })
 
-    $win.loadURL(
-      `file://${require.resolve('react-screenshots/dist/index.html')}`
-    )
+    $win.loadURL(`file://${require.resolve('react-screenshots/dist/index.html')}`)
     return $win
   }
 
@@ -162,10 +152,7 @@ export default class Screenshots extends Events {
             if (canceled || !filePath) return
             fs.writeFile(
               filePath,
-              Buffer.from(
-                data.dataURL.replace(/^data:image\/\w+;base64,/, ''),
-                'base64'
-              ),
+              Buffer.from(data.dataURL.replace(/^data:image\/\w+;base64,/, ''), 'base64'),
               (err: NodeJS.ErrnoException | null) => {
                 if (err) return
                 this.endCapture()
