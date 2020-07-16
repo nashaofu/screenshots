@@ -113,11 +113,13 @@ export default class ScreenshotsViewer extends PureComponent {
     this.draw()
     window.addEventListener('mousemove', this.onMousemove)
     window.addEventListener('mouseup', this.onMouseup)
+    window.addEventListener('dblclick', this.onDblClick)
   }
 
   componentWillUnmount () {
     window.removeEventListener('mousemove', this.onMousemove)
     window.removeEventListener('mouseup', this.onMouseup)
+    window.removeEventListener('dblclick', this.onDblClick)
   }
 
   componentDidUpdate () {
@@ -214,6 +216,12 @@ export default class ScreenshotsViewer extends PureComponent {
         action.mouseup(e, this.actionArgs)
       }
     }
+  }
+
+  onDblClick = (e) => {
+    const { actions } = this.props
+    const Action = actions.find(t => t.type !== 'divider' && t.key.title === '确定').key
+    this.onAction(Action)
   }
 
   handlePointInRecord = e => {
