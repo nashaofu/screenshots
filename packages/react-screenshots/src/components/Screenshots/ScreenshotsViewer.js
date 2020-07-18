@@ -1,3 +1,4 @@
+import Ok from './actions/ok'
 import React, { PureComponent } from 'react'
 import { withContext } from './ScreenshotsContext'
 import ScreenshotsViewerBar from './ScreenshotsViewerBar'
@@ -56,16 +57,7 @@ export default class ScreenshotsViewer extends PureComponent {
   }
 
   get pointers () {
-    const pointers = [
-      'top',
-      'top-right',
-      'right',
-      'right-bottom',
-      'bottom',
-      'bottom-left',
-      'left',
-      'left-top'
-    ]
+    const pointers = ['top', 'top-right', 'right', 'right-bottom', 'bottom', 'bottom-left', 'left', 'left-top']
     const { action } = this.props
     return action ? [] : pointers
   }
@@ -160,7 +152,7 @@ export default class ScreenshotsViewer extends PureComponent {
       }
     } else {
       const current = this.handlePointInRecord(e)
-      if (current.type && (current.type !== Object.getPrototypeOf(action).constructor.type)) {
+      if (current.type && current.type !== Object.getPrototypeOf(action).constructor.type) {
         // 根据路径更改action
         const Action = actions.find(t => t.key.type === current.type).key
         const nextAction = this.onAction(Action)
@@ -180,7 +172,7 @@ export default class ScreenshotsViewer extends PureComponent {
     }
   }
 
-  onMousemove = (e) => {
+  onMousemove = e => {
     const { viewer, action } = this.props
     if (!viewer) return
     if (!action) {
@@ -196,7 +188,7 @@ export default class ScreenshotsViewer extends PureComponent {
     }
   }
 
-  onMouseup = (e) => {
+  onMouseup = e => {
     const { viewer, action } = this.props
     if (!viewer) return
     if (!action) {
@@ -218,10 +210,11 @@ export default class ScreenshotsViewer extends PureComponent {
     }
   }
 
-  onDblClick = (e) => {
+  onDblClick = () => {
     const { actions } = this.props
-    const Action = actions.find(t => t.type !== 'divider' && t.key.title === '确定').key
-    this.onAction(Action)
+    if (actions.some(({ key }) => key === Ok)) {
+      this.onAction(Ok)
+    }
   }
 
   handlePointInRecord = e => {
@@ -257,8 +250,8 @@ export default class ScreenshotsViewer extends PureComponent {
         const textRect = recent.domClientRect
         const textX = textRect.left - left
         const textY = textRect.top - top
-        const assertX = x >= textX && x <= (textX + textRect.width)
-        const assertY = y >= textY && y <= (textY + textRect.height)
+        const assertX = x >= textX && x <= textX + textRect.width
+        const assertY = y >= textY && y <= textY + textRect.height
         if (assertX && assertY) {
           action = recent
           type = t.type
@@ -283,7 +276,7 @@ export default class ScreenshotsViewer extends PureComponent {
     })
   }
 
-  resize = (e) => {
+  resize = e => {
     if (!this.viewer) return
     const x = e.clientX - this.point.x
     const y = e.clientY - this.point.y
@@ -333,7 +326,7 @@ export default class ScreenshotsViewer extends PureComponent {
     if (
       Action.type !== 'undo' && // 撤销action不执行
       lastAction &&
-      (Action.prototype !== Object.getPrototypeOf(lastAction))
+      Action.prototype !== Object.getPrototypeOf(lastAction)
     ) {
       lastAction.beforeUnMount && lastAction.beforeUnMount()
     }
@@ -380,14 +373,14 @@ export default class ScreenshotsViewer extends PureComponent {
             style={{
               cursor: this.cursor
             }}
-            onMouseDown={(e) => this.onMousedown(e, 'move')}
+            onMouseDown={e => this.onMousedown(e, 'move')}
           />
-          {this.pointers.map((pointer) => {
+          {this.pointers.map(pointer => {
             return (
               <div
                 key={pointer}
                 className={`screenshots-viewer-pointer-${pointer}`}
-                onMouseDown={(e) => this.onMousedown(e, pointer)}
+                onMouseDown={e => this.onMousedown(e, pointer)}
               />
             )
           })}
