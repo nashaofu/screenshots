@@ -3,7 +3,7 @@ import fs from 'fs'
 import Event from './event'
 import Events from 'events'
 import padStart0 from './padStart0'
-import getDisplay from './getDisplay'
+import getBoundAndDisplay from './getBoundAndDisplay'
 
 interface Bounds {
   x1: number
@@ -34,8 +34,8 @@ export default class Screenshots extends Events {
    */
   public startCapture (): void {
     if (this.$win && !this.$win.isDestroyed()) this.$win.close()
-    const display = getDisplay()
-    this.$win = this.createWindow(display)
+    const { bound, display } = getBoundAndDisplay()
+    this.$win = this.createWindow(bound)
     ipcMain.once('SCREENSHOTS::DOM-READY', () => {
       if (!this.$win) return
       this.$win.webContents.send('SCREENSHOTS::SEND-DISPLAY-DATA', display)
