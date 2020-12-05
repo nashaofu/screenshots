@@ -105,13 +105,11 @@ export default class ScreenshotsViewer extends PureComponent {
     this.draw()
     window.addEventListener('mousemove', this.onMousemove)
     window.addEventListener('mouseup', this.onMouseup)
-    window.addEventListener('dblclick', this.onDblClick)
   }
 
   componentWillUnmount () {
     window.removeEventListener('mousemove', this.onMousemove)
     window.removeEventListener('mouseup', this.onMouseup)
-    window.removeEventListener('dblclick', this.onDblClick)
   }
 
   componentDidUpdate () {
@@ -210,9 +208,9 @@ export default class ScreenshotsViewer extends PureComponent {
     }
   }
 
-  onDblClick = () => {
+  onDblClick = e => {
     const { actions } = this.props
-    if (actions.some(({ key }) => key === Ok)) {
+    if (e.target === e.currentTarget && actions.some(({ key }) => key === Ok)) {
       this.onAction(Ok)
     }
   }
@@ -347,6 +345,7 @@ export default class ScreenshotsViewer extends PureComponent {
         style={{
           display: viewer ? 'block' : 'none'
         }}
+        onDoubleClick={this.onDblClick}
       >
         <div
           ref={this.viewerRef}

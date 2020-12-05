@@ -22,6 +22,7 @@ export default class App extends PureComponent {
 
   componentWillUnmount () {
     window.removeEventListener('resize', this.resize)
+    window.removeEventListener('keyup', this.onKeyUp)
     ipcRenderer.off('SCREENSHOTS::SEND-DISPLAY-DATA', this.getSource)
   }
 
