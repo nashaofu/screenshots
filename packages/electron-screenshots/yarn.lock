@@ -990,9 +990,9 @@ inherits@2, inherits@^2.0.3, inherits@~2.0.3:
   integrity sha1-D6LGT5MpF8NDOg3tVTY6rjdBa3w=
 
 ini@^1.3.4:
-  version "1.3.5"
-  resolved "https://registry.npm.taobao.org/ini/download/ini-1.3.5.tgz#eee25f56db1c9ec6085e0c22778083f596abf927"
-  integrity sha1-7uJfVtscnsYIXgwid4CD9Zar+Sc=
+  version "1.3.8"
+  resolved "https://registry.yarnpkg.com/ini/-/ini-1.3.8.tgz#a29da425b48806f34767a4efce397269af28432c"
+  integrity sha512-JV/yugV2uzW5iMRSiZAyDtQd+nxtUnjeLt0acNdw98kKLrvuRVyB80tsREOE7yvGVgalhZ6RNXCmEHkUKBKxew==
 
 is-arrayish@^0.2.1:
   version "0.2.1"
@@ -1468,10 +1468,10 @@ react-is@^16.8.1:
   resolved "https://registry.npm.taobao.org/react-is/download/react-is-16.13.1.tgz?cache=0&sync_timestamp=1603369407179&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Freact-is%2Fdownload%2Freact-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
   integrity sha1-eJcppNw23imZ3BVt1sHZwYzqVqQ=
 
-react-screenshots@^0.0.10:
-  version "0.0.10"
-  resolved "https://registry.npm.taobao.org/react-screenshots/download/react-screenshots-0.0.10.tgz#e214165bfc85598077094a9b34e64a0046472a95"
-  integrity sha1-4hQWW/yFWYB3CUqbNOZKAEZHKpU=
+react-screenshots@^0.0.12:
+  version "0.0.12"
+  resolved "https://registry.yarnpkg.com/react-screenshots/-/react-screenshots-0.0.12.tgz#980c21f77e0e09bdedfccbb678edcd756d2d29c9"
+  integrity sha512-KcFBKE6ZXnkov6iO9Cig66JTaK0ui1tpvLwZMyFBlM98vPV3d1jhMOe5wVlj4Q9SdmDv+/BM/XNqHW8vwuQKhg==
   dependencies:
     core-js "^3.6.5"
     normalize.css "^8.0.1"
