@@ -86,7 +86,7 @@ export default class Screenshots extends Events {
       fullscreen: false,
       // 设为true mac全屏窗口没有桌面滚动效果
       simpleFullscreen: true,
-      backgroundColor: '#30000000',
+      backgroundColor: '#00000000',
       titleBarStyle: 'hidden',
       alwaysOnTop: true,
       enableLargerThanScreen: true,
