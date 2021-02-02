@@ -218,8 +218,8 @@ export default class ScreenshotsViewer extends PureComponent {
 
   handlePointInRecord = e => {
     const { left, top } = this.canvasRef.current.getBoundingClientRect()
-    const x = e.clientX - left
-    const y = e.clientY - top
+    const x = (e.clientX - left) * devicePixelRatio
+    const y = (e.clientY - top) * devicePixelRatio
 
     let action = null
     let type = ''
