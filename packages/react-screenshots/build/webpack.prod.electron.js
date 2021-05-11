@@ -1,6 +1,6 @@
 const path = require('path')
 const config = require('./config')
-const merge = require('webpack-merge')
+const { merge } = require('webpack-merge')
 const styleLoader = require('./style-loader')
 const webpackConfig = require('./webpack.config')
 const TerserPlugin = require('terser-webpack-plugin')
@@ -67,10 +67,7 @@ module.exports = merge(webpackConfig, {
         // Default number of concurrent runs: os.cpus().length - 1
         // Disabled on WSL (Windows Subsystem for Linux) due to an issue with Terser
         // https://github.com/webpack-contrib/terser-webpack-plugin/issues/21
-        parallel: true,
-        // Enable file caching
-        cache: true,
-        sourceMap: config.sourceMap
+        parallel: true
       }),
       new OptimizeCSSAssetsPlugin({
         cssProcessorOptions: {
@@ -78,11 +75,11 @@ module.exports = merge(webpackConfig, {
             ? {
               // `inline: false` forces the sourcemap to be output into a
               // separate file
-              inline: false,
-              // `annotation: true` appends the sourceMappingURL to the end of
-              // the css file, helping the browser find the sourcemap
-              annotation: true
-            }
+                inline: false,
+                // `annotation: true` appends the sourceMappingURL to the end of
+                // the css file, helping the browser find the sourcemap
+                annotation: true
+              }
             : false
         }
       })

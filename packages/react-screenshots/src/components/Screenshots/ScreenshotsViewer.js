@@ -257,6 +257,8 @@ export default class ScreenshotsViewer extends PureComponent {
           return true
         }
       }
+
+      return false
     })
     return { action, index, type }
   }

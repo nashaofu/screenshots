@@ -290,8 +290,8 @@ export default class Text extends Action {
           this.drag.textWrap
         )
         const dom = e.target
-        var range = document.createRange()
-        var sel = window.getSelection()
+        const range = document.createRange()
+        const sel = window.getSelection()
         range.setStart(dom.childNodes[0], dom.innerText.length)
         range.collapse(true)
         sel.removeAllRanges()

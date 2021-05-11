@@ -12,7 +12,7 @@ module.exports = {
     browser: true,
     commonjs: true
   },
-  extends: ['standard', 'standard-react'],
+  extends: ['standard', 'standard-jsx', 'standard-react'],
   plugins: ['react-hooks'],
   rules: {
     'react/prop-types': 0,

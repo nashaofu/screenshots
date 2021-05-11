@@ -10,6 +10,6 @@
     "alpha": "lerna publish --dist-tag alpha"
   },
   "devDependencies": {
-    "lerna": "^3.20.2"
+    "lerna": "^4.0.0"
   }
 }

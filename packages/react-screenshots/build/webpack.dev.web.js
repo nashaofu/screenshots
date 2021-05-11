@@ -1,13 +1,12 @@
 const path = require('path')
 const config = require('./config')
-const merge = require('webpack-merge')
+const { merge } = require('webpack-merge')
 const styleLoader = require('./style-loader')
 const webpackConfig = require('./webpack.config')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = merge(webpackConfig, {
   mode: 'development',
-  watch: true,
   entry: {
     app: config.entry.web
   },
