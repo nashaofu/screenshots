@@ -1,6 +1,6 @@
 {
   "name": "electron-screenshots",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "description": "electron 截图插件",
   "types": "lib/screenshots.d.ts",
   "main": "lib/screenshots.js",
@@ -35,7 +35,7 @@
     "registry": "https://registry.npmjs.org/"
   },
   "dependencies": {
-    "react-screenshots": "^0.0.14"
+    "react-screenshots": "^0.0.15"
   },
   "peerDependencies": {
     "electron": ">=8"
