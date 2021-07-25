@@ -1,4 +1,5 @@
 import Ok from './actions/ok'
+import Cancel from './actions/cancel'
 import React, { PureComponent } from 'react'
 import { withContext } from './ScreenshotsContext'
 import ScreenshotsViewerBar from './ScreenshotsViewerBar'
@@ -63,20 +64,8 @@ export default class ScreenshotsViewer extends PureComponent {
   }
 
   get actionArgs () {
-    const {
-      image,
-      viewer,
-      width,
-      height,
-      stack,
-      action,
-      actions,
-      border,
-      font,
-      color,
-      cursor,
-      editPointers
-    } = this.props
+    const { image, viewer, width, height, stack, action, actions, border, font, color, cursor, editPointers } =
+      this.props
     return {
       viewer: this.viewerRef.current,
       el: this.canvasRef.current,
@@ -208,9 +197,17 @@ export default class ScreenshotsViewer extends PureComponent {
     }
   }
 
+  onRightClick = e => {
+    const { actions } = this.props
+    if (e.target === e.currentTarget && e.button === 2 && actions.some(({ key }) => key === Cancel)) {
+      e.preventDefault()
+      this.onAction(Cancel)
+    }
+  }
+
   onDblClick = e => {
     const { actions } = this.props
-    if (e.target === e.currentTarget && actions.some(({ key }) => key === Ok)) {
+    if (e.target === e.currentTarget && e.button === 0 && actions.some(({ key }) => key === Ok)) {
       this.onAction(Ok)
     }
   }
@@ -347,6 +344,7 @@ export default class ScreenshotsViewer extends PureComponent {
         style={{
           display: viewer ? 'block' : 'none'
         }}
+        onMouseUp={this.onRightClick}
         onDoubleClick={this.onDblClick}
       >
         <div
