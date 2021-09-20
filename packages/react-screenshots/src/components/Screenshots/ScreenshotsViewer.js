@@ -1,3 +1,4 @@
+import dpr from '../../dpr'
 import Ok from './actions/ok'
 import Cancel from './actions/cancel'
 import React, { PureComponent } from 'react'
@@ -112,7 +113,7 @@ export default class ScreenshotsViewer extends PureComponent {
     const rx = image.width / width
     const ry = image.height / height
 
-    this.ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0)
+    this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
 
     this.ctx.clearRect(0, 0, w, h)
     this.ctx.drawImage(image.el, x * rx, y * ry, w * rx, h * ry, 0, 0, w, h)
@@ -214,8 +215,8 @@ export default class ScreenshotsViewer extends PureComponent {
 
   handlePointInRecord = e => {
     const { left, top } = this.canvasRef.current.getBoundingClientRect()
-    const x = (e.clientX - left) * devicePixelRatio
-    const y = (e.clientY - top) * devicePixelRatio
+    const x = (e.clientX - left) * dpr
+    const y = (e.clientY - top) * dpr
 
     let action = null
     let type = ''
@@ -360,8 +361,8 @@ export default class ScreenshotsViewer extends PureComponent {
         >
           <canvas
             ref={this.canvasRef}
-            width={width * devicePixelRatio}
-            height={height * devicePixelRatio}
+            width={width * dpr}
+            height={height * dpr}
             style={{
               width,
               height

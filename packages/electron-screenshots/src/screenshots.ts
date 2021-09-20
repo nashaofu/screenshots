@@ -95,7 +95,6 @@ export default class Screenshots extends Events {
       maximizable: false,
       webPreferences: {
         nodeIntegration: true,
-        enableRemoteModule: true,
         contextIsolation: false
       }
     })

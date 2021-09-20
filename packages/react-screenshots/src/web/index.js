@@ -1,6 +1,3 @@
-// 导入core-js和raf
-import 'core-js'
-import 'raf/polyfill'
 import App from './app'
 import React from 'react'
 import ReactDOM from 'react-dom'

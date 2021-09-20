@@ -1,3 +1,4 @@
+import dpr from '../../dpr'
 import React, { PureComponent } from 'react'
 import { withContext } from './ScreenshotsContext'
 
@@ -34,7 +35,7 @@ export default class ScreenshotsCanvas extends PureComponent {
   draw = () => {
     const { image, width, height } = this.props
     if (!image) return
-    this.ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0)
+    this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
 
     this.ctx.clearRect(0, 0, width, height)
     this.ctx.drawImage(
@@ -108,8 +109,8 @@ export default class ScreenshotsCanvas extends PureComponent {
       <div className="screenshots-canvas" onMouseDown={this.onMousedown}>
         <canvas
           ref={this.canvasRef}
-          width={width * devicePixelRatio}
-          height={height * devicePixelRatio}
+          width={width * dpr}
+          height={height * dpr}
           style={{
             width,
             height
