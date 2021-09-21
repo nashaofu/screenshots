@@ -1,6 +1,6 @@
 {
   "name": "react-screenshots",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "description": "a picture clipping and graffiti tool by react",
   "main": "dist/screenshots.js",
   "files": [
