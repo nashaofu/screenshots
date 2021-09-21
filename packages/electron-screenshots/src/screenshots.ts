@@ -34,11 +34,11 @@ export default class Screenshots extends Events {
    */
   public startCapture (): void {
     if (this.$win && !this.$win.isDestroyed()) this.$win.close()
-    const { bound, display } = getBoundAndDisplay()
+    const { bound, display, scaleFactor } = getBoundAndDisplay()
     this.$win = this.createWindow(bound)
     ipcMain.once('SCREENSHOTS::DOM-READY', () => {
       if (!this.$win) return
-      this.$win.webContents.send('SCREENSHOTS::SEND-DISPLAY-DATA', display)
+      this.$win.webContents.send('SCREENSHOTS::SEND-DISPLAY-DATA', display, scaleFactor)
     })
 
     // 捕捉桌面之后显示窗口

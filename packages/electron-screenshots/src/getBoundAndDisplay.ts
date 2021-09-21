@@ -7,6 +7,7 @@ export interface Display extends Rectangle {
 export interface BoundAndDisplay {
   bound: Rectangle
   display: Display
+  scaleFactor: number
 }
 
 export default (): BoundAndDisplay => {
@@ -15,9 +16,6 @@ export default (): BoundAndDisplay => {
 
   // win32 darwin linux平台分别处理
   const display = process.platform === 'linux' ? workArea : bounds
-  // mac图片太大，导致截图窗口卡顿，并且截图窗口显示延迟很严重
-  let scale = process.platform === 'darwin' ? 2 : scaleFactor
-  scale = scale < 2 ? 2 : scale
 
   return {
     bound: {
@@ -28,10 +26,11 @@ export default (): BoundAndDisplay => {
     },
     display: {
       id,
-      x: display.x * scale,
-      y: display.y * scale,
-      width: display.width * scale,
-      height: display.height * scale
-    }
+      x: display.x,
+      y: display.y,
+      width: display.width,
+      height: display.height
+    },
+    scaleFactor
   }
 }

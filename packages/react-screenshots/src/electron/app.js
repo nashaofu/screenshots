@@ -1,7 +1,7 @@
 import { ipcRenderer } from 'electron'
 import React, { PureComponent } from 'react'
 import Screenshot from '@/components/Screenshots'
-import getSourceDataURL from './getSourceDataURL'
+import getSnapshotDataURL from './getSnapshotDataURL'
 import 'normalize.css'
 import './app.less'
 
@@ -26,8 +26,8 @@ export default class App extends PureComponent {
     ipcRenderer.off('SCREENSHOTS::SEND-DISPLAY-DATA', this.getSource)
   }
 
-  getSource = (e, display) => {
-    getSourceDataURL(display).then(dataURL => {
+  getSource = (e, display, scaleFactor) => {
+    getSnapshotDataURL(display, scaleFactor).then(dataURL => {
       // 捕捉完桌面后通知主进程
       ipcRenderer.send('SCREENSHOTS::CAPTURED')
       this.setState({ image: dataURL })
