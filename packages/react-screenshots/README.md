@@ -13,7 +13,7 @@
 ```js
 import React, { PureComponent } from 'react'
 import Screenshot from 'react-screenshots'
-import 'react-screenshots/dist/react-screenshots.css'
+import 'react-screenshots/dist/screenshots.css'
 
 export default class App extends PureComponent {
   state = {
