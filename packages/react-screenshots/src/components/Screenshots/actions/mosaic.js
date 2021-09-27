@@ -11,47 +11,29 @@ export default class Mosaic extends Action {
   static icon = 'screenshots-icon-mosaic'
 
   mosaic = null
-  tileWidth = 10
-  tileHeight = 10
-  tiles = []
+  size = 10
 
   constructor (props) {
     super(props)
-    const { context, ctx } = props
-    const { width, height } = context
-    this.imageData = ctx.getImageData(0, 0, width, height).data
-    this.tileColumnSize = Math.ceil(width / this.tileWidth)
-    this.tileRowSize = Math.ceil(height / this.tileHeight)
+    const { context } = props
+    const { viewer, image, width, height } = context
+    const $canvas = document.createElement('canvas')
+    const { x1, y1, x2, y2 } = viewer
+    const vw = x2 - x1
+    const vh = y2 - y1
 
-    for (let i = 0; i < this.tileRowSize; i++) {
-      for (let j = 0; j < this.tileColumnSize; j++) {
-        const tile = {
-          row: i,
-          column: j,
-          pixelWidth: this.tileWidth,
-          pixelHeight: this.tileHeight
-        }
+    $canvas.width = vw
+    $canvas.height = vh
 
-        if (j === tile.column - 1) { // Last column
-          tile.pixelWidth = width - (j * this.tileWidth)
-        }
+    const rx = image.width / width
+    const ry = image.height / height
 
-        if (i === tile.row - 1) { // Last row
-          tile.pixelHeight = height - (i * this.tileHeight)
-        }
+    const ctx = $canvas.getContext('2d')
 
-        const data = []
-        const pixelPosition = width * 4 * this.tileHeight * tile.row + tile.column * this.tileWidth * 4
-        for (let i = 0, j = tile.pixelHeight; i < j; i++) {
-          const position = pixelPosition + width * 4 * i
-          data.push.apply(data, this.imageData.slice(position, position + tile.pixelWidth * 4))
-        };
-        tile.data = data
+    ctx.drawImage(image.el, x1 * rx, y1 * ry, vw * rx, vh * ry, 0, 0, vw, vh)
 
-        this.tiles.push(tile)
-      }
-    }
-
+    this.imageData = ctx.getImageData(0, 0, vw, vh)
+    this.ctx = ctx
     props.setContext({ cursor: 'crosshair' })
   }
 
@@ -72,38 +54,49 @@ export default class Mosaic extends Action {
   }
 
   mousemove = (e, { el, ctx, context, setContext }) => {
+    if (!this.mosaic) {
+      return
+    }
     const { left, top } = el.getBoundingClientRect()
     const x = e.clientX - left
     const y = e.clientY - top
 
-    if (this.mosaic) {
-      // 开始move以后再推进栈
-      if (this.mosaic.ready) {
-        delete this.mosaic.ready
-        this.mosaic.history[0].undoPriority = this.setUndoPriority(context)
-        context.stack.push(this.mosaic)
-      }
-
-      const tiles = []
-      const size = this.mosaic.history[0].size / 3
-      let startRow = Math.max(0, Math.floor(y / this.tileHeight) - Math.floor(size / 2))
-      const startColumn = Math.max(0, Math.floor(x / this.tileWidth) - Math.floor(size / 2))
-
-      const endRow = Math.min(this.tileRowSize, startRow + size)
-      const endColumn = Math.min(this.tileColumnSize, startColumn + size)
-
-      // Get tiles.
-      while (startRow < endRow) {
-        let column = startColumn
-        while (column < endColumn) {
-          tiles.push(this.tiles[startRow * this.tileColumnSize + column])
-          column += 1
-        }
-        startRow += 1
-      }
-      this.mosaic.history[0].tiles = this.mosaic.history[0].tiles.concat(tiles)
-      setContext({ stack: [...context.stack] })
+    // 开始move以后再推进栈
+    if (this.mosaic.ready) {
+      this.mosaic.ready = false
+      this.mosaic.history[0].undoPriority = this.setUndoPriority(context)
+      context.stack.push(this.mosaic)
     }
+
+    const lastTile = this.mosaic.history[0].tiles[this.mosaic.history[0].tiles.length - 1]
+
+    if (!lastTile) {
+      this.mosaic.history[0].tiles.push({
+        x,
+        y,
+        size: this.size
+      })
+    } else {
+      const dx = lastTile.x - x
+      const dy = lastTile.y - y
+      // 减小点的个数
+      const length = Math.sqrt(dx ** 2 + dy ** 2)
+      if (length > this.size) {
+        this.mosaic.history[0].tiles.push({
+          x: Math.floor(x + dx / 2),
+          y: Math.floor(y + dy / 2),
+          size: this.size
+        })
+
+        this.mosaic.history[0].tiles.push({
+          x,
+          y,
+          size: this.size
+        })
+      }
+    }
+
+    setContext({ stack: [...context.stack] })
   }
 
   mouseup = (e, { el, ctx, context, setContext }) => {
@@ -115,35 +108,15 @@ export default class Mosaic extends Action {
   draw = (ctx, action) => {
     const { tiles } = action
     tiles.forEach(tile => {
-      if (!tile.color) {
-        const dataLen = tile.data.length
-        let r = 0; let g = 0; let b = 0; let a = 0
-        for (let i = 0; i < dataLen; i += 4) {
-          r += tile.data[i]
-          g += tile.data[i + 1]
-          b += tile.data[i + 2]
-          a += tile.data[i + 3]
-        }
+      const { data, width } = this.imageData
 
-        // Set tile color.
-        const pixelLen = dataLen / 4
-        tile.color = {
-          r: parseInt(r / pixelLen, 10),
-          g: parseInt(g / pixelLen, 10),
-          b: parseInt(b / pixelLen, 10),
-          a: parseInt(a / pixelLen, 10)
-        }
-      }
+      const index = tile.y * width * 4 + tile.x * 4
 
-      const color = tile.color
-      ctx.fillStyle = `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a / 255})`
+      const color = data.slice(index, index + 4)
 
-      const x = tile.column * this.tileWidth
-      const y = tile.row * this.tileHeight
-      const w = tile.pixelWidth
-      const h = tile.pixelHeight
+      ctx.fillStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${color[3] / 255})`
 
-      ctx.fillRect(x, y, w, h)
+      ctx.fillRect(tile.x - tile.size / 2, tile.y - tile.size / 2, tile.size, tile.size)
     })
   }
 
@@ -151,16 +124,17 @@ export default class Mosaic extends Action {
     this.props.setContext({
       border: size
     })
+    const sizes = {
+      3: 6,
+      6: 10,
+      9: 14
+    }
     this.props.context.border = size
+    this.size = sizes[size]
   }
 
   render () {
     const { border } = this.props.context
-    return (
-      <Size
-        value={border}
-        onChange={this.onSizeChange}
-      />
-    )
+    return <Size value={border} onChange={this.onSizeChange} />
   }
 }
