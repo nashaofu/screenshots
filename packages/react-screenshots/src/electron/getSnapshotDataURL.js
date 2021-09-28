@@ -22,9 +22,9 @@ export default async (display, scaleFactor) => {
       mandatory: {
         chromeMediaSource: 'desktop',
         chromeMediaSourceId: source.id,
-        minWidth: display.width * scaleFactor,
+        minWidth: display.width,
         maxWidth: display.width * scaleFactor,
-        minHeight: display.height * scaleFactor,
+        minHeight: display.height,
         maxHeight: display.height * scaleFactor
       }
     }
