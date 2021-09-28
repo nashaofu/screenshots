@@ -208,9 +208,9 @@ ansi-colors@^4.1.1:
   integrity sha512-JoX0apGbHaUJBNl6yF+p6JAFYZ666/hhCGKN5t9QFjbJQKUU/g8MNbFDbvfrgKXvI1QpZplPOnwIo99lX/AAmA==
 
 ansi-regex@^5.0.0:
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/ansi-regex/-/ansi-regex-5.0.0.tgz#388539f55179bf39339c81af30a654d69f87cb75"
-  integrity sha512-bY6fj56OUQ0hU1KjFNDQuJFezqKdrAyFdIevADiqrWHwSlbmBNMHp5ak2f40Pm8JTFyM2mqxkG6ngkHO11f/lg==
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/ansi-regex/-/ansi-regex-5.0.1.tgz#082cb2c89c9fe8659a311a53bd6a4dc5301db304"
+  integrity sha512-quJQXlTSUGL2LH9SUXo8VwsY4soanhgo6LNSm84E1LBcE8s3O0wpdiRzyR9z/ZZJMlMWv37qOOb9pdJlMUEKFQ==
 
 ansi-styles@^3.2.1:
   version "3.2.1"
@@ -1657,10 +1657,10 @@ react-dom@^17.0.2:
     object-assign "^4.1.1"
     scheduler "^0.20.2"
 
-react-screenshots@^0.0.15:
-  version "0.0.15"
-  resolved "https://registry.yarnpkg.com/react-screenshots/-/react-screenshots-0.0.15.tgz#8c44860390f63c5ddfb48503fda4b7da3260f098"
-  integrity sha512-YuNIXm/y8WvJO8+Ls0NOt+MQsfPm1p7JV4WOMTFO7FzQi7dYXSbFSiWMfBEbrg5bWnm2u/DRS/5dxzGyLzIFmA==
+react-screenshots@^0.0.17:
+  version "0.0.17"
+  resolved "https://registry.yarnpkg.com/react-screenshots/-/react-screenshots-0.0.17.tgz#a213ad2dcf636f7353701d3c36ab7869e5451468"
+  integrity sha512-mZf4EpKt2i4jTCvoqWdsrjio1Ijwy9DHUIdrfolLPl29BCOgSTOmrz+0qIxaKXr4p4N+NC/Nz0pWK4ojG4B55Q==
   dependencies:
     core-js "^3.12.1"
     normalize.css "^8.0.1"
