@@ -13,7 +13,7 @@ export default class Mosaic extends Action {
   mosaic = null
   size = 10
 
-  constructor (props) {
+  constructor(props) {
     super(props)
     const { context } = props
     const { viewer, image, width, height } = context
@@ -68,30 +68,43 @@ export default class Mosaic extends Action {
       context.stack.push(this.mosaic)
     }
 
-    const lastTile = this.mosaic.history[0].tiles[this.mosaic.history[0].tiles.length - 1]
+    let lastTile = this.mosaic.history[0].tiles[this.mosaic.history[0].tiles.length - 1]
 
     if (!lastTile) {
       this.mosaic.history[0].tiles.push({
         x,
         y,
-        size: this.size
+        size: this.size,
+        color: this.getColor(x, y, this.size)
       })
     } else {
       const dx = lastTile.x - x
       const dy = lastTile.y - y
       // 减小点的个数
-      const length = Math.sqrt(dx ** 2 + dy ** 2)
-      if (length > this.size) {
-        this.mosaic.history[0].tiles.push({
-          x: Math.floor(x + dx / 2),
-          y: Math.floor(y + dy / 2),
-          size: this.size
-        })
+      let length = Math.sqrt(dx ** 2 + dy ** 2)
+      const sin = -dy / length
+      const cos = -dx / length
 
+      while (length > this.size) {
+        const cx = Math.floor(lastTile.x + this.size * cos)
+        const cy = Math.floor(lastTile.y + this.size * sin)
+        lastTile = {
+          x: cx,
+          y: cy,
+          size: this.size,
+          color: this.getColor(cx, cy, this.size)
+        }
+        this.mosaic.history[0].tiles.push(lastTile)
+        length -= this.size
+      }
+
+      // 最后一个位置补充一块
+      if (length > this.size / 2) {
         this.mosaic.history[0].tiles.push({
           x,
           y,
-          size: this.size
+          size: this.size,
+          color: this.getColor(x, y, this.size)
         })
       }
     }
@@ -105,17 +118,38 @@ export default class Mosaic extends Action {
     }
   }
 
+  getColor(x, y, size) {
+    const { data, width } = this.imageData
+
+    let x1 = Math.floor(x - size / 2)
+    let y1 = Math.floor(y - size / 2)
+    x1 = x1 >= 0 ? x1 : 0
+    y1 = y1 >= 0 ? y1 : 0
+
+    const rgbas = [0, 0, 0, 0]
+
+    for (let r = 0; r < size; r++) {
+      for (let c = 0; c < size; c++) {
+        const index = (y1 + r) * width * 4 + (x1 + c) * 4
+        const rgba = data.slice(index, index + 4)
+        rgbas[0] += rgba[0]
+        rgbas[1] += rgba[1]
+        rgbas[2] += rgba[2]
+        rgbas[3] += rgba[3]
+      }
+    }
+    return rgbas.map(rgba => rgba / size / size)
+  }
+
   draw = (ctx, action) => {
     const { tiles } = action
     tiles.forEach(tile => {
-      const { data, width } = this.imageData
+      const r = Math.round(tile.color[0])
+      const g = Math.round(tile.color[1])
+      const b = Math.round(tile.color[2])
+      const a = tile.color[3] / 255
 
-      const index = tile.y * width * 4 + tile.x * 4
-
-      const color = data.slice(index, index + 4)
-
-      ctx.fillStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${color[3] / 255})`
-
+      ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${a})`
       ctx.fillRect(tile.x - tile.size / 2, tile.y - tile.size / 2, tile.size, tile.size)
     })
   }
@@ -133,7 +167,7 @@ export default class Mosaic extends Action {
     this.size = sizes[size]
   }
 
-  render () {
+  render() {
     const { border } = this.props.context
     return <Size value={border} onChange={this.onSizeChange} />
   }
