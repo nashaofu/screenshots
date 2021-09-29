@@ -13,7 +13,7 @@ export default class Mosaic extends Action {
   mosaic = null
   size = 10
 
-  constructor(props) {
+  constructor (props) {
     super(props)
     const { context } = props
     const { viewer, image, width, height } = context
@@ -118,7 +118,7 @@ export default class Mosaic extends Action {
     }
   }
 
-  getColor(x, y, size) {
+  getColor (x, y, size) {
     const { data, width } = this.imageData
 
     let x1 = Math.floor(x - size / 2)
@@ -167,7 +167,7 @@ export default class Mosaic extends Action {
     this.size = sizes[size]
   }
 
-  render() {
+  render () {
     const { border } = this.props.context
     return <Size value={border} onChange={this.onSizeChange} />
   }
