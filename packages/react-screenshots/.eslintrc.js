@@ -1,26 +1,21 @@
 module.exports = {
   root: true,
-  parser: 'babel-eslint',
-  parserOptions: {
-    ecmaFeatures: {
-      legacyDecorators: true
-    }
-  },
+  parser: '@typescript-eslint/parser',
   env: {
     es6: true,
     node: true,
-    browser: true,
-    commonjs: true
+    browser: true
   },
-  extends: ['standard', 'standard-jsx', 'standard-react'],
-  plugins: ['react-hooks'],
+  extends: [
+    'standard',
+    'standard-jsx',
+    'standard-react',
+    'plugin:react-hooks/recommended',
+    'plugin:@typescript-eslint/recommended'
+  ],
   rules: {
-    'react/prop-types': 0,
-    'react/jsx-handler-names': 0,
-    'react-hooks/rules-of-hooks': 'error',
-    'react-hooks/exhaustive-deps': 'warn',
-    'jsx-quotes': ['error', 'prefer-double'],
-    'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off'
+    // note you must disable the base rule as it can report incorrect errors
+    'no-use-before-define': 'off',
+    '@typescript-eslint/no-use-before-define': ['error']
   }
 }
