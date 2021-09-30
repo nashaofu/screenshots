@@ -1,0 +1,29 @@
+@import '../var.less';
+
+.screenshots-button {
+  width: @button-size;
+  height: @button-size;
+  line-height: @button-size;
+  color: #555;
+  font-size: 18px;
+  text-align: center;
+  margin: 0 3px;
+  vertical-align: middle;
+  cursor: pointer;
+
+  &-checked,
+  &:hover {
+    background-color: #eee;
+    outline: 1px solid #777;
+  }
+
+  &-disabled {
+    color: #ccc;
+    cursor: not-allowed;
+
+    &:hover {
+      background-color: #fff;
+      outline: none;
+    }
+  }
+}
