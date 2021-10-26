@@ -7,12 +7,11 @@ export interface Display extends Rectangle {
 export interface BoundAndDisplay {
   bound: Rectangle
   display: Display
-  scaleFactor: number
 }
 
 export default (): BoundAndDisplay => {
   const point = screen.getCursorScreenPoint()
-  const { id, bounds, workArea, scaleFactor } = screen.getDisplayNearestPoint(point)
+  const { id, bounds, workArea } = screen.getDisplayNearestPoint(point)
 
   // win32 darwin linux平台分别处理
   const display = process.platform === 'linux' ? workArea : bounds
@@ -30,7 +29,6 @@ export default (): BoundAndDisplay => {
       y: display.y,
       width: display.width,
       height: display.height
-    },
-    scaleFactor
+    }
   }
 }

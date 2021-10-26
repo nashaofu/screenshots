@@ -26,8 +26,8 @@ export default class App extends PureComponent {
     ipcRenderer.off('SCREENSHOTS::SEND-DISPLAY-DATA', this.getSource)
   }
 
-  getSource = (e, display, scaleFactor) => {
-    getSnapshotDataURL(display, scaleFactor).then(dataURL => {
+  getSource = (e, display) => {
+    getSnapshotDataURL(display).then(dataURL => {
       // 捕捉完桌面后通知主进程
       ipcRenderer.send('SCREENSHOTS::CAPTURED')
       this.setState({ image: dataURL })
