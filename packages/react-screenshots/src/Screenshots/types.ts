@@ -2,7 +2,8 @@ import { MutableRefObject } from 'react'
 
 export type CanvasContextRef = MutableRefObject<CanvasRenderingContext2D | null>
 
-export type EmiterListener = (...args: unknown[]) => unknown
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type EmiterListener = (...args: any) => unknown
 
 export type Emiter = Record<string, EmiterListener[]>
 
@@ -14,6 +15,7 @@ export interface HistoryAction<T> {
 }
 export interface History {
   index: number
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   stack: HistoryAction<any>[]
 }
 

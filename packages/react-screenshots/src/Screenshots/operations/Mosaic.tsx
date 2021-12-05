@@ -82,41 +82,7 @@ export default function MosaicButton (): ReactElement {
     cursorDispatcher.set('crosshair')
   }, [checked, operationDispatcher, cursorDispatcher])
 
-  useEffect(() => {
-    if (!bounds || !image || !checked) {
-      return
-    }
-
-    const $canvas = document.createElement('canvas')
-
-    const canvasContext = $canvas.getContext('2d')
-
-    if (!canvasContext) {
-      return
-    }
-
-    $canvas.width = bounds.width
-    $canvas.height = bounds.height
-
-    const rx = image.naturalWidth / width
-    const ry = image.naturalHeight / height
-
-    canvasContext.drawImage(
-      image,
-      bounds.x * rx,
-      bounds.y * ry,
-      bounds.width * rx,
-      bounds.height * ry,
-      0,
-      0,
-      bounds.width,
-      bounds.height
-    )
-
-    imageDataRef.current = canvasContext.getImageData(0, 0, bounds.width, bounds.height)
-  }, [width, height, bounds, image, checked])
-
-  useCanvasMousedown(
+  const onMousedown = useCallback(
     (e: MouseEvent): void => {
       if (!checked || mosaicRef.current || !imageDataRef.current || !canvasContextRef.current) {
         return
@@ -142,10 +108,10 @@ export default function MosaicButton (): ReactElement {
 
       historyDispatcher.push(mosaicRef.current)
     },
-    [historyDispatcher]
+    [checked, size, canvasContextRef, historyDispatcher]
   )
 
-  useCanvasMousemove(
+  const onMousemove = useCallback(
     (e: MouseEvent): void => {
       if (!checked || !mosaicRef.current || !canvasContextRef.current || !imageDataRef.current) {
         return
@@ -198,10 +164,10 @@ export default function MosaicButton (): ReactElement {
 
       historyDispatcher.set(history)
     },
-    [history, historyDispatcher]
+    [checked, canvasContextRef, history, historyDispatcher]
   )
 
-  useCanvasMouseup((): void => {
+  const onMouseup = useCallback(() => {
     if (!checked) {
       return
     }
@@ -209,7 +175,44 @@ export default function MosaicButton (): ReactElement {
     if (mosaicRef.current) {
       mosaicRef.current = null
     }
-  })
+  }, [checked])
+
+  useCanvasMousedown(onMousedown)
+  useCanvasMousemove(onMousemove)
+  useCanvasMouseup(onMouseup)
+  useEffect(() => {
+    if (!bounds || !image || !checked) {
+      return
+    }
+
+    const $canvas = document.createElement('canvas')
+
+    const canvasContext = $canvas.getContext('2d')
+
+    if (!canvasContext) {
+      return
+    }
+
+    $canvas.width = bounds.width
+    $canvas.height = bounds.height
+
+    const rx = image.naturalWidth / width
+    const ry = image.naturalHeight / height
+
+    canvasContext.drawImage(
+      image,
+      bounds.x * rx,
+      bounds.y * ry,
+      bounds.width * rx,
+      bounds.height * ry,
+      0,
+      0,
+      bounds.width,
+      bounds.height
+    )
+
+    imageDataRef.current = canvasContext.getImageData(0, 0, bounds.width, bounds.height)
+  }, [width, height, bounds, image, checked])
 
   return (
     <ScreenshotsButton

@@ -51,7 +51,7 @@ export default function BrushButton (): ReactElement {
     cursorDispatcher.set('default')
   }, [checked, operationDispatcher, cursorDispatcher])
 
-  useCanvasMousedown(
+  const onMousedown = useCallback(
     (e: MouseEvent): void => {
       if (!checked || brushRef.current || !canvasContextRef.current) {
         return
@@ -75,10 +75,10 @@ export default function BrushButton (): ReactElement {
 
       historyDispatcher.push(brushRef.current)
     },
-    [checked, historyDispatcher]
+    [checked, canvasContextRef, size, color, historyDispatcher]
   )
 
-  useCanvasMousemove(
+  const onMousemove = useCallback(
     (e: MouseEvent): void => {
       if (!checked || !brushRef.current || !canvasContextRef.current) {
         return
@@ -93,10 +93,10 @@ export default function BrushButton (): ReactElement {
 
       historyDispatcher.set(history)
     },
-    [history]
+    [checked, history, canvasContextRef, historyDispatcher]
   )
 
-  useCanvasMouseup((): void => {
+  const onMouseup = useCallback((): void => {
     if (!checked) {
       return
     }
@@ -104,7 +104,11 @@ export default function BrushButton (): ReactElement {
     if (brushRef.current) {
       brushRef.current = null
     }
-  })
+  }, [checked])
+
+  useCanvasMousedown(onMousedown)
+  useCanvasMousemove(onMousemove)
+  useCanvasMouseup(onMouseup)
 
   return (
     <ScreenshotsButton
