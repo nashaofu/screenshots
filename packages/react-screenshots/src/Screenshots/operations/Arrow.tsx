@@ -54,7 +54,7 @@ export default function ArrowButton (): ReactElement {
     cursorDispatcher.set('default')
   }, [operationDispatcher, cursorDispatcher])
 
-  useCanvasMousedown(
+  const onMousedown = useCallback(
     (e: MouseEvent) => {
       if (!checked || arrowRef.current || !canvasContextRef.current) {
         return
@@ -74,10 +74,10 @@ export default function ArrowButton (): ReactElement {
       }
       historyDispatcher.push(arrowRef.current)
     },
-    [checked, historyDispatcher]
+    [checked, color, size, canvasContextRef, historyDispatcher]
   )
 
-  useCanvasMousemove(
+  const onMousemove = useCallback(
     (e: MouseEvent) => {
       if (!checked || !arrowRef.current || !canvasContextRef.current) {
         return
@@ -103,10 +103,10 @@ export default function ArrowButton (): ReactElement {
       arrowRef.current.data.y2 = y
       historyDispatcher.set(history)
     },
-    [history, historyDispatcher]
+    [checked, history, canvasContextRef, historyDispatcher]
   )
 
-  useCanvasMouseup(() => {
+  const onMouseup = useCallback(() => {
     if (!checked) {
       return
     }
@@ -114,7 +114,11 @@ export default function ArrowButton (): ReactElement {
     if (arrowRef.current) {
       arrowRef.current = null
     }
-  })
+  }, [checked])
+
+  useCanvasMousedown(onMousedown)
+  useCanvasMousemove(onMousemove)
+  useCanvasMouseup(onMouseup)
 
   return (
     <ScreenshotsButton

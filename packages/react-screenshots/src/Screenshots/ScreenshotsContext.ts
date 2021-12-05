@@ -15,7 +15,7 @@ export interface ScreenshotsContextStore {
 }
 
 export interface ScreenshotsContextDispatcher {
-  call?: <T extends unknown>(funcName: string, ...args: T[]) => void
+  call?: <T>(funcName: string, ...args: T[]) => void
   setHistory?: Dispatch<SetStateAction<History>>
   setBounds?: Dispatch<SetStateAction<Bounds | null>>
   setCursor?: Dispatch<SetStateAction<string | undefined>>
