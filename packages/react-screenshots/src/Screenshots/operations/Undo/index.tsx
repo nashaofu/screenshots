@@ -1,8 +1,8 @@
 import React, { ReactElement, useCallback } from 'react'
-import ScreenshotsButton from '../ScreenshotsButton'
-import useHistory from '../hooks/useHistory'
+import ScreenshotsButton from '../../ScreenshotsButton'
+import useHistory from '../../hooks/useHistory'
 
-export default function UndoButton (): ReactElement {
+export default function Undo (): ReactElement {
   const [history, historyDispatcher] = useHistory()
 
   const onClick = useCallback(() => {

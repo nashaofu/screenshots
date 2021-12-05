@@ -1,22 +1,22 @@
 import React, { ReactElement, useCallback, useRef, useState } from 'react'
-import useCanvasMousedown from '../hooks/useCanvasMousedown'
-import useCanvasMousemove from '../hooks/useCanvasMousemove'
-import useCanvasMouseup from '../hooks/useCanvasMouseup'
-import ScreenshotsButton from '../ScreenshotsButton'
-import ScreenshotsSizeColor from '../ScreenshotsSizeColor'
-import useCursor from '../hooks/useCursor'
-import useOperation from '../hooks/useOperation'
-import useHistory from '../hooks/useHistory'
-import useCanvasContextRef from '../hooks/useCanvasContextRef'
-import { HistoryAction, Point } from '../types'
+import useCanvasMousedown from '../../hooks/useCanvasMousedown'
+import useCanvasMousemove from '../../hooks/useCanvasMousemove'
+import useCanvasMouseup from '../../hooks/useCanvasMouseup'
+import ScreenshotsButton from '../../ScreenshotsButton'
+import ScreenshotsSizeColor from '../../ScreenshotsSizeColor'
+import useCursor from '../../hooks/useCursor'
+import useOperation from '../../hooks/useOperation'
+import useHistory from '../../hooks/useHistory'
+import useCanvasContextRef from '../../hooks/useCanvasContextRef'
+import { HistoryAction, Point } from '../../types'
 
-export interface Brush {
+export interface BrushData {
   size: number
   color: string
   points: Point[]
 }
 
-function draw (ctx: CanvasRenderingContext2D, brush: Brush): void {
+function draw (ctx: CanvasRenderingContext2D, brush: BrushData): void {
   ctx.lineCap = 'round'
   ctx.lineJoin = 'round'
   ctx.lineWidth = brush.size
@@ -32,22 +32,22 @@ function draw (ctx: CanvasRenderingContext2D, brush: Brush): void {
   ctx.stroke()
 }
 
-export default function BrushButton (): ReactElement {
+export default function Brush (): ReactElement {
   const [, cursorDispatcher] = useCursor()
   const [operation, operationDispatcher] = useOperation()
   const canvasContextRef = useCanvasContextRef()
   const [history, historyDispatcher] = useHistory()
   const [size, setSize] = useState(3)
   const [color, setColor] = useState('#ee5126')
-  const brushRef = useRef<HistoryAction<Brush> | null>(null)
+  const brushRef = useRef<HistoryAction<BrushData> | null>(null)
 
-  const checked = operation === 'BrushButton'
+  const checked = operation === 'Brush'
 
   const onClick = useCallback(() => {
     if (checked) {
       return
     }
-    operationDispatcher.set('BrushButton')
+    operationDispatcher.set('Brush')
     cursorDispatcher.set('default')
   }, [checked, operationDispatcher, cursorDispatcher])
 

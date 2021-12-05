@@ -1,16 +1,16 @@
 import React, { ReactElement, useCallback, useEffect, useRef, useState } from 'react'
-import ScreenshotsButton from '../ScreenshotsButton'
-import ScreenshotsSize from '../ScreenshotsSize'
-import useCanvasMousedown from '../hooks/useCanvasMousedown'
-import useCanvasMousemove from '../hooks/useCanvasMousemove'
-import useCanvasMouseup from '../hooks/useCanvasMouseup'
-import { HistoryAction } from '../types'
-import useOperation from '../hooks/useOperation'
-import useCursor from '../hooks/useCursor'
-import useStore from '../hooks/useStore'
-import useBounds from '../hooks/useBounds'
-import useHistory from '../hooks/useHistory'
-import useCanvasContextRef from '../hooks/useCanvasContextRef'
+import ScreenshotsButton from '../../ScreenshotsButton'
+import ScreenshotsSize from '../../ScreenshotsSize'
+import useCanvasMousedown from '../../hooks/useCanvasMousedown'
+import useCanvasMousemove from '../../hooks/useCanvasMousemove'
+import useCanvasMouseup from '../../hooks/useCanvasMouseup'
+import { HistoryAction } from '../../types'
+import useOperation from '../../hooks/useOperation'
+import useCursor from '../../hooks/useCursor'
+import useStore from '../../hooks/useStore'
+import useBounds from '../../hooks/useBounds'
+import useHistory from '../../hooks/useHistory'
+import useCanvasContextRef from '../../hooks/useCanvasContextRef'
 
 export interface MosaicTile {
   x: number
@@ -18,38 +18,23 @@ export interface MosaicTile {
   color: number[]
 }
 
-export interface Mosaic {
+export interface MosaicData {
   size: number
   tiles: MosaicTile[]
 }
 
-function getColor (x: number, y: number, size: number, imageData: ImageData): number[] {
+function getColor (x: number, y: number, imageData: ImageData): number[] {
   if (!imageData) {
     return [0, 0, 0, 0]
   }
   const { data, width } = imageData
 
-  let x1 = Math.floor(x - size / 2)
-  let y1 = Math.floor(y - size / 2)
-  x1 = x1 >= 0 ? x1 : 0
-  y1 = y1 >= 0 ? y1 : 0
+  const index = y * width * 4 + x * 4
 
-  const rgbas = [0, 0, 0, 0]
-
-  for (let r = 0; r < size; r++) {
-    for (let c = 0; c < size; c++) {
-      const index = (y1 + r) * width * 4 + (x1 + c) * 4
-      const rgba = data.slice(index, index + 4)
-      rgbas[0] += rgba[0]
-      rgbas[1] += rgba[1]
-      rgbas[2] += rgba[2]
-      rgbas[3] += rgba[3]
-    }
-  }
-  return rgbas.map(rgba => rgba / size / size)
+  return data.slice(index, index + 4)
 }
 
-function draw (ctx: CanvasRenderingContext2D, mosaic: Mosaic) {
+function draw (ctx: CanvasRenderingContext2D, mosaic: MosaicData) {
   mosaic.tiles.forEach(tile => {
     const r = Math.round(tile.color[0])
     const g = Math.round(tile.color[1])
@@ -61,7 +46,7 @@ function draw (ctx: CanvasRenderingContext2D, mosaic: Mosaic) {
   })
 }
 
-export default function MosaicButton (): ReactElement {
+export default function Mosaic (): ReactElement {
   const { image, width, height } = useStore()
   const [operation, operationDispatcher] = useOperation()
   const canvasContextRef = useCanvasContextRef()
@@ -70,15 +55,15 @@ export default function MosaicButton (): ReactElement {
   const [, cursorDispatcher] = useCursor()
   const [size, setSize] = useState(3)
   const imageDataRef = useRef<ImageData | null>(null)
-  const mosaicRef = useRef<HistoryAction<Mosaic> | null>(null)
+  const mosaicRef = useRef<HistoryAction<MosaicData> | null>(null)
 
-  const checked = operation === 'MosaicButton'
+  const checked = operation === 'Mosaic'
 
   const onClick = useCallback(() => {
     if (checked) {
       return
     }
-    operationDispatcher.set('MosaicButton')
+    operationDispatcher.set('Mosaic')
     cursorDispatcher.set('crosshair')
   }, [checked, operationDispatcher, cursorDispatcher])
 
@@ -99,7 +84,7 @@ export default function MosaicButton (): ReactElement {
             {
               x,
               y,
-              color: getColor(x, y, mosaicSize, imageDataRef.current)
+              color: getColor(x, y, imageDataRef.current)
             }
           ]
         },
@@ -130,7 +115,7 @@ export default function MosaicButton (): ReactElement {
         mosaicTiles.push({
           x,
           y,
-          color: getColor(x, y, mosaicSize, imageDataRef.current)
+          color: getColor(x, y, imageDataRef.current)
         })
       } else {
         const dx = lastTile.x - x
@@ -146,7 +131,7 @@ export default function MosaicButton (): ReactElement {
           lastTile = {
             x: cx,
             y: cy,
-            color: getColor(cx, cy, mosaicSize, imageDataRef.current)
+            color: getColor(cx, cy, imageDataRef.current)
           }
           mosaicTiles.push(lastTile)
           length -= mosaicSize
@@ -157,7 +142,7 @@ export default function MosaicButton (): ReactElement {
           mosaicTiles.push({
             x,
             y,
-            color: getColor(x, y, mosaicSize, imageDataRef.current)
+            color: getColor(x, y, imageDataRef.current)
           })
         }
       }

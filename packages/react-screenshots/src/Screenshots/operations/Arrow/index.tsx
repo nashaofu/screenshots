@@ -1,16 +1,16 @@
 import React, { ReactElement, useCallback, useRef, useState } from 'react'
-import ScreenshotsButton from '../ScreenshotsButton'
-import ScreenshotsSizeColor from '../ScreenshotsSizeColor'
-import useCanvasMousedown from '../hooks/useCanvasMousedown'
-import useCanvasMousemove from '../hooks/useCanvasMousemove'
-import useCanvasMouseup from '../hooks/useCanvasMouseup'
-import { HistoryAction } from '../types'
-import useCursor from '../hooks/useCursor'
-import useOperation from '../hooks/useOperation'
-import useHistory from '../hooks/useHistory'
-import useCanvasContextRef from '../hooks/useCanvasContextRef'
+import ScreenshotsButton from '../../ScreenshotsButton'
+import ScreenshotsSizeColor from '../../ScreenshotsSizeColor'
+import useCanvasMousedown from '../../hooks/useCanvasMousedown'
+import useCanvasMousemove from '../../hooks/useCanvasMousemove'
+import useCanvasMouseup from '../../hooks/useCanvasMouseup'
+import { HistoryAction } from '../../types'
+import useCursor from '../../hooks/useCursor'
+import useOperation from '../../hooks/useOperation'
+import useHistory from '../../hooks/useHistory'
+import useCanvasContextRef from '../../hooks/useCanvasContextRef'
 
-export interface Arrow {
+export interface ArrowData {
   size: number
   color: string
   x1: number
@@ -19,7 +19,7 @@ export interface Arrow {
   y2: number
 }
 
-function draw (ctx: CanvasRenderingContext2D, { size, color, x1, x2, y1, y2 }: Arrow) {
+function draw (ctx: CanvasRenderingContext2D, { size, color, x1, x2, y1, y2 }: ArrowData) {
   ctx.lineCap = 'round'
   ctx.lineJoin = 'bevel'
   ctx.lineWidth = size
@@ -38,19 +38,19 @@ function draw (ctx: CanvasRenderingContext2D, { size, color, x1, x2, y1, y2 }: A
   ctx.stroke()
 }
 
-export default function ArrowButton (): ReactElement {
+export default function Arrow (): ReactElement {
   const [, cursorDispatcher] = useCursor()
   const [operation, operationDispatcher] = useOperation()
   const [history, historyDispatcher] = useHistory()
   const canvasContextRef = useCanvasContextRef()
   const [size, setSize] = useState(3)
   const [color, setColor] = useState('#ee5126')
-  const arrowRef = useRef<HistoryAction<Arrow> | null>(null)
+  const arrowRef = useRef<HistoryAction<ArrowData> | null>(null)
 
-  const checked = operation === 'ArrowButton'
+  const checked = operation === 'Arrow'
 
   const onClick = useCallback(() => {
-    operationDispatcher.set('ArrowButton')
+    operationDispatcher.set('Arrow')
     cursorDispatcher.set('default')
   }, [operationDispatcher, cursorDispatcher])
 

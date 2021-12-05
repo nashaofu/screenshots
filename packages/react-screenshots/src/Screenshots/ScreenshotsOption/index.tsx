@@ -35,11 +35,13 @@ export default function ScreenshotsOption ({ open, content, children }: Screensh
 
   useEffect(() => {
     const $el = getPopoverEl()
-    document.body.appendChild($el)
+    if (open) {
+      document.body.appendChild($el)
+    }
     return () => {
       $el.remove()
     }
-  }, [])
+  }, [open])
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {

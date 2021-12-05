@@ -19,6 +19,8 @@ import useOperation from '../hooks/useOperation'
 import useStore from '../hooks/useStore'
 import './index.less'
 
+const borders = ['top', 'right', 'bottom', 'left']
+
 export enum ResizePoints {
   ResizeTop = 'top',
   ResizetopRight = 'top-right',
@@ -63,7 +65,7 @@ export default forwardRef<CanvasRenderingContext2D>(function ScreenshotsCanvas (
     }
 
     const rx = image.naturalWidth / width
-    const ry = image.naturalWidth / height
+    const ry = image.naturalHeight / height
 
     const ctx = ctxRef.current
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
@@ -191,12 +193,15 @@ export default forwardRef<CanvasRenderingContext2D>(function ScreenshotsCanvas (
         }}
       />
       <div
-        className='screenshots-canvas-border'
+        className='screenshots-canvas-body'
         style={{
           cursor
         }}
         onMouseDown={e => onMouseDown(e, 'move')}
       />
+      {borders.map(border => {
+        return <div key={border} className={`screenshots-canvas-border-${border}`} />
+      })}
       {resizePoints.map(resizePoint => {
         return (
           <div
