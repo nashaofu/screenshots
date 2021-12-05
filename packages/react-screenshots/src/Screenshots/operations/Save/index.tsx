@@ -1,11 +1,11 @@
 import React, { ReactElement, useCallback } from 'react'
-import useBounds from '../hooks/useBounds'
-import useCall from '../hooks/useCall'
-import useCanvasContextRef from '../hooks/useCanvasContextRef'
-import useReset from '../hooks/useReset'
-import ScreenshotsButton from '../ScreenshotsButton'
+import useBounds from '../../hooks/useBounds'
+import useCall from '../../hooks/useCall'
+import useCanvasContextRef from '../../hooks/useCanvasContextRef'
+import useReset from '../../hooks/useReset'
+import ScreenshotsButton from '../../ScreenshotsButton'
 
-export default function SaveButton (): ReactElement {
+export default function Save (): ReactElement {
   const canvasContextRef = useCanvasContextRef()
   const [bounds] = useBounds()
   const call = useCall()

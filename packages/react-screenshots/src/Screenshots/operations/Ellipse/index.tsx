@@ -1,16 +1,16 @@
 import React, { ReactElement, useCallback, useRef, useState } from 'react'
-import useCanvasContextRef from '../hooks/useCanvasContextRef'
-import useCanvasMousedown from '../hooks/useCanvasMousedown'
-import useCanvasMousemove from '../hooks/useCanvasMousemove'
-import useCanvasMouseup from '../hooks/useCanvasMouseup'
-import useCursor from '../hooks/useCursor'
-import useHistory from '../hooks/useHistory'
-import useOperation from '../hooks/useOperation'
-import ScreenshotsButton from '../ScreenshotsButton'
-import ScreenshotsSizeColor from '../ScreenshotsSizeColor'
-import { HistoryAction } from '../types'
+import useCanvasContextRef from '../../hooks/useCanvasContextRef'
+import useCanvasMousedown from '../../hooks/useCanvasMousedown'
+import useCanvasMousemove from '../../hooks/useCanvasMousemove'
+import useCanvasMouseup from '../../hooks/useCanvasMouseup'
+import useCursor from '../../hooks/useCursor'
+import useHistory from '../../hooks/useHistory'
+import useOperation from '../../hooks/useOperation'
+import ScreenshotsButton from '../../ScreenshotsButton'
+import ScreenshotsSizeColor from '../../ScreenshotsSizeColor'
+import { HistoryAction } from '../../types'
 
-export interface Ellipse {
+export interface EllipseData {
   size: number
   color: string
   x1: number
@@ -19,7 +19,7 @@ export interface Ellipse {
   y2: number
 }
 
-function draw (ctx: CanvasRenderingContext2D, { size, color, x1, y1, x2, y2 }: Ellipse) {
+function draw (ctx: CanvasRenderingContext2D, { size, color, x1, y1, x2, y2 }: EllipseData) {
   ctx.lineCap = 'butt'
   ctx.lineJoin = 'miter'
   ctx.lineWidth = size
@@ -52,19 +52,19 @@ function draw (ctx: CanvasRenderingContext2D, { size, color, x1, y1, x2, y2 }: E
   ctx.stroke()
 }
 
-export default function EllipseButton (): ReactElement {
+export default function Ellipse (): ReactElement {
   const [history, historyDispatcher] = useHistory()
   const [operation, operationDispatcher] = useOperation()
   const [, cursorDispatcher] = useCursor()
   const canvasContextRef = useCanvasContextRef()
   const [size, setSize] = useState(3)
   const [color, setColor] = useState('#ee5126')
-  const ellipseRef = useRef<HistoryAction<Ellipse> | null>(null)
+  const ellipseRef = useRef<HistoryAction<EllipseData> | null>(null)
 
-  const checked = operation === 'EllipseButton'
+  const checked = operation === 'Ellipse'
 
   const onClick = useCallback(() => {
-    operationDispatcher.set('EllipseButton')
+    operationDispatcher.set('Ellipse')
     cursorDispatcher.set('crosshair')
   }, [operationDispatcher, cursorDispatcher])
 

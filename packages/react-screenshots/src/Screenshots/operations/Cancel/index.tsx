@@ -1,9 +1,9 @@
 import React, { ReactElement, useCallback } from 'react'
-import useCall from '../hooks/useCall'
-import useReset from '../hooks/useReset'
-import ScreenshotsButton from '../ScreenshotsButton'
+import useCall from '../../hooks/useCall'
+import useReset from '../../hooks/useReset'
+import ScreenshotsButton from '../../ScreenshotsButton'
 
-export default function CancelButton (): ReactElement {
+export default function Cancel (): ReactElement {
   const call = useCall()
   const reset = useReset()
 
