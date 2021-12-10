@@ -13,12 +13,11 @@ export default (): BoundAndDisplay => {
   const point = screen.getCursorScreenPoint()
   const { id, bounds, workArea } = screen.getDisplayNearestPoint(point)
 
-  // https://github.com/nashaofu/screenshots/issues/98
-  Object.keys(bounds).forEach(key => {
-    bounds[key] = Math.floor(bounds[key])
-  })
+  const keys: Array<keyof Rectangle> = ['x', 'y', 'width', 'height']
 
-  Object.keys(workArea).forEach(key => {
+  // https://github.com/nashaofu/screenshots/issues/98
+  keys.forEach(key => {
+    bounds[key] = Math.floor(bounds[key])
     workArea[key] = Math.floor(workArea[key])
   })
 
