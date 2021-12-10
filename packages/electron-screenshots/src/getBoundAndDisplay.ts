@@ -13,6 +13,14 @@ export default (): BoundAndDisplay => {
   const point = screen.getCursorScreenPoint()
   const { id, bounds, workArea } = screen.getDisplayNearestPoint(point)
 
+  const keys: Array<keyof Rectangle> = ['x', 'y', 'width', 'height']
+
+  // https://github.com/nashaofu/screenshots/issues/98
+  keys.forEach(key => {
+    bounds[key] = Math.floor(bounds[key])
+    workArea[key] = Math.floor(workArea[key])
+  })
+
   // win32 darwin linux平台分别处理
   const display = process.platform === 'linux' ? workArea : bounds
 
