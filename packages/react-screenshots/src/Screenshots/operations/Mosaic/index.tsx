@@ -31,7 +31,7 @@ function getColor (x: number, y: number, imageData: ImageData): number[] {
 
   const index = y * width * 4 + x * 4
 
-  return data.slice(index, index + 4)
+  return Array.from(data.slice(index, index + 4))
 }
 
 function draw (ctx: CanvasRenderingContext2D, mosaic: MosaicData) {

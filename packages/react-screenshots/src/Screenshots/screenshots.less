@@ -1,6 +1,9 @@
+@import './var.less';
+
 .screenshots {
   position: relative;
   transform: translateZ(0);
+  font-family: @font-family;
   &,
   * {
     box-sizing: border-box;
@@ -54,24 +57,5 @@
         margin-bottom: 4px;
       }
     }
-  }
-  &-textarea {
-    background-color: transparent;
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 300px;
-    border: 2px solid #bbb;
-    font-family: 'Microsoft YaHei';
-    outline: none;
-    padding: 8px 10px;
-    border-radius: 8px;
-    caret-color: #333;
-    word-break: break-all;
-    -webkit-user-modify: read-write-plaintext-only;
-    // 描边效果不是很满意
-    text-shadow: 0 2px #fff, 2px 0 #fff, -2px 0 #fff, 0 -2px #fff, 0 3px 1px #ccc, 3px 0 1px #ccc, -3px 0 1px #ccc,
-      0 -3px 1px #ccc;
-    line-height: 1;
   }
 }

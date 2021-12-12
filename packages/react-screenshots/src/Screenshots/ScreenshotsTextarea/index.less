@@ -1,0 +1,34 @@
+@import '../var.less';
+
+.screenshots-textarea {
+  position: absolute;
+  border: 2px solid @border-color;
+  font-family: @font-family;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  min-width: 8px;
+
+  &,
+  * {
+    box-sizing: border-box;
+  }
+
+  &-input {
+    display: block;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: transparent;
+    border: none;
+    resize: none;
+    outline: none;
+    text-align: left;
+    white-space: nowrap;
+    word-break: break-all;
+    overflow: hidden;
+    font-family: @font-family;
+    text-align: left;
+  }
+}
