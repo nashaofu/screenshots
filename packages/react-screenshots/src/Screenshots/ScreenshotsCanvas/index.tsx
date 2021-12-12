@@ -68,6 +68,8 @@ export default forwardRef<CanvasRenderingContext2D>(function ScreenshotsCanvas (
     const ry = image.naturalHeight / height
 
     const ctx = ctxRef.current
+    ctx.imageSmoothingEnabled = true
+    ctx.imageSmoothingQuality = 'high'
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
     ctx.clearRect(0, 0, bounds.width, bounds.height)
     ctx.drawImage(
