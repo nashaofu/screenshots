@@ -1,4 +1,4 @@
-import { dialog, ipcMain, Rectangle, clipboard, nativeImage, BrowserWindow } from 'electron'
+import { dialog, ipcMain, clipboard, nativeImage, BrowserWindow, BrowserView } from 'electron'
 import fs from 'fs'
 import Event from './event'
 import Events from 'events'
@@ -24,22 +24,34 @@ export default class Screenshots extends Events {
   // 截图窗口对象
   public $win: BrowserWindow | null = null
 
+  public $view: BrowserView = new BrowserView({
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false
+    }
+  })
+
+  private isReady = new Promise<true>(resolve => {
+    ipcMain.once('SCREENSHOTS.ready', () => {
+      resolve(true)
+    })
+  })
+
   constructor () {
     super()
     this.listenIpc()
+    this.$view.webContents.loadURL(`file://${require.resolve('react-screenshots/dist/electron/index.html')}`)
   }
 
   /**
    * 开始截图
    */
-  public startCapture (): void {
-    if (this.$win && !this.$win.isDestroyed()) this.$win.close()
-    const { bound, display } = getBoundAndDisplay()
-    this.$win = this.createWindow(bound)
-    ipcMain.once('SCREENSHOTS::DOM-READY', () => {
-      if (!this.$win) return
-      this.$win.webContents.send('SCREENSHOTS::SEND-DISPLAY-DATA', display)
-    })
+  public async startCapture (): void {
+    if (this.$win && !this.$win.isDestroyed()) {
+      this.$win.close()
+    }
+    await this.isReady
+    this.createWindow()
 
     // 捕捉桌面之后显示窗口
     // 避免截图窗口自己被截图
@@ -65,13 +77,14 @@ export default class Screenshots extends Events {
   /**
    * 初始化窗口
    */
-  private createWindow ({ x, y, width, height }: Rectangle): BrowserWindow {
-    const $win = new BrowserWindow({
+  private createWindow (): BrowserWindow {
+    const { bound, display } = getBoundAndDisplay()
+    this.$win = new BrowserWindow({
       title: 'screenshots',
-      x,
-      y,
-      width,
-      height,
+      x: bound.x,
+      y: bound.y,
+      width: bound.width,
+      height: bound.height,
       useContentSize: true,
       frame: false,
       show: false,
@@ -95,12 +108,14 @@ export default class Screenshots extends Events {
       maximizable: false,
       webPreferences: {
         nodeIntegration: true,
-        contextIsolation: false
+        contextIsolation: false,
+        nativeWindowOpen: false
       }
     })
 
-    $win.loadURL(`file://${require.resolve('react-screenshots/dist/index.html')}`)
-    return $win
+    this.$win.setBrowserView(this.$view)
+    this.$view.setBounds(bound)
+    this.$view.webContents.send('SCREENSHOTS.sendDisplayData', display)
   }
 
   /**

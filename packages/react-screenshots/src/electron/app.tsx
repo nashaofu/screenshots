@@ -1,24 +1,47 @@
-import { ipcRenderer } from 'electron'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState, useEffect, useState } from 'react'
 import Screenshots from '../Screenshots'
-import useUrl from './useUrl'
+import getSnapshotDataURL from './getSnapshotDataURL'
 import './app.less'
 
+export interface Display {
+  id: number
+  x: number
+  y: number
+  width: number
+  height: number
+  scaleFactor: number
+}
+
 export default function App (): JSX.Element {
-  const url = useUrl()
+  const [url, setUrl] = useState<string | undefined>(undefined)
   const [width, setWidth] = useState(window.innerWidth)
   const [height, setHeight] = useState(window.innerHeight)
 
   const onSave = useCallback(({ viewer, dataURL }) => {
-    ipcRenderer.send('SCREENSHOTS::SAVE', { viewer, dataURL })
+    window.screenshots.save({ viewer, dataURL })
   }, [])
 
   const onCancel = useCallback(() => {
-    ipcRenderer.send('SCREENSHOTS::CANCEL')
+    window.screenshots.cancel()
   }, [])
 
   const onOk = useCallback(({ dataURL, viewer }) => {
-    ipcRenderer.send('SCREENSHOTS::OK', { viewer, dataURL })
+    window.screenshots.ok({ viewer, dataURL })
+  }, [])
+
+  useEffect(() => {
+    const onCapture = (display: Display) => {
+      getSnapshotDataURL(display).then(dataURL => {
+        setUrl(dataURL)
+        window.screenshots.captured()
+      })
+    }
+    window.screenshots.on('capture', onCapture)
+    // 告诉主进程页面准备完成
+    window.screenshots.ready()
+    return () => {
+      window.screenshots.off('capture', onCapture)
+    }
   }, [])
 
   useEffect(() => {
@@ -35,8 +58,6 @@ export default function App (): JSX.Element {
 
     window.addEventListener('resize', onResize)
     window.addEventListener('keyup', onKeyup)
-    // 告诉主进程页面准备完成
-    ipcRenderer.send('SCREENSHOTS::DOM-READY')
     return () => {
       window.removeEventListener('resize', onResize)
       window.removeEventListener('keyup', onKeyup)

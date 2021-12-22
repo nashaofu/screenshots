@@ -1,7 +1,7 @@
 import { desktopCapturer } from 'electron'
-import { Display } from './useUrl'
+import { Display } from './app'
 
-export default async (display: Display, scaleFactor: number): Promise<string | undefined> => {
+export default async (display: Display): Promise<string | undefined> => {
   const sources = await desktopCapturer.getSources({
     types: ['screen'],
     thumbnailSize: {
@@ -28,6 +28,6 @@ export default async (display: Display, scaleFactor: number): Promise<string | u
   }
 
   return source?.thumbnail.toDataURL({
-    scaleFactor
+    scaleFactor: display.scaleFactor
   })
 }
