@@ -61,7 +61,7 @@ const $win = new BrowserWindow({
 $win.loadURL(`file://${require.resolve('react-screenshots/dist/index.html')}`)
 
 // 渲染进程页面加载后通知主进程
-ipcMain.once('SCREENSHOTS::DOM-READY', () => {
+ipcMain.once('SCREENSHOTS.ready', () => {
   // 发送需要截取的屏幕信息
   // display = {
   //   id, // 屏幕id

@@ -2,7 +2,7 @@ import debug from 'electron-debug'
 import { app, globalShortcut } from 'electron'
 import Screenshots from './screenshots'
 
-app.on('ready', () => {
+app.whenReady().then(() => {
   const screenshots = new Screenshots()
   globalShortcut.register('ctrl+shift+a', () => screenshots.startCapture())
   // 点击确定按钮回调事件

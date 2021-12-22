@@ -1,7 +1,8 @@
-import React, { ReactElement, useCallback, useEffect, useRef } from 'react'
+import React, { ReactElement, useCallback, useEffect, useRef, useState } from 'react'
+import ScreenshotsMagnifier from '../ScreenshotsMagnifier'
 import './index.less'
 import getBoundsByPoints from './getBoundsByPoints'
-import { Point } from '../types'
+import { Point, Position } from '../types'
 import useBounds from '../hooks/useBounds'
 import useStore from '../hooks/useStore'
 
@@ -11,6 +12,7 @@ export default function ScreenshotsBackground (): ReactElement | null {
 
   const elRef = useRef<HTMLDivElement>(null)
   const pointRef = useRef<Point | null>(null)
+  const [position, setPosition] = useState<Position | null>(null)
 
   const updateBounds = useCallback(
     (p1: Point, p2: Point) => {
@@ -54,6 +56,18 @@ export default function ScreenshotsBackground (): ReactElement | null {
 
   useEffect(() => {
     const onMouseMove = (e: MouseEvent) => {
+      if (elRef.current) {
+        const rect = elRef.current.getBoundingClientRect()
+        if (e.clientX < rect.left || e.clientY < rect.top || e.clientX > rect.right || e.clientY > rect.bottom) {
+          setPosition(null)
+          return
+        }
+        setPosition({
+          x: e.clientX - rect.x,
+          y: e.clientY - rect.y
+        })
+      }
+
       if (!pointRef.current) {
         return
       }
@@ -96,6 +110,7 @@ export default function ScreenshotsBackground (): ReactElement | null {
       onMouseDown={onMouseDown}
     >
       <div className='screenshots-background-mask' />
+      {position && !bounds && <ScreenshotsMagnifier x={position?.x} y={position?.y} />}
     </div>
   )
 }
