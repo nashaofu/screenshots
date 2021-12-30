@@ -9,6 +9,7 @@ import useCursor from '../../hooks/useCursor'
 import useOperation from '../../hooks/useOperation'
 import useHistory from '../../hooks/useHistory'
 import useCanvasContextRef from '../../hooks/useCanvasContextRef'
+import { isHit } from '../utils'
 
 export interface ArrowData {
   size: number
@@ -62,6 +63,7 @@ export default function Arrow (): ReactElement {
 
       const { left, top } = canvasContextRef.current.canvas.getBoundingClientRect()
       arrowRef.current = {
+        action: 'Arrow',
         data: {
           size,
           color,
@@ -70,11 +72,11 @@ export default function Arrow (): ReactElement {
           x2: e.clientX - left,
           y2: e.clientY - top
         },
-        draw
+        draw,
+        isHit
       }
-      historyDispatcher.push(arrowRef.current)
     },
-    [checked, color, size, canvasContextRef, historyDispatcher]
+    [checked, color, size, canvasContextRef]
   )
 
   const onMousemove = useCallback(
@@ -101,7 +103,12 @@ export default function Arrow (): ReactElement {
 
       arrowRef.current.data.x2 = x
       arrowRef.current.data.y2 = y
-      historyDispatcher.set(history)
+
+      if (history.top !== arrowRef.current) {
+        historyDispatcher.push(arrowRef.current)
+      } else {
+        historyDispatcher.set(history)
+      }
     },
     [checked, history, canvasContextRef, historyDispatcher]
   )

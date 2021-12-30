@@ -7,34 +7,51 @@ export default defineConfig(({ command, mode }) => {
     return {
       plugins: [react()]
     }
-  } else {
-    if (mode === 'lib') {
-      return {
-        build: {
-          outDir: 'dist/lib',
-          lib: {
-            entry: './src/Screenshots/index.tsx',
-            formats: ['es', 'cjs'],
-            fileName: format => `react-screenshots.${format}.js`
-          },
-          rollupOptions: {
-            external: ['react', 'react-dom']
+  }
+
+  if (mode === 'web') {
+    return {
+      base: './',
+      build: {
+        outDir: 'dist/web'
+      },
+      plugins: [react()]
+    }
+  }
+
+  if (mode === 'electron') {
+    return {
+      base: './',
+      build: {
+        outDir: 'dist/electron',
+        rollupOptions: {
+          input: {
+            index: './electron.html'
           }
+        }
+      },
+      plugins: [react()]
+    }
+  }
+
+  if (mode === 'lib') {
+    return {
+      build: {
+        outDir: 'dist/lib',
+        lib: {
+          entry: './src/Screenshots/index.tsx',
+          formats: ['es', 'cjs'],
+          fileName: format => `react-screenshots.${format}.js`
         },
-        plugins: [
-          react({
-            jsxRuntime: 'classic'
-          })
-        ]
-      }
-    } else {
-      return {
-        base: './',
-        build: {
-          outDir: 'dist/web'
-        },
-        plugins: [react()]
-      }
+        rollupOptions: {
+          external: ['react', 'react-dom']
+        }
+      },
+      plugins: [
+        react({
+          jsxRuntime: 'classic'
+        })
+      ]
     }
   }
 })

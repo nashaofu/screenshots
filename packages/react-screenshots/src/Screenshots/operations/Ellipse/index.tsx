@@ -9,6 +9,7 @@ import useOperation from '../../hooks/useOperation'
 import ScreenshotsButton from '../../ScreenshotsButton'
 import ScreenshotsSizeColor from '../../ScreenshotsSizeColor'
 import { HistoryAction } from '../../types'
+import { isHit } from '../utils'
 
 export interface EllipseData {
   size: number
@@ -78,6 +79,7 @@ export default function Ellipse (): ReactElement {
       const x = e.clientX - left
       const y = e.clientY - top
       ellipseRef.current = {
+        action: 'Ellipse',
         data: {
           size,
           color,
@@ -86,11 +88,11 @@ export default function Ellipse (): ReactElement {
           x2: x,
           y2: y
         },
-        draw
+        draw,
+        isHit
       }
-      historyDispatcher.push(ellipseRef.current)
     },
-    [checked, size, color, canvasContextRef, historyDispatcher]
+    [checked, size, color, canvasContextRef]
   )
 
   const onMousemove = useCallback(
@@ -103,7 +105,11 @@ export default function Ellipse (): ReactElement {
       ellipseData.x2 = e.clientX - left
       ellipseData.y2 = e.clientY - top
 
-      historyDispatcher.set(history)
+      if (history.top !== ellipseRef.current) {
+        historyDispatcher.push(ellipseRef.current)
+      } else {
+        historyDispatcher.set(history)
+      }
     },
     [checked, canvasContextRef, history, historyDispatcher]
   )

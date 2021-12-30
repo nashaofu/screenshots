@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect, useState, useEffect, useState } from 'react'
+import React, { useCallback, useState, useEffect } from 'react'
 import Screenshots from '../Screenshots'
-import getSnapshotDataURL from './getSnapshotDataURL'
+import { Bounds } from '../Screenshots/types'
 import './app.less'
 
 export interface Display {
@@ -9,7 +9,6 @@ export interface Display {
   y: number
   width: number
   height: number
-  scaleFactor: number
 }
 
 export default function App (): JSX.Element {
@@ -17,24 +16,23 @@ export default function App (): JSX.Element {
   const [width, setWidth] = useState(window.innerWidth)
   const [height, setHeight] = useState(window.innerHeight)
 
-  const onSave = useCallback(({ viewer, dataURL }) => {
-    window.screenshots.save({ viewer, dataURL })
+  const onSave = useCallback(async (blob: Blob, bounds: Bounds) => {
+    window.screenshots.save(await blob.arrayBuffer(), bounds)
   }, [])
 
   const onCancel = useCallback(() => {
     window.screenshots.cancel()
   }, [])
 
-  const onOk = useCallback(({ dataURL, viewer }) => {
-    window.screenshots.ok({ viewer, dataURL })
+  const onOk = useCallback(async (blob: Blob, bounds: Bounds) => {
+    window.screenshots.ok(await blob.arrayBuffer(), bounds)
   }, [])
 
   useEffect(() => {
-    const onCapture = (display: Display) => {
-      getSnapshotDataURL(display).then(dataURL => {
-        setUrl(dataURL)
-        window.screenshots.captured()
-      })
+    const onCapture = async (display: Display) => {
+      const dataURL = await window.screenshots.capture(display)
+      setUrl(dataURL)
+      window.screenshots.captured()
     }
     window.screenshots.on('capture', onCapture)
     // 告诉主进程页面准备完成

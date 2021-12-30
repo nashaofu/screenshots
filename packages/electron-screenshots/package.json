@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "prepublishOnly": "npm run build",
-    "start": "electron lib/index.js",
+    "start": "DEBUG=screenshots electron lib/index.js",
     "dev": "tsc --sourceMap --watch",
     "build": "npm run lint && npm run clean && tsc",
     "lint": "eslint . --ext .js,.ts --fix",
@@ -35,12 +35,14 @@
     "registry": "https://registry.npmjs.org/"
   },
   "dependencies": {
+    "debug": "^4.3.3",
     "react-screenshots": "^0.1.2"
   },
   "peerDependencies": {
     "electron": ">=11"
   },
   "devDependencies": {
+    "@types/debug": "^4.1.7",
     "@typescript-eslint/eslint-plugin": "^4.23.0",
     "@typescript-eslint/parser": "^4.23.0",
     "electron": "^14.0.1",

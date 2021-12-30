@@ -18,6 +18,7 @@ import useCursor from '../hooks/useCursor'
 import useOperation from '../hooks/useOperation'
 import useStore from '../hooks/useStore'
 import './index.less'
+import isPointInDraw from './isPointInDraw'
 
 const borders = ['top', 'right', 'bottom', 'left']
 
@@ -105,10 +106,15 @@ export default forwardRef<CanvasRenderingContext2D>(function ScreenshotsCanvas (
           height: bounds.height
         }
       } else {
-        emiter.emit('mousedown', e.nativeEvent)
+        const draw = isPointInDraw(bounds, canvasRef.current, history, e.nativeEvent)
+        if (draw) {
+          emiter.emit('drawselect', draw)
+        } else {
+          emiter.emit('mousedown', e.nativeEvent)
+        }
       }
     },
-    [bounds, operation, emiter]
+    [bounds, operation, emiter, history]
   )
 
   const updateBounds = useCallback(
@@ -121,8 +127,6 @@ export default forwardRef<CanvasRenderingContext2D>(function ScreenshotsCanvas (
     },
     [width, height, bounds, boundsDispatcher]
   )
-
-  useImperativeHandle<CanvasRenderingContext2D | null, CanvasRenderingContext2D | null>(ref, () => ctxRef.current)
 
   useLayoutEffect(() => {
     if (!image || !bounds || !canvasRef.current) {
@@ -170,6 +174,9 @@ export default forwardRef<CanvasRenderingContext2D>(function ScreenshotsCanvas (
       window.removeEventListener('mouseup', onMouseUp)
     }
   }, [updateBounds, operation, emiter])
+
+  // 放到最后，保证ctxRef.current存在
+  useImperativeHandle<CanvasRenderingContext2D | null, CanvasRenderingContext2D | null>(ref, () => ctxRef.current)
 
   if (!bounds) {
     return null
