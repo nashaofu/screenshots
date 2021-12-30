@@ -35,7 +35,7 @@ export default function getBoundsByPoints (
   return {
     x: x1,
     y: y1,
-    width: x2 - x1,
-    height: y2 - y1
+    width: Math.max(x2 - x1, 1),
+    height: Math.max(y2 - y1, 1)
   }
 }

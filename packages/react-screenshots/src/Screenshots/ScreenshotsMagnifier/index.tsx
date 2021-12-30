@@ -74,7 +74,7 @@ export default function ScreenshotsMagnifier ({ x, y }: ScreenshotsMagnifierProp
       magnifierWidth,
       magnifierHeight
     )
-    const { data } = ctx.getImageData(magnifierWidth / 2, magnifierWidth / 2, 1, 1)
+    const { data } = ctx.getImageData(Math.floor(magnifierWidth / 2), Math.floor(magnifierHeight / 2), 1, 1)
     const hex = Array.from(data.slice(0, 3))
       .map(val => (val >= 16 ? val.toString(16) : `0${val.toString(16)}`))
       .join('')

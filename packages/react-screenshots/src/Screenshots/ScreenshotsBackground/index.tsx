@@ -60,12 +60,12 @@ export default function ScreenshotsBackground (): ReactElement | null {
         const rect = elRef.current.getBoundingClientRect()
         if (e.clientX < rect.left || e.clientY < rect.top || e.clientX > rect.right || e.clientY > rect.bottom) {
           setPosition(null)
-          return
+        } else {
+          setPosition({
+            x: e.clientX - rect.x,
+            y: e.clientY - rect.y
+          })
         }
-        setPosition({
-          x: e.clientX - rect.x,
-          y: e.clientY - rect.y
-        })
       }
 
       if (!pointRef.current) {

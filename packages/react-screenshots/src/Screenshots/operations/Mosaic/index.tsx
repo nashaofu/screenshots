@@ -78,6 +78,7 @@ export default function Mosaic (): ReactElement {
       const y = e.clientY - rect.y
       const mosaicSize = size * 2
       mosaicRef.current = {
+        action: 'Mosaic',
         data: {
           size: mosaicSize,
           tiles: [
@@ -90,10 +91,8 @@ export default function Mosaic (): ReactElement {
         },
         draw
       }
-
-      historyDispatcher.push(mosaicRef.current)
     },
-    [checked, size, canvasContextRef, historyDispatcher]
+    [checked, size, canvasContextRef]
   )
 
   const onMousemove = useCallback(
@@ -147,7 +146,11 @@ export default function Mosaic (): ReactElement {
         }
       }
 
-      historyDispatcher.set(history)
+      if (history.top !== mosaicRef.current) {
+        historyDispatcher.push(mosaicRef.current)
+      } else {
+        historyDispatcher.set(history)
+      }
     },
     [checked, canvasContextRef, history, historyDispatcher]
   )

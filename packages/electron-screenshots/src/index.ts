@@ -4,10 +4,13 @@ import Screenshots from './screenshots'
 
 app.whenReady().then(() => {
   const screenshots = new Screenshots()
-  globalShortcut.register('ctrl+shift+a', () => screenshots.startCapture())
+  globalShortcut.register('ctrl+shift+a', () => {
+    screenshots.startCapture()
+    screenshots.$view.webContents.openDevTools()
+  })
   // 点击确定按钮回调事件
-  screenshots.on('ok', (e, { viewer }) => {
-    console.log('capture', viewer)
+  screenshots.on('ok', (e, buffer, bounds) => {
+    console.log('capture', buffer, bounds)
   })
   // 点击取消按钮回调事件
   screenshots.on('cancel', () => {
@@ -20,8 +23,8 @@ app.whenReady().then(() => {
     console.log('capture', 'cancel2')
   })
   // 点击保存按钮回调事件
-  screenshots.on('save', (e, { viewer }) => {
-    console.log('capture', viewer)
+  screenshots.on('save', (e, buffer, bounds) => {
+    console.log('capture', buffer, bounds)
   })
   debug({ showDevTools: true, devToolsMode: 'undocked' })
 })

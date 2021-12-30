@@ -9,6 +9,7 @@ import useOperation from '../../hooks/useOperation'
 import ScreenshotsButton from '../../ScreenshotsButton'
 import ScreenshotsSizeColor from '../../ScreenshotsSizeColor'
 import { HistoryAction } from '../../types'
+import { isHit } from '../utils'
 
 export interface RectangleData {
   size: number
@@ -63,6 +64,7 @@ export default function Rectangle (): ReactElement {
       const x = e.clientX - left
       const y = e.clientY - top
       rectangleRef.current = {
+        action: 'Rectangle',
         data: {
           size,
           color,
@@ -71,11 +73,11 @@ export default function Rectangle (): ReactElement {
           x2: x,
           y2: y
         },
-        draw
+        draw,
+        isHit
       }
-      historyDispatcher.push(rectangleRef.current)
     },
-    [checked, size, color, canvasContextRef, historyDispatcher]
+    [checked, size, color, canvasContextRef]
   )
 
   const onMousemove = useCallback(
@@ -88,7 +90,11 @@ export default function Rectangle (): ReactElement {
       rectangleData.x2 = e.clientX - left
       rectangleData.y2 = e.clientY - top
 
-      historyDispatcher.set(history)
+      if (history.top !== rectangleRef.current) {
+        historyDispatcher.push(rectangleRef.current)
+      } else {
+        historyDispatcher.set(history)
+      }
     },
     [checked, canvasContextRef, history, historyDispatcher]
   )

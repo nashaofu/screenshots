@@ -9,6 +9,8 @@ import useOperation from '../../hooks/useOperation'
 import useHistory from '../../hooks/useHistory'
 import useCanvasContextRef from '../../hooks/useCanvasContextRef'
 import { HistoryAction, Point } from '../../types'
+import useDrawSelect from '../../hooks/useDrawSelect'
+import { isHit } from '../utils'
 
 export interface BrushData {
   size: number
@@ -43,13 +45,23 @@ export default function Brush (): ReactElement {
 
   const checked = operation === 'Brush'
 
-  const onClick = useCallback(() => {
+  const selectBrush = useCallback(() => {
     if (checked) {
       return
     }
     operationDispatcher.set('Brush')
     cursorDispatcher.set('default')
   }, [checked, operationDispatcher, cursorDispatcher])
+
+  const onDrawSelect = useCallback(
+    (action: HistoryAction<unknown>) => {
+      if (action.action !== 'Brush') {
+        return
+      }
+      selectBrush()
+    },
+    [selectBrush]
+  )
 
   const onMousedown = useCallback(
     (e: MouseEvent): void => {
@@ -60,6 +72,7 @@ export default function Brush (): ReactElement {
       const { left, top } = canvasContextRef.current.canvas.getBoundingClientRect()
 
       brushRef.current = {
+        action: 'Brush',
         data: {
           size: size,
           color: color,
@@ -70,12 +83,11 @@ export default function Brush (): ReactElement {
             }
           ]
         },
-        draw
+        draw,
+        isHit
       }
-
-      historyDispatcher.push(brushRef.current)
     },
-    [checked, canvasContextRef, size, color, historyDispatcher]
+    [checked, canvasContextRef, size, color]
   )
 
   const onMousemove = useCallback(
@@ -91,7 +103,11 @@ export default function Brush (): ReactElement {
         y: e.clientY - top
       })
 
-      historyDispatcher.set(history)
+      if (history.top !== brushRef.current) {
+        historyDispatcher.push(brushRef.current)
+      } else {
+        historyDispatcher.set(history)
+      }
     },
     [checked, history, canvasContextRef, historyDispatcher]
   )
@@ -106,6 +122,7 @@ export default function Brush (): ReactElement {
     }
   }, [checked])
 
+  useDrawSelect(onDrawSelect)
   useCanvasMousedown(onMousedown)
   useCanvasMousemove(onMousemove)
   useCanvasMouseup(onMouseup)
@@ -115,7 +132,7 @@ export default function Brush (): ReactElement {
       title='画笔'
       icon='icon-brush'
       checked={checked}
-      onClick={onClick}
+      onClick={selectBrush}
       option={<ScreenshotsSizeColor size={size} color={color} onSizeChange={setSize} onColorChange={setColor} />}
     />
   )

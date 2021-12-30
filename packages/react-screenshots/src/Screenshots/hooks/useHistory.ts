@@ -3,6 +3,11 @@ import { History, HistoryAction } from '../types'
 import useDispatcher from './useDispatcher'
 import useStore from './useStore'
 
+export interface HistoryValue extends History {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  top?: HistoryAction<any>
+}
+
 export interface HistoryDispatcher {
   push: <T>(action: HistoryAction<T>) => void
   pop: () => void
@@ -12,7 +17,7 @@ export interface HistoryDispatcher {
   reset: () => void
 }
 
-export type HistoryValueDispatcher = [History, HistoryDispatcher]
+export type HistoryValueDispatcher = [HistoryValue, HistoryDispatcher]
 
 export default function useHistory (): HistoryValueDispatcher {
   const { history } = useStore()
@@ -79,7 +84,8 @@ export default function useHistory (): HistoryValueDispatcher {
   return [
     {
       index: history.index,
-      stack: history.stack
+      stack: history.stack,
+      top: history.stack.slice(history.index, history.index + 1)[0]
     },
     {
       push,

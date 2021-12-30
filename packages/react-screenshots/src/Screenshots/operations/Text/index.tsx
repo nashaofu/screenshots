@@ -6,7 +6,7 @@ import useHistory from '../../hooks/useHistory'
 import useOperation from '../../hooks/useOperation'
 import ScreenshotsButton from '../../ScreenshotsButton'
 import ScreenshotsSizeColor from '../../ScreenshotsSizeColor'
-import { HistoryAction } from '../../types'
+import { HistoryAction, Point } from '../../types'
 import ScreenshotsTextarea from '../../ScreenshotsTextarea'
 import useBounds from '../../hooks/useBounds'
 
@@ -41,6 +41,30 @@ function draw (ctx: CanvasRenderingContext2D, { size, color, fontFamily, x, y, t
   text.split('\n').forEach((item, index) => {
     ctx.fillText(item, x, y + index * size)
   })
+}
+
+function isHit (ctx: CanvasRenderingContext2D, action: HistoryAction<TextData>, point: Point) {
+  ctx.textAlign = 'left'
+  ctx.textBaseline = 'top'
+  ctx.font = `${action.data.size}px ${action.data.fontFamily}`
+
+  let width = 0
+  let height = 0
+
+  action.data.text.split('\n').forEach(item => {
+    const measured = ctx.measureText(item)
+    if (width < measured.width) {
+      width = measured.width
+    }
+    height += action.data.size
+  })
+
+  const left = action.data.x
+  const top = action.data.y
+  const right = action.data.x + width
+  const bottom = action.data.y + height
+
+  return point.x >= left && point.x <= right && point.y >= top && point.y <= bottom
 }
 
 export default function Text (): ReactElement {
@@ -106,6 +130,7 @@ export default function Text (): ReactElement {
       const y = e.clientY - top
 
       textRef.current = {
+        action: 'Text',
         data: {
           size: sizes[size],
           color,
@@ -114,7 +139,8 @@ export default function Text (): ReactElement {
           y,
           text: ''
         },
-        draw: draw
+        draw: draw,
+        isHit
       }
 
       setTextareaBounds({
