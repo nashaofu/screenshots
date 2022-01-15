@@ -1,20 +1,20 @@
 import { useCallback } from 'react'
-import { History, HistoryAction } from '../types'
+import { History, HistoryItem, HistoryItemType } from '../types'
 import useDispatcher from './useDispatcher'
 import useStore from './useStore'
 
 export interface HistoryValue extends History {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  top?: HistoryAction<any>
+  top?: HistoryItem<unknown, unknown>
 }
 
 export interface HistoryDispatcher {
-  push: <T>(action: HistoryAction<T>) => void
+  push: <S, E>(action: HistoryItem<S, E>) => void
   pop: () => void
   undo: () => void
   redo: () => void
   set: (history: History) => void
   reset: () => void
+  select: <S, E>(action: HistoryItem<S, E>) => void
 }
 
 export type HistoryValueDispatcher = [HistoryValue, HistoryDispatcher]
@@ -24,7 +24,7 @@ export default function useHistory (): HistoryValueDispatcher {
   const { setHistory } = useDispatcher()
 
   const push = useCallback(
-    <T>(action: HistoryAction<T>) => {
+    <S, E>(action: HistoryItem<S, E>) => {
       const { index, stack } = history
 
       stack.splice(index + 1)
@@ -52,6 +52,12 @@ export default function useHistory (): HistoryValueDispatcher {
   const undo = useCallback(() => {
     const { index, stack } = history
 
+    const item = stack[index]
+
+    if (item && item.type === HistoryItemType.EDIT) {
+      item.source.editHistory.pop()
+    }
+
     setHistory?.({
       index: index <= 0 ? -1 : index - 1,
       stack
@@ -60,6 +66,12 @@ export default function useHistory (): HistoryValueDispatcher {
 
   const redo = useCallback(() => {
     const { index, stack } = history
+
+    const item = stack[index + 1]
+
+    if (item && item.type === HistoryItemType.EDIT) {
+      item.source.editHistory.push(item)
+    }
 
     setHistory?.({
       index: index >= stack.length - 1 ? stack.length - 1 : index + 1,
@@ -72,6 +84,22 @@ export default function useHistory (): HistoryValueDispatcher {
       setHistory?.({ ...history })
     },
     [setHistory]
+  )
+
+  const select = useCallback(
+    <S, E>(action: HistoryItem<S, E>) => {
+      history.stack.forEach(item => {
+        if (item.type === HistoryItemType.SOURCE) {
+          if (item === action) {
+            item.isSelected = true
+          } else {
+            item.isSelected = false
+          }
+        }
+      })
+      setHistory?.({ ...history })
+    },
+    [history, setHistory]
   )
 
   const reset = useCallback(() => {
@@ -93,6 +121,7 @@ export default function useHistory (): HistoryValueDispatcher {
       undo,
       redo,
       set,
+      select,
       reset
     }
   ]

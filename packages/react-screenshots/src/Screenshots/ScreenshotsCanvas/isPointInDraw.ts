@@ -1,6 +1,11 @@
-import { Bounds, History } from '../types'
+import { Bounds, History, HistoryItemType } from '../types'
 
-export default function isPointInDraw (bounds: Bounds, canvas: HTMLCanvasElement | null, history: History, e: MouseEvent) {
+export default function isPointInDraw (
+  bounds: Bounds,
+  canvas: HTMLCanvasElement | null,
+  history: History,
+  e: MouseEvent
+) {
   if (!canvas) {
     return false
   }
@@ -21,6 +26,9 @@ export default function isPointInDraw (bounds: Bounds, canvas: HTMLCanvasElement
   const stack = [...history.stack.slice(0, history.index + 1)]
 
   return stack.reverse().find(item => {
+    if (item.type !== HistoryItemType.SOURCE) {
+      return false
+    }
     ctx.clearRect(0, 0, bounds.width, bounds.height)
     return item.isHit?.(ctx, item, { x, y })
   })

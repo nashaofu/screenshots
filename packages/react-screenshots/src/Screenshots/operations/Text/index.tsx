@@ -6,9 +6,12 @@ import useHistory from '../../hooks/useHistory'
 import useOperation from '../../hooks/useOperation'
 import ScreenshotsButton from '../../ScreenshotsButton'
 import ScreenshotsSizeColor from '../../ScreenshotsSizeColor'
-import { HistoryAction, Point } from '../../types'
+import { HistoryItemEdit, HistoryItemSource, HistoryItemType, Point } from '../../types'
 import ScreenshotsTextarea from '../../ScreenshotsTextarea'
 import useBounds from '../../hooks/useBounds'
+import useDrawSelect from '../../hooks/useDrawSelect'
+import useCanvasMousemove from '../../hooks/useCanvasMousemove'
+import useCanvasMouseup from '../../hooks/useCanvasMouseup'
 
 export interface TextData {
   size: number
@@ -17,6 +20,13 @@ export interface TextData {
   x: number
   y: number
   text: string
+}
+
+export interface TextEditData {
+  x1: number
+  x2: number
+  y1: number
+  y2: number
 }
 
 export interface TextareaBounds {
@@ -32,18 +42,27 @@ const sizes: Record<number, number> = {
   9: 46
 }
 
-function draw (ctx: CanvasRenderingContext2D, { size, color, fontFamily, x, y, text }: TextData) {
+function draw (ctx: CanvasRenderingContext2D, action: HistoryItemSource<TextData, TextEditData>) {
+  const { size, color, fontFamily, x, y, text } = action.data
   ctx.fillStyle = color
   ctx.textAlign = 'left'
   ctx.textBaseline = 'top'
   ctx.font = `${size}px ${fontFamily}`
 
+  const distance = action.editHistory.reduce(
+    (distance, { data }) => ({
+      x: distance.x + data.x2 - data.x1,
+      y: distance.y + data.y2 - data.y1
+    }),
+    { x: 0, y: 0 }
+  )
+
   text.split('\n').forEach((item, index) => {
-    ctx.fillText(item, x, y + index * size)
+    ctx.fillText(item, x + distance.x, y + distance.y + index * size)
   })
 }
 
-function isHit (ctx: CanvasRenderingContext2D, action: HistoryAction<TextData>, point: Point) {
+function isHit (ctx: CanvasRenderingContext2D, action: HistoryItemSource<TextData, TextEditData>, point: Point) {
   ctx.textAlign = 'left'
   ctx.textBaseline = 'top'
   ctx.font = `${action.data.size}px ${action.data.fontFamily}`
@@ -59,32 +78,44 @@ function isHit (ctx: CanvasRenderingContext2D, action: HistoryAction<TextData>, 
     height += action.data.size
   })
 
-  const left = action.data.x
-  const top = action.data.y
-  const right = action.data.x + width
-  const bottom = action.data.y + height
+  const { x, y } = action.editHistory.reduce(
+    (distance, { data }) => ({
+      x: distance.x + data.x2 - data.x1,
+      y: distance.y + data.y2 - data.y1
+    }),
+    { x: 0, y: 0 }
+  )
+
+  const left = action.data.x + x
+  const top = action.data.y + y
+  const right = left + width
+  const bottom = top + height
 
   return point.x >= left && point.x <= right && point.y >= top && point.y <= bottom
 }
 
 export default function Text (): ReactElement {
-  const [, historyDispatcher] = useHistory()
+  const [history, historyDispatcher] = useHistory()
   const [bounds] = useBounds()
   const [operation, operationDispatcher] = useOperation()
   const [, cursorDispatcher] = useCursor()
   const canvasContextRef = useCanvasContextRef()
   const [size, setSize] = useState(3)
   const [color, setColor] = useState('#ee5126')
-  const textRef = useRef<HistoryAction<TextData> | null>(null)
+  const textRef = useRef<HistoryItemSource<TextData, TextEditData> | null>(null)
+  const textEditRef = useRef<HistoryItemEdit<TextEditData, TextData> | null>(null)
   const [textareaBounds, setTextareaBounds] = useState<TextareaBounds | null>(null)
   const [text, setText] = useState<string>('')
 
   const checked = operation === 'Text'
 
-  const onClick = useCallback(() => {
+  const selectText = useCallback(() => {
+    if (checked) {
+      return
+    }
     operationDispatcher.set('Text')
     cursorDispatcher.set('default')
-  }, [operationDispatcher, cursorDispatcher])
+  }, [checked, operationDispatcher, cursorDispatcher])
 
   const onSizeChange = useCallback((size: number) => {
     if (textRef.current) {
@@ -119,6 +150,30 @@ export default function Text (): ReactElement {
     setTextareaBounds(null)
   }, [historyDispatcher])
 
+  const onDrawSelect = useCallback(
+    (action: HistoryItemSource<unknown, unknown>, e: MouseEvent) => {
+      if (action.name !== 'Text') {
+        return
+      }
+
+      selectText()
+
+      textEditRef.current = {
+        type: HistoryItemType.EDIT,
+        data: {
+          x1: e.clientX,
+          y1: e.clientY,
+          x2: e.clientX,
+          y2: e.clientY
+        },
+        source: action as HistoryItemSource<TextData, TextEditData>
+      }
+
+      historyDispatcher.select(action)
+    },
+    [selectText, historyDispatcher]
+  )
+
   const onMousedown = useCallback(
     (e: MouseEvent) => {
       if (!checked || !canvasContextRef.current || textRef.current || !bounds) {
@@ -130,7 +185,8 @@ export default function Text (): ReactElement {
       const y = e.clientY - top
 
       textRef.current = {
-        action: 'Text',
+        name: 'Text',
+        type: HistoryItemType.SOURCE,
         data: {
           size: sizes[size],
           color,
@@ -139,7 +195,9 @@ export default function Text (): ReactElement {
           y,
           text: ''
         },
-        draw: draw,
+        isSelected: false,
+        editHistory: [],
+        draw,
         isHit
       }
 
@@ -153,7 +211,38 @@ export default function Text (): ReactElement {
     [checked, size, color, bounds, canvasContextRef]
   )
 
+  const onMousemove = useCallback(
+    (e: MouseEvent): void => {
+      if (!checked) {
+        return
+      }
+
+      if (textEditRef.current && textEditRef.current.source.isSelected) {
+        textEditRef.current.data.x2 = e.clientX
+        textEditRef.current.data.y2 = e.clientY
+        if (history.top !== textEditRef.current) {
+          textEditRef.current.source.editHistory.push(textEditRef.current)
+          historyDispatcher.push(textEditRef.current)
+        } else {
+          historyDispatcher.set(history)
+        }
+      }
+    },
+    [checked, history, historyDispatcher]
+  )
+
+  const onMouseup = useCallback((): void => {
+    if (!checked) {
+      return
+    }
+
+    textEditRef.current = null
+  }, [checked])
+
+  useDrawSelect(onDrawSelect)
   useCanvasMousedown(onMousedown)
+  useCanvasMousemove(onMousemove)
+  useCanvasMouseup(onMouseup)
 
   return (
     <>
@@ -161,7 +250,7 @@ export default function Text (): ReactElement {
         title='文本'
         icon='icon-text'
         checked={checked}
-        onClick={onClick}
+        onClick={selectText}
         option={
           <ScreenshotsSizeColor size={size} color={color} onSizeChange={onSizeChange} onColorChange={onColorChange} />
         }

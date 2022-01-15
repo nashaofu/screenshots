@@ -4,11 +4,12 @@ import useCanvasMousedown from '../../hooks/useCanvasMousedown'
 import useCanvasMousemove from '../../hooks/useCanvasMousemove'
 import useCanvasMouseup from '../../hooks/useCanvasMouseup'
 import useCursor from '../../hooks/useCursor'
+import useDrawSelect from '../../hooks/useDrawSelect'
 import useHistory from '../../hooks/useHistory'
 import useOperation from '../../hooks/useOperation'
 import ScreenshotsButton from '../../ScreenshotsButton'
 import ScreenshotsSizeColor from '../../ScreenshotsSizeColor'
-import { HistoryAction } from '../../types'
+import { HistoryItemSource, HistoryItemEdit, HistoryItemType } from '../../types'
 import { isHit } from '../utils'
 
 export interface RectangleData {
@@ -20,7 +21,15 @@ export interface RectangleData {
   y2: number
 }
 
-function draw (ctx: CanvasRenderingContext2D, { size, color, x1, y1, x2, y2 }: RectangleData) {
+export interface RectangleEditData {
+  x1: number
+  y1: number
+  x2: number
+  y2: number
+}
+
+function draw (ctx: CanvasRenderingContext2D, action: HistoryItemSource<RectangleData, RectangleEditData>) {
+  let { size, color, x1, y1, x2, y2 } = action.data
   ctx.lineCap = 'butt'
   ctx.lineJoin = 'miter'
   ctx.lineWidth = size
@@ -33,8 +42,16 @@ function draw (ctx: CanvasRenderingContext2D, { size, color, x1, y1, x2, y2 }: R
     [y1, y2] = [y2, y1]
   }
 
+  const { x, y } = action.editHistory.reduce(
+    (distance, { data }) => ({
+      x: distance.x + data.x2 - data.x1,
+      y: distance.y + data.y2 - data.y1
+    }),
+    { x: 0, y: 0 }
+  )
+
   ctx.beginPath()
-  ctx.rect(x1, y1, x2 - x1, y2 - y1)
+  ctx.rect(x1 + x, y1 + y, x2 - x1, y2 - y1)
   ctx.stroke()
 }
 
@@ -45,14 +62,42 @@ export default function Rectangle (): ReactElement {
   const canvasContextRef = useCanvasContextRef()
   const [size, setSize] = useState(3)
   const [color, setColor] = useState('#ee5126')
-  const rectangleRef = useRef<HistoryAction<RectangleData> | null>(null)
+  const rectangleRef = useRef<HistoryItemSource<RectangleData, RectangleEditData> | null>(null)
+  const rectangleEditRef = useRef<HistoryItemEdit<RectangleEditData, RectangleData> | null>(null)
 
   const checked = operation === 'Rectangle'
 
-  const onClick = useCallback(() => {
+  const selectRectangle = useCallback(() => {
+    if (checked) {
+      return
+    }
     operationDispatcher.set('Rectangle')
     cursorDispatcher.set('crosshair')
-  }, [operationDispatcher, cursorDispatcher])
+  }, [checked, operationDispatcher, cursorDispatcher])
+
+  const onDrawSelect = useCallback(
+    (action: HistoryItemSource<unknown, unknown>, e: MouseEvent) => {
+      if (action.name !== 'Rectangle') {
+        return
+      }
+
+      selectRectangle()
+
+      rectangleEditRef.current = {
+        type: HistoryItemType.EDIT,
+        data: {
+          x1: e.clientX,
+          y1: e.clientY,
+          x2: e.clientX,
+          y2: e.clientY
+        },
+        source: action as HistoryItemSource<RectangleData, RectangleEditData>
+      }
+
+      historyDispatcher.select(action)
+    },
+    [selectRectangle, historyDispatcher]
+  )
 
   const onMousedown = useCallback(
     (e: MouseEvent) => {
@@ -64,7 +109,8 @@ export default function Rectangle (): ReactElement {
       const x = e.clientX - left
       const y = e.clientY - top
       rectangleRef.current = {
-        action: 'Rectangle',
+        name: 'Rectangle',
+        type: HistoryItemType.SOURCE,
         data: {
           size,
           color,
@@ -73,6 +119,8 @@ export default function Rectangle (): ReactElement {
           x2: x,
           y2: y
         },
+        isSelected: false,
+        editHistory: [],
         draw,
         isHit
       }
@@ -82,18 +130,30 @@ export default function Rectangle (): ReactElement {
 
   const onMousemove = useCallback(
     (e: MouseEvent) => {
-      if (!checked || !canvasContextRef.current || !rectangleRef.current) {
+      if (!checked || !canvasContextRef.current) {
         return
       }
-      const { left, top } = canvasContextRef.current.canvas.getBoundingClientRect()
-      const rectangleData = rectangleRef.current.data
-      rectangleData.x2 = e.clientX - left
-      rectangleData.y2 = e.clientY - top
 
-      if (history.top !== rectangleRef.current) {
-        historyDispatcher.push(rectangleRef.current)
-      } else {
-        historyDispatcher.set(history)
+      if (rectangleEditRef.current && rectangleEditRef.current.source.isSelected) {
+        rectangleEditRef.current.data.x2 = e.clientX
+        rectangleEditRef.current.data.y2 = e.clientY
+        if (history.top !== rectangleEditRef.current) {
+          rectangleEditRef.current.source.editHistory.push(rectangleEditRef.current)
+          historyDispatcher.push(rectangleEditRef.current)
+        } else {
+          historyDispatcher.set(history)
+        }
+      } else if (rectangleRef.current) {
+        const { left, top } = canvasContextRef.current.canvas.getBoundingClientRect()
+        const rectangleData = rectangleRef.current.data
+        rectangleData.x2 = e.clientX - left
+        rectangleData.y2 = e.clientY - top
+
+        if (history.top !== rectangleRef.current) {
+          historyDispatcher.push(rectangleRef.current)
+        } else {
+          historyDispatcher.set(history)
+        }
       }
     },
     [checked, canvasContextRef, history, historyDispatcher]
@@ -104,11 +164,11 @@ export default function Rectangle (): ReactElement {
       return
     }
 
-    if (rectangleRef.current) {
-      rectangleRef.current = null
-    }
+    rectangleRef.current = null
+    rectangleEditRef.current = null
   }, [checked])
 
+  useDrawSelect(onDrawSelect)
   useCanvasMousedown(onMousedown)
   useCanvasMousemove(onMousemove)
   useCanvasMouseup(onMouseup)
@@ -118,7 +178,7 @@ export default function Rectangle (): ReactElement {
       title='矩形'
       icon='icon-rectangle'
       checked={checked}
-      onClick={onClick}
+      onClick={selectRectangle}
       option={<ScreenshotsSizeColor size={size} color={color} onSizeChange={setSize} onColorChange={setColor} />}
     />
   )

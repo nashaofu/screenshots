@@ -4,11 +4,12 @@ import useCanvasMousedown from '../../hooks/useCanvasMousedown'
 import useCanvasMousemove from '../../hooks/useCanvasMousemove'
 import useCanvasMouseup from '../../hooks/useCanvasMouseup'
 import useCursor from '../../hooks/useCursor'
+import useDrawSelect from '../../hooks/useDrawSelect'
 import useHistory from '../../hooks/useHistory'
 import useOperation from '../../hooks/useOperation'
 import ScreenshotsButton from '../../ScreenshotsButton'
 import ScreenshotsSizeColor from '../../ScreenshotsSizeColor'
-import { HistoryAction } from '../../types'
+import { HistoryItemEdit, HistoryItemSource, HistoryItemType } from '../../types'
 import { isHit } from '../utils'
 
 export interface EllipseData {
@@ -20,7 +21,15 @@ export interface EllipseData {
   y2: number
 }
 
-function draw (ctx: CanvasRenderingContext2D, { size, color, x1, y1, x2, y2 }: EllipseData) {
+export interface EllipseEditData {
+  x1: number
+  y1: number
+  x2: number
+  y2: number
+}
+
+function draw (ctx: CanvasRenderingContext2D, action: HistoryItemSource<EllipseData, EllipseEditData>) {
+  let { size, color, x1, y1, x2, y2 } = action.data
   ctx.lineCap = 'butt'
   ctx.lineJoin = 'miter'
   ctx.lineWidth = size
@@ -33,8 +42,16 @@ function draw (ctx: CanvasRenderingContext2D, { size, color, x1, y1, x2, y2 }: E
     [y1, y2] = [y2, y1]
   }
 
-  const x = (x1 + x2) / 2
-  const y = (y1 + y2) / 2
+  const distance = action.editHistory.reduce(
+    (distance, { data }) => ({
+      x: distance.x + data.x2 - data.x1,
+      y: distance.y + data.y2 - data.y1
+    }),
+    { x: 0, y: 0 }
+  )
+
+  const x = (x1 + x2) / 2 + distance.x
+  const y = (y1 + y2) / 2 + distance.y
   const rx = (x2 - x1) / 2
   const ry = (y2 - y1) / 2
   const k = 0.5522848
@@ -60,14 +77,42 @@ export default function Ellipse (): ReactElement {
   const canvasContextRef = useCanvasContextRef()
   const [size, setSize] = useState(3)
   const [color, setColor] = useState('#ee5126')
-  const ellipseRef = useRef<HistoryAction<EllipseData> | null>(null)
+  const ellipseRef = useRef<HistoryItemSource<EllipseData, EllipseEditData> | null>(null)
+  const ellipseEditRef = useRef<HistoryItemEdit<EllipseEditData, EllipseData> | null>(null)
 
   const checked = operation === 'Ellipse'
 
-  const onClick = useCallback(() => {
+  const selectEllipse = useCallback(() => {
+    if (checked) {
+      return
+    }
     operationDispatcher.set('Ellipse')
     cursorDispatcher.set('crosshair')
-  }, [operationDispatcher, cursorDispatcher])
+  }, [checked, operationDispatcher, cursorDispatcher])
+
+  const onDrawSelect = useCallback(
+    (action: HistoryItemSource<unknown, unknown>, e: MouseEvent) => {
+      if (action.name !== 'Ellipse') {
+        return
+      }
+
+      selectEllipse()
+
+      ellipseEditRef.current = {
+        type: HistoryItemType.EDIT,
+        data: {
+          x1: e.clientX,
+          y1: e.clientY,
+          x2: e.clientX,
+          y2: e.clientY
+        },
+        source: action as HistoryItemSource<EllipseData, EllipseEditData>
+      }
+
+      historyDispatcher.select(action)
+    },
+    [selectEllipse, historyDispatcher]
+  )
 
   const onMousedown = useCallback(
     (e: MouseEvent) => {
@@ -79,7 +124,8 @@ export default function Ellipse (): ReactElement {
       const x = e.clientX - left
       const y = e.clientY - top
       ellipseRef.current = {
-        action: 'Ellipse',
+        name: 'Ellipse',
+        type: HistoryItemType.SOURCE,
         data: {
           size,
           color,
@@ -88,6 +134,8 @@ export default function Ellipse (): ReactElement {
           x2: x,
           y2: y
         },
+        isSelected: false,
+        editHistory: [],
         draw,
         isHit
       }
@@ -97,18 +145,29 @@ export default function Ellipse (): ReactElement {
 
   const onMousemove = useCallback(
     (e: MouseEvent) => {
-      if (!checked || !canvasContextRef.current || !ellipseRef.current) {
+      if (!checked || !canvasContextRef.current) {
         return
       }
-      const { left, top } = canvasContextRef.current.canvas.getBoundingClientRect()
-      const ellipseData = ellipseRef.current.data
-      ellipseData.x2 = e.clientX - left
-      ellipseData.y2 = e.clientY - top
 
-      if (history.top !== ellipseRef.current) {
-        historyDispatcher.push(ellipseRef.current)
-      } else {
-        historyDispatcher.set(history)
+      if (ellipseEditRef.current && ellipseEditRef.current.source.isSelected) {
+        ellipseEditRef.current.data.x2 = e.clientX
+        ellipseEditRef.current.data.y2 = e.clientY
+        if (history.top !== ellipseEditRef.current) {
+          ellipseEditRef.current.source.editHistory.push(ellipseEditRef.current)
+          historyDispatcher.push(ellipseEditRef.current)
+        } else {
+          historyDispatcher.set(history)
+        }
+      } else if (ellipseRef.current) {
+        const { left, top } = canvasContextRef.current.canvas.getBoundingClientRect()
+        ellipseRef.current.data.x2 = e.clientX - left
+        ellipseRef.current.data.y2 = e.clientY - top
+
+        if (history.top !== ellipseRef.current) {
+          historyDispatcher.push(ellipseRef.current)
+        } else {
+          historyDispatcher.set(history)
+        }
       }
     },
     [checked, canvasContextRef, history, historyDispatcher]
@@ -119,11 +178,11 @@ export default function Ellipse (): ReactElement {
       return
     }
 
-    if (ellipseRef.current) {
-      ellipseRef.current = null
-    }
+    ellipseRef.current = null
+    ellipseEditRef.current = null
   }, [checked])
 
+  useDrawSelect(onDrawSelect)
   useCanvasMousedown(onMousedown)
   useCanvasMousemove(onMousemove)
   useCanvasMouseup(onMouseup)
@@ -133,7 +192,7 @@ export default function Ellipse (): ReactElement {
       title='椭圆'
       icon='icon-ellipse'
       checked={checked}
-      onClick={onClick}
+      onClick={selectEllipse}
       option={<ScreenshotsSizeColor size={size} color={color} onSizeChange={setSize} onColorChange={setColor} />}
     />
   )
