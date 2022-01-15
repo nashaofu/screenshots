@@ -11,7 +11,7 @@ import useBounds from '../hooks/useBounds'
 import dpr from '../dpr'
 import getPoints from './getPoints'
 import getBoundsByPoints from './getBoundsByPoints'
-import { Bounds, Point } from '../types'
+import { Bounds, HistoryItemType, Point } from '../types'
 import useEmiter from '../hooks/useEmiter'
 import useHistory from '../hooks/useHistory'
 import useCursor from '../hooks/useCursor'
@@ -85,7 +85,11 @@ export default forwardRef<CanvasRenderingContext2D>(function ScreenshotsCanvas (
       bounds.height
     )
 
-    history.stack.slice(0, history.index + 1).forEach(item => item.draw(ctx, item.data))
+    history.stack.slice(0, history.index + 1).forEach(item => {
+      if (item.type === HistoryItemType.SOURCE) {
+        item.draw(ctx, item)
+      }
+    })
   }, [image, width, height, bounds, ctxRef, history])
 
   const onMouseDown = useCallback(
@@ -108,7 +112,7 @@ export default forwardRef<CanvasRenderingContext2D>(function ScreenshotsCanvas (
       } else {
         const draw = isPointInDraw(bounds, canvasRef.current, history, e.nativeEvent)
         if (draw) {
-          emiter.emit('drawselect', draw)
+          emiter.emit('drawselect', draw, e.nativeEvent)
         } else {
           emiter.emit('mousedown', e.nativeEvent)
         }

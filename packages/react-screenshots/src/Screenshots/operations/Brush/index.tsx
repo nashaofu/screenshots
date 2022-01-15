@@ -8,7 +8,7 @@ import useCursor from '../../hooks/useCursor'
 import useOperation from '../../hooks/useOperation'
 import useHistory from '../../hooks/useHistory'
 import useCanvasContextRef from '../../hooks/useCanvasContextRef'
-import { HistoryAction, Point } from '../../types'
+import { HistoryItemEdit, HistoryItemSource, HistoryItemType, Point } from '../../types'
 import useDrawSelect from '../../hooks/useDrawSelect'
 import { isHit } from '../utils'
 
@@ -18,19 +18,37 @@ export interface BrushData {
   points: Point[]
 }
 
-function draw (ctx: CanvasRenderingContext2D, brush: BrushData): void {
+export interface BrushEditData {
+  x1: number
+  y1: number
+  x2: number
+  y2: number
+}
+
+function draw (ctx: CanvasRenderingContext2D, action: HistoryItemSource<BrushData, BrushEditData>): void {
+  const { size, color, points } = action.data
   ctx.lineCap = 'round'
   ctx.lineJoin = 'round'
-  ctx.lineWidth = brush.size
-  ctx.strokeStyle = brush.color
+  ctx.lineWidth = size
+  ctx.strokeStyle = color
+
+  const { x, y } = action.editHistory.reduce(
+    (distance, { data }) => ({
+      x: distance.x + data.x2 - data.x1,
+      y: distance.y + data.y2 - data.y1
+    }),
+    { x: 0, y: 0 }
+  )
+
   ctx.beginPath()
-  brush.points.forEach((item, index) => {
+  points.forEach((item, index) => {
     if (index === 0) {
-      ctx.moveTo(item.x, item.y)
+      ctx.moveTo(item.x + x, item.y + y)
     } else {
-      ctx.lineTo(item.x, item.y)
+      ctx.lineTo(item.x + x, item.y + y)
     }
   })
+
   ctx.stroke()
 }
 
@@ -41,7 +59,8 @@ export default function Brush (): ReactElement {
   const [history, historyDispatcher] = useHistory()
   const [size, setSize] = useState(3)
   const [color, setColor] = useState('#ee5126')
-  const brushRef = useRef<HistoryAction<BrushData> | null>(null)
+  const brushRef = useRef<HistoryItemSource<BrushData, BrushEditData> | null>(null)
+  const brushEditRef = useRef<HistoryItemEdit<BrushEditData, BrushData> | null>(null)
 
   const checked = operation === 'Brush'
 
@@ -54,13 +73,27 @@ export default function Brush (): ReactElement {
   }, [checked, operationDispatcher, cursorDispatcher])
 
   const onDrawSelect = useCallback(
-    (action: HistoryAction<unknown>) => {
-      if (action.action !== 'Brush') {
+    (action: HistoryItemSource<unknown, unknown>, e: MouseEvent) => {
+      if (action.name !== 'Brush') {
         return
       }
+
       selectBrush()
+
+      brushEditRef.current = {
+        type: HistoryItemType.EDIT,
+        data: {
+          x1: e.clientX,
+          y1: e.clientY,
+          x2: e.clientX,
+          y2: e.clientY
+        },
+        source: action as HistoryItemSource<BrushData, BrushEditData>
+      }
+
+      historyDispatcher.select(action)
     },
-    [selectBrush]
+    [selectBrush, historyDispatcher]
   )
 
   const onMousedown = useCallback(
@@ -72,7 +105,8 @@ export default function Brush (): ReactElement {
       const { left, top } = canvasContextRef.current.canvas.getBoundingClientRect()
 
       brushRef.current = {
-        action: 'Brush',
+        name: 'Brush',
+        type: HistoryItemType.SOURCE,
         data: {
           size: size,
           color: color,
@@ -83,6 +117,8 @@ export default function Brush (): ReactElement {
             }
           ]
         },
+        isSelected: false,
+        editHistory: [],
         draw,
         isHit
       }
@@ -92,21 +128,32 @@ export default function Brush (): ReactElement {
 
   const onMousemove = useCallback(
     (e: MouseEvent): void => {
-      if (!checked || !brushRef.current || !canvasContextRef.current) {
+      if (!checked || !canvasContextRef.current) {
         return
       }
 
-      const { left, top } = canvasContextRef.current.canvas.getBoundingClientRect()
+      if (brushEditRef.current && brushEditRef.current.source.isSelected) {
+        brushEditRef.current.data.x2 = e.clientX
+        brushEditRef.current.data.y2 = e.clientY
+        if (history.top !== brushEditRef.current) {
+          brushEditRef.current.source.editHistory.push(brushEditRef.current)
+          historyDispatcher.push(brushEditRef.current)
+        } else {
+          historyDispatcher.set(history)
+        }
+      } else if (brushRef.current) {
+        const { left, top } = canvasContextRef.current.canvas.getBoundingClientRect()
 
-      brushRef.current.data.points.push({
-        x: e.clientX - left,
-        y: e.clientY - top
-      })
+        brushRef.current.data.points.push({
+          x: e.clientX - left,
+          y: e.clientY - top
+        })
 
-      if (history.top !== brushRef.current) {
-        historyDispatcher.push(brushRef.current)
-      } else {
-        historyDispatcher.set(history)
+        if (history.top !== brushRef.current) {
+          historyDispatcher.push(brushRef.current)
+        } else {
+          historyDispatcher.set(history)
+        }
       }
     },
     [checked, history, canvasContextRef, historyDispatcher]
@@ -117,9 +164,8 @@ export default function Brush (): ReactElement {
       return
     }
 
-    if (brushRef.current) {
-      brushRef.current = null
-    }
+    brushRef.current = null
+    brushEditRef.current = null
   }, [checked])
 
   useDrawSelect(onDrawSelect)

@@ -4,7 +4,7 @@ import ScreenshotsSize from '../../ScreenshotsSize'
 import useCanvasMousedown from '../../hooks/useCanvasMousedown'
 import useCanvasMousemove from '../../hooks/useCanvasMousemove'
 import useCanvasMouseup from '../../hooks/useCanvasMouseup'
-import { HistoryAction } from '../../types'
+import { HistoryItemSource, HistoryItemType } from '../../types'
 import useOperation from '../../hooks/useOperation'
 import useCursor from '../../hooks/useCursor'
 import useStore from '../../hooks/useStore'
@@ -34,15 +34,16 @@ function getColor (x: number, y: number, imageData: ImageData): number[] {
   return Array.from(data.slice(index, index + 4))
 }
 
-function draw (ctx: CanvasRenderingContext2D, mosaic: MosaicData) {
-  mosaic.tiles.forEach(tile => {
+function draw (ctx: CanvasRenderingContext2D, action: HistoryItemSource<MosaicData, null>) {
+  const { tiles, size } = action.data
+  tiles.forEach(tile => {
     const r = Math.round(tile.color[0])
     const g = Math.round(tile.color[1])
     const b = Math.round(tile.color[2])
     const a = tile.color[3] / 255
 
     ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${a})`
-    ctx.fillRect(tile.x - mosaic.size / 2, tile.y - mosaic.size / 2, mosaic.size, mosaic.size)
+    ctx.fillRect(tile.x - size / 2, tile.y - size / 2, size, size)
   })
 }
 
@@ -55,7 +56,7 @@ export default function Mosaic (): ReactElement {
   const [, cursorDispatcher] = useCursor()
   const [size, setSize] = useState(3)
   const imageDataRef = useRef<ImageData | null>(null)
-  const mosaicRef = useRef<HistoryAction<MosaicData> | null>(null)
+  const mosaicRef = useRef<HistoryItemSource<MosaicData, null> | null>(null)
 
   const checked = operation === 'Mosaic'
 
@@ -78,7 +79,8 @@ export default function Mosaic (): ReactElement {
       const y = e.clientY - rect.y
       const mosaicSize = size * 2
       mosaicRef.current = {
-        action: 'Mosaic',
+        name: 'Mosaic',
+        type: HistoryItemType.SOURCE,
         data: {
           size: mosaicSize,
           tiles: [
@@ -89,6 +91,8 @@ export default function Mosaic (): ReactElement {
             }
           ]
         },
+        isSelected: false,
+        editHistory: [],
         draw
       }
     },

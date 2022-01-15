@@ -13,16 +13,34 @@ export interface Point {
   x: number
   y: number
 }
-export interface HistoryAction<T> {
-  action: string
-  data: T
-  draw: (ctx: CanvasRenderingContext2D, data: T) => void
-  isHit?: (ctx: CanvasRenderingContext2D, action: HistoryAction<T>, point: Point) => boolean
+
+export enum HistoryItemType {
+  EDIT = 1,
+  SOURCE = 2
 }
+
+export interface HistoryItemEdit<E, S> {
+  type: HistoryItemType.EDIT
+  data: E
+  source: HistoryItemSource<S, E>
+}
+
+export interface HistoryItemSource<S, E> {
+  name: string
+  type: HistoryItemType.SOURCE
+  data: S
+  isSelected: boolean
+  editHistory: HistoryItemEdit<E, S>[]
+  draw: (ctx: CanvasRenderingContext2D, action: HistoryItemSource<S, E>) => void
+  isHit?: (ctx: CanvasRenderingContext2D, action: HistoryItemSource<S, E>, point: Point) => boolean
+}
+
+export type HistoryItem<S, E> = HistoryItemEdit<E, S> | HistoryItemSource<S, E>
+
 export interface History {
   index: number
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  stack: HistoryAction<any>[]
+  stack: HistoryItem<any, any>[]
 }
 
 export interface Bounds {
