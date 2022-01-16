@@ -86,7 +86,7 @@ export default forwardRef<CanvasRenderingContext2D>(function ScreenshotsCanvas (
     )
 
     history.stack.slice(0, history.index + 1).forEach(item => {
-      if (item.type === HistoryItemType.SOURCE) {
+      if (item.type === HistoryItemType.Source) {
         item.draw(ctx, item)
       }
     })

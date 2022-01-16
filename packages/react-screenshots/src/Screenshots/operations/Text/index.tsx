@@ -164,7 +164,7 @@ export default function Text (): ReactElement {
       selectText()
 
       textEditRef.current = {
-        type: HistoryItemType.EDIT,
+        type: HistoryItemType.Edit,
         data: {
           x1: e.clientX,
           y1: e.clientY,
@@ -191,7 +191,7 @@ export default function Text (): ReactElement {
 
       textRef.current = {
         name: 'Text',
-        type: HistoryItemType.SOURCE,
+        type: HistoryItemType.Source,
         data: {
           size: sizes[size],
           color,

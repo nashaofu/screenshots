@@ -85,7 +85,7 @@ export default function Mosaic (): ReactElement {
       const mosaicSize = size * 2
       mosaicRef.current = {
         name: 'Mosaic',
-        type: HistoryItemType.SOURCE,
+        type: HistoryItemType.Source,
         data: {
           size: mosaicSize,
           tiles: [

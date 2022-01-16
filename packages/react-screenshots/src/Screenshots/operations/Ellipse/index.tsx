@@ -10,8 +10,8 @@ import useOperation from '../../hooks/useOperation'
 import ScreenshotsButton from '../../ScreenshotsButton'
 import ScreenshotsSizeColor from '../../ScreenshotsSizeColor'
 import { HistoryItemEdit, HistoryItemSource, HistoryItemType } from '../../types'
-import { isHit } from '../utils'
-import draw from './draw'
+import { isHit, isHitCircle } from '../utils'
+import draw, { getEditedEllipseData } from './draw'
 
 export interface EllipseData {
   size: number
@@ -22,7 +22,20 @@ export interface EllipseData {
   y2: number
 }
 
+export enum EllipseEditType {
+  Move,
+  ResizeTop,
+  ResizeRightTop,
+  ResizeRight,
+  ResizeRightBottom,
+  ResizeBottom,
+  ResizeLeftBottom,
+  ResizeLeft,
+  ResizeLeftTop
+}
+
 export interface EllipseEditData {
+  type: EllipseEditType
   x1: number
   y1: number
   x2: number
@@ -56,26 +69,90 @@ export default function Ellipse (): ReactElement {
 
   const onDrawSelect = useCallback(
     (action: HistoryItemSource<unknown, unknown>, e: MouseEvent) => {
-      if (action.name !== 'Ellipse') {
+      if (action.name !== 'Ellipse' || !canvasContextRef.current) {
         return
       }
 
+      const source = action as HistoryItemSource<EllipseData, EllipseEditData>
+
       selectEllipse()
 
+      const { x1, y1, x2, y2 } = getEditedEllipseData(source)
+
+      let type = EllipseEditType.Move
+      if (
+        isHitCircle(canvasContextRef.current.canvas, e, {
+          x: (x1 + x2) / 2,
+          y: y1
+        })
+      ) {
+        type = EllipseEditType.ResizeTop
+      } else if (
+        isHitCircle(canvasContextRef.current.canvas, e, {
+          x: x2,
+          y: y1
+        })
+      ) {
+        type = EllipseEditType.ResizeRightTop
+      } else if (
+        isHitCircle(canvasContextRef.current.canvas, e, {
+          x: x2,
+          y: (y1 + y2) / 2
+        })
+      ) {
+        type = EllipseEditType.ResizeRight
+      } else if (
+        isHitCircle(canvasContextRef.current.canvas, e, {
+          x: x2,
+          y: y2
+        })
+      ) {
+        type = EllipseEditType.ResizeRightBottom
+      } else if (
+        isHitCircle(canvasContextRef.current.canvas, e, {
+          x: (x1 + x2) / 2,
+          y: y2
+        })
+      ) {
+        type = EllipseEditType.ResizeBottom
+      } else if (
+        isHitCircle(canvasContextRef.current.canvas, e, {
+          x: x1,
+          y: y2
+        })
+      ) {
+        type = EllipseEditType.ResizeLeftBottom
+      } else if (
+        isHitCircle(canvasContextRef.current.canvas, e, {
+          x: x1,
+          y: (y1 + y2) / 2
+        })
+      ) {
+        type = EllipseEditType.ResizeLeft
+      } else if (
+        isHitCircle(canvasContextRef.current.canvas, e, {
+          x: x1,
+          y: y1
+        })
+      ) {
+        type = EllipseEditType.ResizeLeftTop
+      }
+
       ellipseEditRef.current = {
-        type: HistoryItemType.EDIT,
+        type: HistoryItemType.Edit,
         data: {
+          type,
           x1: e.clientX,
           y1: e.clientY,
           x2: e.clientX,
           y2: e.clientY
         },
-        source: action as HistoryItemSource<EllipseData, EllipseEditData>
+        source
       }
 
       historyDispatcher.select(action)
     },
-    [selectEllipse, historyDispatcher]
+    [canvasContextRef, selectEllipse, historyDispatcher]
   )
 
   const onMousedown = useCallback(
@@ -89,7 +166,7 @@ export default function Ellipse (): ReactElement {
       const y = e.clientY - top
       ellipseRef.current = {
         name: 'Ellipse',
-        type: HistoryItemType.SOURCE,
+        type: HistoryItemType.Source,
         data: {
           size,
           color,

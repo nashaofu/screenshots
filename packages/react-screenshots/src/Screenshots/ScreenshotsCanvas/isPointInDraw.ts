@@ -16,7 +16,7 @@ export default function isPointInDraw (
   const ctx = $canvas.getContext('2d')
 
   if (!ctx) {
-    return undefined
+    return false
   }
 
   const { left, top } = canvas.getBoundingClientRect()
@@ -26,7 +26,7 @@ export default function isPointInDraw (
   const stack = [...history.stack.slice(0, history.index + 1)]
 
   return stack.reverse().find(item => {
-    if (item.type !== HistoryItemType.SOURCE) {
+    if (item.type !== HistoryItemType.Source) {
       return false
     }
     ctx.clearRect(0, 0, bounds.width, bounds.height)

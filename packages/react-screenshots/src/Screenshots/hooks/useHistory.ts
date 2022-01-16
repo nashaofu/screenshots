@@ -29,14 +29,14 @@ export default function useHistory (): HistoryValueDispatcher {
       const { index, stack } = history
 
       stack.forEach(item => {
-        if (item.type === HistoryItemType.SOURCE) {
+        if (item.type === HistoryItemType.Source) {
           item.isSelected = false
         }
       })
 
-      if (action.type === HistoryItemType.SOURCE) {
+      if (action.type === HistoryItemType.Source) {
         action.isSelected = true
-      } else if (action.type === HistoryItemType.EDIT) {
+      } else if (action.type === HistoryItemType.Edit) {
         action.source.isSelected = true
       }
 
@@ -68,9 +68,9 @@ export default function useHistory (): HistoryValueDispatcher {
     const item = stack[index]
 
     if (item) {
-      if (item.type === HistoryItemType.SOURCE) {
+      if (item.type === HistoryItemType.Source) {
         item.isSelected = false
-      } else if (item.type === HistoryItemType.EDIT) {
+      } else if (item.type === HistoryItemType.Edit) {
         item.source.editHistory.pop()
       }
     }
@@ -87,9 +87,9 @@ export default function useHistory (): HistoryValueDispatcher {
     const item = stack[index + 1]
 
     if (item) {
-      if (item.type === HistoryItemType.SOURCE) {
+      if (item.type === HistoryItemType.Source) {
         item.isSelected = false
-      } else if (item.type === HistoryItemType.EDIT) {
+      } else if (item.type === HistoryItemType.Edit) {
         item.source.editHistory.push(item)
       }
     }
@@ -110,7 +110,7 @@ export default function useHistory (): HistoryValueDispatcher {
   const select = useCallback(
     <S, E>(action: HistoryItem<S, E>) => {
       history.stack.forEach(item => {
-        if (item.type === HistoryItemType.SOURCE) {
+        if (item.type === HistoryItemType.Source) {
           if (item === action) {
             item.isSelected = true
           } else {
@@ -125,7 +125,7 @@ export default function useHistory (): HistoryValueDispatcher {
 
   const clearSelect = useCallback(() => {
     history.stack.forEach(item => {
-      if (item.type === HistoryItemType.SOURCE) {
+      if (item.type === HistoryItemType.Source) {
         item.isSelected = false
       }
     })
