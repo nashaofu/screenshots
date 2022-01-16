@@ -14,11 +14,11 @@ export default function Save (): ReactElement {
   const reset = useReset()
 
   const onClick = useCallback(() => {
-    if (!canvasContextRef.current) {
-      return
-    }
     historyDispatcher.clearSelect()
     setTimeout(() => {
+      if (!canvasContextRef.current) {
+        return
+      }
       canvasContextRef.current.canvas.toBlob(blob => {
         call('onSave', blob, bounds)
         reset()

@@ -1,33 +1,61 @@
-import { EllipseData, EllipseEditData } from '.'
+import { EllipseData, EllipseEditData, EllipseEditType } from '.'
 import { HistoryItemSource } from '../../types'
 import { drawDragCircle } from '../utils'
 
+export function getEditedEllipseData (action: HistoryItemSource<EllipseData, EllipseEditData>) {
+  let { x1, y1, x2, y2 } = action.data
+
+  action.editHistory.forEach(({ data }) => {
+    const x = data.x2 - data.x1
+    const y = data.y2 - data.y1
+    if (data.type === EllipseEditType.Move) {
+      x1 += x
+      y1 += y
+      x2 += x
+      y2 += y
+    } else if (data.type === EllipseEditType.ResizeTop) {
+      y1 += y
+    } else if (data.type === EllipseEditType.ResizeRightTop) {
+      x2 += x
+      y1 += y
+    } else if (data.type === EllipseEditType.ResizeRight) {
+      x2 += x
+    } else if (data.type === EllipseEditType.ResizeRightBottom) {
+      x2 += x
+      y2 += y
+    } else if (data.type === EllipseEditType.ResizeBottom) {
+      y2 += y
+    } else if (data.type === EllipseEditType.ResizeLeftBottom) {
+      x1 += x
+      y2 += y
+    } else if (data.type === EllipseEditType.ResizeLeft) {
+      x1 += x
+    } else if (data.type === EllipseEditType.ResizeLeftTop) {
+      x1 += x
+      y1 += y
+    }
+  })
+
+  return {
+    ...action.data,
+    x1,
+    x2,
+    y1,
+    y2
+  }
+}
+
 export default function draw (ctx: CanvasRenderingContext2D, action: HistoryItemSource<EllipseData, EllipseEditData>) {
-  let { size, color, x1, y1, x2, y2 } = action.data
+  const { size, color, x1, y1, x2, y2 } = getEditedEllipseData(action)
   ctx.lineCap = 'butt'
   ctx.lineJoin = 'miter'
   ctx.lineWidth = size
   ctx.strokeStyle = color
 
-  if (x1 > x2) {
-    [x1, x2] = [x2, x1]
-  }
-  if (y1 > y2) {
-    [y1, y2] = [y2, y1]
-  }
-
-  const distance = action.editHistory.reduce(
-    (distance, { data }) => ({
-      x: distance.x + data.x2 - data.x1,
-      y: distance.y + data.y2 - data.y1
-    }),
-    { x: 0, y: 0 }
-  )
-
-  const x = (x1 + x2) / 2 + distance.x
-  const y = (y1 + y2) / 2 + distance.y
-  const rx = (x2 - x1) / 2
-  const ry = (y2 - y1) / 2
+  const x = (x1 + x2) / 2
+  const y = (y1 + y2) / 2
+  const rx = Math.abs(x2 - x1) / 2
+  const ry = Math.abs(y2 - y1) / 2
   const k = 0.5522848
   // 水平控制点偏移量
   const ox = rx * k
@@ -49,16 +77,20 @@ export default function draw (ctx: CanvasRenderingContext2D, action: HistoryItem
     ctx.fillStyle = '#ffffff'
 
     ctx.beginPath()
-    ctx.rect(x - rx, y - ry, rx * 2, ry * 2)
+    ctx.moveTo(x1, y1)
+    ctx.lineTo(x2, y1)
+    ctx.lineTo(x2, y2)
+    ctx.lineTo(x1, y2)
+    ctx.closePath()
     ctx.stroke()
 
-    drawDragCircle(ctx, x, y - ry)
-    drawDragCircle(ctx, x + rx, y - ry)
-    drawDragCircle(ctx, x + rx, y)
-    drawDragCircle(ctx, x + rx, y + ry)
-    drawDragCircle(ctx, x, y + ry)
-    drawDragCircle(ctx, x - rx, y + ry)
-    drawDragCircle(ctx, x - rx, y)
-    drawDragCircle(ctx, x - rx, y - ry)
+    drawDragCircle(ctx, (x1 + x2) / 2, y1)
+    drawDragCircle(ctx, x2, y1)
+    drawDragCircle(ctx, x2, (y1 + y2) / 2)
+    drawDragCircle(ctx, x2, y2)
+    drawDragCircle(ctx, (x1 + x2) / 2, y2)
+    drawDragCircle(ctx, x1, y2)
+    drawDragCircle(ctx, x1, (y1 + y2) / 2)
+    drawDragCircle(ctx, x1, y1)
   }
 }

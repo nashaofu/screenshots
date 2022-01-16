@@ -15,19 +15,19 @@ export interface Point {
 }
 
 export enum HistoryItemType {
-  EDIT = 1,
-  SOURCE = 2
+  Edit,
+  Source
 }
 
 export interface HistoryItemEdit<E, S> {
-  type: HistoryItemType.EDIT
+  type: HistoryItemType.Edit
   data: E
   source: HistoryItemSource<S, E>
 }
 
 export interface HistoryItemSource<S, E> {
   name: string
-  type: HistoryItemType.SOURCE
+  type: HistoryItemType.Source
   data: S
   isSelected?: boolean
   editHistory: HistoryItemEdit<E, S>[]

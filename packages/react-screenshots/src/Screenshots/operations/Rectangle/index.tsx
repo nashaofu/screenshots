@@ -10,8 +10,8 @@ import useOperation from '../../hooks/useOperation'
 import ScreenshotsButton from '../../ScreenshotsButton'
 import ScreenshotsSizeColor from '../../ScreenshotsSizeColor'
 import { HistoryItemSource, HistoryItemEdit, HistoryItemType } from '../../types'
-import { isHit } from '../utils'
-import draw from './draw'
+import { isHit, isHitCircle } from '../utils'
+import draw, { getEditedRectangleData } from './draw'
 
 export interface RectangleData {
   size: number
@@ -22,7 +22,20 @@ export interface RectangleData {
   y2: number
 }
 
+export enum RectangleEditType {
+  Move,
+  ResizeTop,
+  ResizeRightTop,
+  ResizeRight,
+  ResizeRightBottom,
+  ResizeBottom,
+  ResizeLeftBottom,
+  ResizeLeft,
+  ResizeLeftTop
+}
+
 export interface RectangleEditData {
+  type: RectangleEditType
   x1: number
   y1: number
   x2: number
@@ -56,15 +69,78 @@ export default function Rectangle (): ReactElement {
 
   const onDrawSelect = useCallback(
     (action: HistoryItemSource<unknown, unknown>, e: MouseEvent) => {
-      if (action.name !== 'Rectangle') {
+      if (action.name !== 'Rectangle' || !canvasContextRef.current) {
         return
       }
 
+      const source = action as HistoryItemSource<RectangleData, RectangleEditData>
       selectRectangle()
 
+      const { x1, y1, x2, y2 } = getEditedRectangleData(source)
+
+      let type = RectangleEditType.Move
+      if (
+        isHitCircle(canvasContextRef.current.canvas, e, {
+          x: (x1 + x2) / 2,
+          y: y1
+        })
+      ) {
+        type = RectangleEditType.ResizeTop
+      } else if (
+        isHitCircle(canvasContextRef.current.canvas, e, {
+          x: x2,
+          y: y1
+        })
+      ) {
+        type = RectangleEditType.ResizeRightTop
+      } else if (
+        isHitCircle(canvasContextRef.current.canvas, e, {
+          x: x2,
+          y: (y1 + y2) / 2
+        })
+      ) {
+        type = RectangleEditType.ResizeRight
+      } else if (
+        isHitCircle(canvasContextRef.current.canvas, e, {
+          x: x2,
+          y: y2
+        })
+      ) {
+        type = RectangleEditType.ResizeRightBottom
+      } else if (
+        isHitCircle(canvasContextRef.current.canvas, e, {
+          x: (x1 + x2) / 2,
+          y: y2
+        })
+      ) {
+        type = RectangleEditType.ResizeBottom
+      } else if (
+        isHitCircle(canvasContextRef.current.canvas, e, {
+          x: x1,
+          y: y2
+        })
+      ) {
+        type = RectangleEditType.ResizeLeftBottom
+      } else if (
+        isHitCircle(canvasContextRef.current.canvas, e, {
+          x: x1,
+          y: (y1 + y2) / 2
+        })
+      ) {
+        type = RectangleEditType.ResizeLeft
+      } else if (
+        isHitCircle(canvasContextRef.current.canvas, e, {
+          x: x1,
+          y: y1
+        })
+      ) {
+        type = RectangleEditType.ResizeLeftTop
+      }
+
       rectangleEditRef.current = {
-        type: HistoryItemType.EDIT,
+        type: HistoryItemType.Edit,
         data: {
+          type,
           x1: e.clientX,
           y1: e.clientY,
           x2: e.clientX,
@@ -75,7 +151,7 @@ export default function Rectangle (): ReactElement {
 
       historyDispatcher.select(action)
     },
-    [selectRectangle, historyDispatcher]
+    [canvasContextRef, selectRectangle, historyDispatcher]
   )
 
   const onMousedown = useCallback(
@@ -89,7 +165,7 @@ export default function Rectangle (): ReactElement {
       const y = e.clientY - top
       rectangleRef.current = {
         name: 'Rectangle',
-        type: HistoryItemType.SOURCE,
+        type: HistoryItemType.Source,
         data: {
           size,
           color,

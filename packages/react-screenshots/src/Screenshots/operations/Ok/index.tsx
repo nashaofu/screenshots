@@ -14,11 +14,11 @@ export default function Ok (): ReactElement {
   const reset = useReset()
 
   const onClick = useCallback(() => {
-    if (!canvasContextRef.current) {
-      return
-    }
     historyDispatcher.clearSelect()
     setTimeout(() => {
+      if (!canvasContextRef.current) {
+        return
+      }
       canvasContextRef.current.canvas.toBlob(blob => {
         call('onOk', blob, bounds)
         reset()

@@ -60,7 +60,7 @@ export default function Brush (): ReactElement {
       selectBrush()
 
       brushEditRef.current = {
-        type: HistoryItemType.EDIT,
+        type: HistoryItemType.Edit,
         data: {
           x1: e.clientX,
           y1: e.clientY,
@@ -85,7 +85,7 @@ export default function Brush (): ReactElement {
 
       brushRef.current = {
         name: 'Brush',
-        type: HistoryItemType.SOURCE,
+        type: HistoryItemType.Source,
         data: {
           size: size,
           color: color,

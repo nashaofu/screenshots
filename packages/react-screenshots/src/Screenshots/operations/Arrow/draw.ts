@@ -1,26 +1,40 @@
-import { ArrowData, ArrowEditData } from '.'
+import { ArrowData, ArrowEditData, ArrowEditType } from '.'
 import { HistoryItemSource } from '../../types'
 import { drawDragCircle } from '../utils'
 
+export function getEditedArrowData (action: HistoryItemSource<ArrowData, ArrowEditData>) {
+  let { x1, y1, x2, y2 } = action.data
+  action.editHistory.forEach(({ data }) => {
+    const x = data.x2 - data.x1
+    const y = data.y2 - data.y1
+    if (data.type === ArrowEditType.Move) {
+      x1 += x
+      y1 += y
+      x2 += x
+      y2 += y
+    } else if (data.type === ArrowEditType.MoveStart) {
+      x1 += x
+      y1 += y
+    } else if (data.type === ArrowEditType.MoveEnd) {
+      x2 += x
+      y2 += y
+    }
+  })
+  return {
+    ...action.data,
+    x1,
+    x2,
+    y1,
+    y2
+  }
+}
+
 export default function draw (ctx: CanvasRenderingContext2D, action: HistoryItemSource<ArrowData, ArrowEditData>) {
-  let { size, color, x1, x2, y1, y2 } = action.data
+  const { size, color, x1, x2, y1, y2 } = getEditedArrowData(action)
   ctx.lineCap = 'round'
   ctx.lineJoin = 'bevel'
   ctx.lineWidth = size
   ctx.strokeStyle = color
-
-  const distance = action.editHistory.reduce(
-    (distance, { data }) => ({
-      x: distance.x + data.x2 - data.x1,
-      y: distance.y + data.y2 - data.y1
-    }),
-    { x: 0, y: 0 }
-  )
-
-  x1 += distance.x
-  x2 += distance.x
-  y1 += distance.y
-  y2 += distance.y
 
   const dx = x2 - x1
   const dy = y2 - y1

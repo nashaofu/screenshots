@@ -9,9 +9,9 @@ import useCursor from '../../hooks/useCursor'
 import useOperation from '../../hooks/useOperation'
 import useHistory from '../../hooks/useHistory'
 import useCanvasContextRef from '../../hooks/useCanvasContextRef'
-import { isHit } from '../utils'
+import { isHit, isHitCircle } from '../utils'
 import useDrawSelect from '../../hooks/useDrawSelect'
-import draw from './draw'
+import draw, { getEditedArrowData } from './draw'
 
 export interface ArrowData {
   size: number
@@ -22,7 +22,14 @@ export interface ArrowData {
   y2: number
 }
 
+export enum ArrowEditType {
+  Move,
+  MoveStart,
+  MoveEnd
+}
+
 export interface ArrowEditData {
+  type: ArrowEditType
   x1: number
   x2: number
   y1: number
@@ -56,26 +63,46 @@ export default function Arrow (): ReactElement {
 
   const onDrawSelect = useCallback(
     (action: HistoryItemSource<unknown, unknown>, e: MouseEvent) => {
-      if (action.name !== 'Arrow') {
+      if (action.name !== 'Arrow' || !canvasContextRef.current) {
         return
       }
 
+      const source = action as HistoryItemSource<ArrowData, ArrowEditData>
       selectArrow()
 
+      const { x1, y1, x2, y2 } = getEditedArrowData(source)
+      let type = ArrowEditType.Move
+      if (
+        isHitCircle(canvasContextRef.current.canvas, e, {
+          x: x1,
+          y: y1
+        })
+      ) {
+        type = ArrowEditType.MoveStart
+      } else if (
+        isHitCircle(canvasContextRef.current.canvas, e, {
+          x: x2,
+          y: y2
+        })
+      ) {
+        type = ArrowEditType.MoveEnd
+      }
+
       arrowEditRef.current = {
-        type: HistoryItemType.EDIT,
+        type: HistoryItemType.Edit,
         data: {
+          type,
           x1: e.clientX,
           y1: e.clientY,
           x2: e.clientX,
           y2: e.clientY
         },
-        source: action as HistoryItemSource<ArrowData, ArrowEditData>
+        source
       }
 
       historyDispatcher.select(action)
     },
-    [selectArrow, historyDispatcher]
+    [canvasContextRef, selectArrow, historyDispatcher]
   )
 
   const onMousedown = useCallback(
@@ -87,7 +114,7 @@ export default function Arrow (): ReactElement {
       const { left, top } = canvasContextRef.current.canvas.getBoundingClientRect()
       arrowRef.current = {
         name: 'Arrow',
-        type: HistoryItemType.SOURCE,
+        type: HistoryItemType.Source,
         data: {
           size,
           color,
