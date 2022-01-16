@@ -11,6 +11,7 @@ import ScreenshotsButton from '../../ScreenshotsButton'
 import ScreenshotsSizeColor from '../../ScreenshotsSizeColor'
 import { HistoryItemEdit, HistoryItemSource, HistoryItemType } from '../../types'
 import { isHit } from '../utils'
+import draw from './draw'
 
 export interface EllipseData {
   size: number
@@ -28,48 +29,6 @@ export interface EllipseEditData {
   y2: number
 }
 
-function draw (ctx: CanvasRenderingContext2D, action: HistoryItemSource<EllipseData, EllipseEditData>) {
-  let { size, color, x1, y1, x2, y2 } = action.data
-  ctx.lineCap = 'butt'
-  ctx.lineJoin = 'miter'
-  ctx.lineWidth = size
-  ctx.strokeStyle = color
-
-  if (x1 > x2) {
-    [x1, x2] = [x2, x1]
-  }
-  if (y1 > y2) {
-    [y1, y2] = [y2, y1]
-  }
-
-  const distance = action.editHistory.reduce(
-    (distance, { data }) => ({
-      x: distance.x + data.x2 - data.x1,
-      y: distance.y + data.y2 - data.y1
-    }),
-    { x: 0, y: 0 }
-  )
-
-  const x = (x1 + x2) / 2 + distance.x
-  const y = (y1 + y2) / 2 + distance.y
-  const rx = (x2 - x1) / 2
-  const ry = (y2 - y1) / 2
-  const k = 0.5522848
-  // 水平控制点偏移量
-  const ox = rx * k
-  // 垂直控制点偏移量
-  const oy = ry * k
-  // 从椭圆的左端点开始顺时针绘制四条三次贝塞尔曲线
-  ctx.beginPath()
-  ctx.moveTo(x - rx, y)
-  ctx.bezierCurveTo(x - rx, y - oy, x - ox, y - ry, x, y - ry)
-  ctx.bezierCurveTo(x + ox, y - ry, x + rx, y - oy, x + rx, y)
-  ctx.bezierCurveTo(x + rx, y + oy, x + ox, y + ry, x, y + ry)
-  ctx.bezierCurveTo(x - ox, y + ry, x - rx, y + oy, x - rx, y)
-  ctx.closePath()
-  ctx.stroke()
-}
-
 export default function Ellipse (): ReactElement {
   const [history, historyDispatcher] = useHistory()
   const [operation, operationDispatcher] = useOperation()
@@ -83,12 +42,17 @@ export default function Ellipse (): ReactElement {
   const checked = operation === 'Ellipse'
 
   const selectEllipse = useCallback(() => {
+    operationDispatcher.set('Ellipse')
+    cursorDispatcher.set('crosshair')
+  }, [operationDispatcher, cursorDispatcher])
+
+  const onSelectEllipse = useCallback(() => {
     if (checked) {
       return
     }
-    operationDispatcher.set('Ellipse')
-    cursorDispatcher.set('crosshair')
-  }, [checked, operationDispatcher, cursorDispatcher])
+    selectEllipse()
+    historyDispatcher.clearSelect()
+  }, [checked, selectEllipse, historyDispatcher])
 
   const onDrawSelect = useCallback(
     (action: HistoryItemSource<unknown, unknown>, e: MouseEvent) => {
@@ -134,7 +98,6 @@ export default function Ellipse (): ReactElement {
           x2: x,
           y2: y
         },
-        isSelected: false,
         editHistory: [],
         draw,
         isHit
@@ -149,7 +112,7 @@ export default function Ellipse (): ReactElement {
         return
       }
 
-      if (ellipseEditRef.current && ellipseEditRef.current.source.isSelected) {
+      if (ellipseEditRef.current) {
         ellipseEditRef.current.data.x2 = e.clientX
         ellipseEditRef.current.data.y2 = e.clientY
         if (history.top !== ellipseEditRef.current) {
@@ -178,9 +141,13 @@ export default function Ellipse (): ReactElement {
       return
     }
 
+    if (ellipseRef.current) {
+      historyDispatcher.clearSelect()
+    }
+
     ellipseRef.current = null
     ellipseEditRef.current = null
-  }, [checked])
+  }, [checked, historyDispatcher])
 
   useDrawSelect(onDrawSelect)
   useCanvasMousedown(onMousedown)
@@ -192,7 +159,7 @@ export default function Ellipse (): ReactElement {
       title='椭圆'
       icon='icon-ellipse'
       checked={checked}
-      onClick={selectEllipse}
+      onClick={onSelectEllipse}
       option={<ScreenshotsSizeColor size={size} color={color} onSizeChange={setSize} onColorChange={setColor} />}
     />
   )

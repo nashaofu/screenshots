@@ -60,13 +60,18 @@ export default function Mosaic (): ReactElement {
 
   const checked = operation === 'Mosaic'
 
-  const onClick = useCallback(() => {
+  const selectMosaic = useCallback(() => {
+    operationDispatcher.set('Mosaic')
+    cursorDispatcher.set('crosshair')
+  }, [operationDispatcher, cursorDispatcher])
+
+  const onSelectMosaic = useCallback(() => {
     if (checked) {
       return
     }
-    operationDispatcher.set('Mosaic')
-    cursorDispatcher.set('crosshair')
-  }, [checked, operationDispatcher, cursorDispatcher])
+    selectMosaic()
+    historyDispatcher.clearSelect()
+  }, [checked, selectMosaic, historyDispatcher])
 
   const onMousedown = useCallback(
     (e: MouseEvent): void => {
@@ -91,7 +96,6 @@ export default function Mosaic (): ReactElement {
             }
           ]
         },
-        isSelected: false,
         editHistory: [],
         draw
       }
@@ -164,14 +168,13 @@ export default function Mosaic (): ReactElement {
       return
     }
 
-    if (mosaicRef.current) {
-      mosaicRef.current = null
-    }
+    mosaicRef.current = null
   }, [checked])
 
   useCanvasMousedown(onMousedown)
   useCanvasMousemove(onMousemove)
   useCanvasMouseup(onMouseup)
+
   useEffect(() => {
     if (!bounds || !image || !checked) {
       return
@@ -211,7 +214,7 @@ export default function Mosaic (): ReactElement {
       title='马赛克'
       icon='icon-mosaic'
       checked={checked}
-      onClick={onClick}
+      onClick={onSelectMosaic}
       option={<ScreenshotsSize value={size} onChange={setSize} />}
     />
   )
