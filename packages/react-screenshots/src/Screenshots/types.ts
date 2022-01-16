@@ -29,7 +29,7 @@ export interface HistoryItemSource<S, E> {
   name: string
   type: HistoryItemType.SOURCE
   data: S
-  isSelected: boolean
+  isSelected?: boolean
   editHistory: HistoryItemEdit<E, S>[]
   draw: (ctx: CanvasRenderingContext2D, action: HistoryItemSource<S, E>) => void
   isHit?: (ctx: CanvasRenderingContext2D, action: HistoryItemSource<S, E>, point: Point) => boolean

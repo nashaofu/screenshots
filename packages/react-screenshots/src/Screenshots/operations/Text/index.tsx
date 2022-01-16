@@ -110,12 +110,17 @@ export default function Text (): ReactElement {
   const checked = operation === 'Text'
 
   const selectText = useCallback(() => {
+    operationDispatcher.set('Text')
+    cursorDispatcher.set('default')
+  }, [operationDispatcher, cursorDispatcher])
+
+  const onSelectText = useCallback(() => {
     if (checked) {
       return
     }
-    operationDispatcher.set('Text')
-    cursorDispatcher.set('default')
-  }, [checked, operationDispatcher, cursorDispatcher])
+    selectText()
+    historyDispatcher.clearSelect()
+  }, [checked, selectText, historyDispatcher])
 
   const onSizeChange = useCallback((size: number) => {
     if (textRef.current) {
@@ -195,7 +200,6 @@ export default function Text (): ReactElement {
           y,
           text: ''
         },
-        isSelected: false,
         editHistory: [],
         draw,
         isHit
@@ -217,7 +221,7 @@ export default function Text (): ReactElement {
         return
       }
 
-      if (textEditRef.current && textEditRef.current.source.isSelected) {
+      if (textEditRef.current) {
         textEditRef.current.data.x2 = e.clientX
         textEditRef.current.data.y2 = e.clientY
         if (history.top !== textEditRef.current) {
@@ -250,7 +254,7 @@ export default function Text (): ReactElement {
         title='文本'
         icon='icon-text'
         checked={checked}
-        onClick={selectText}
+        onClick={onSelectText}
         option={
           <ScreenshotsSizeColor size={size} color={color} onSizeChange={onSizeChange} onColorChange={onColorChange} />
         }

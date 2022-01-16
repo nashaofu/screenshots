@@ -13,8 +13,9 @@ export interface HistoryDispatcher {
   undo: () => void
   redo: () => void
   set: (history: History) => void
-  reset: () => void
   select: <S, E>(action: HistoryItem<S, E>) => void
+  clearSelect: () => void
+  reset: () => void
 }
 
 export type HistoryValueDispatcher = [HistoryValue, HistoryDispatcher]
@@ -26,6 +27,18 @@ export default function useHistory (): HistoryValueDispatcher {
   const push = useCallback(
     <S, E>(action: HistoryItem<S, E>) => {
       const { index, stack } = history
+
+      stack.forEach(item => {
+        if (item.type === HistoryItemType.SOURCE) {
+          item.isSelected = false
+        }
+      })
+
+      if (action.type === HistoryItemType.SOURCE) {
+        action.isSelected = true
+      } else if (action.type === HistoryItemType.EDIT) {
+        action.source.isSelected = true
+      }
 
       stack.splice(index + 1)
       stack.push(action)
@@ -54,8 +67,12 @@ export default function useHistory (): HistoryValueDispatcher {
 
     const item = stack[index]
 
-    if (item && item.type === HistoryItemType.EDIT) {
-      item.source.editHistory.pop()
+    if (item) {
+      if (item.type === HistoryItemType.SOURCE) {
+        item.isSelected = false
+      } else if (item.type === HistoryItemType.EDIT) {
+        item.source.editHistory.pop()
+      }
     }
 
     setHistory?.({
@@ -69,8 +86,12 @@ export default function useHistory (): HistoryValueDispatcher {
 
     const item = stack[index + 1]
 
-    if (item && item.type === HistoryItemType.EDIT) {
-      item.source.editHistory.push(item)
+    if (item) {
+      if (item.type === HistoryItemType.SOURCE) {
+        item.isSelected = false
+      } else if (item.type === HistoryItemType.EDIT) {
+        item.source.editHistory.push(item)
+      }
     }
 
     setHistory?.({
@@ -102,6 +123,16 @@ export default function useHistory (): HistoryValueDispatcher {
     [history, setHistory]
   )
 
+  const clearSelect = useCallback(() => {
+    history.stack.forEach(item => {
+      if (item.type === HistoryItemType.SOURCE) {
+        item.isSelected = false
+      }
+    })
+
+    setHistory?.({ ...history })
+  }, [history, setHistory])
+
   const reset = useCallback(() => {
     setHistory?.({
       index: -1,
@@ -122,6 +153,7 @@ export default function useHistory (): HistoryValueDispatcher {
       redo,
       set,
       select,
+      clearSelect,
       reset
     }
   ]

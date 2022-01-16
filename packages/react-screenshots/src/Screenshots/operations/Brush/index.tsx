@@ -11,6 +11,7 @@ import useCanvasContextRef from '../../hooks/useCanvasContextRef'
 import { HistoryItemEdit, HistoryItemSource, HistoryItemType, Point } from '../../types'
 import useDrawSelect from '../../hooks/useDrawSelect'
 import { isHit } from '../utils'
+import draw from './draw'
 
 export interface BrushData {
   size: number
@@ -23,33 +24,6 @@ export interface BrushEditData {
   y1: number
   x2: number
   y2: number
-}
-
-function draw (ctx: CanvasRenderingContext2D, action: HistoryItemSource<BrushData, BrushEditData>): void {
-  const { size, color, points } = action.data
-  ctx.lineCap = 'round'
-  ctx.lineJoin = 'round'
-  ctx.lineWidth = size
-  ctx.strokeStyle = color
-
-  const { x, y } = action.editHistory.reduce(
-    (distance, { data }) => ({
-      x: distance.x + data.x2 - data.x1,
-      y: distance.y + data.y2 - data.y1
-    }),
-    { x: 0, y: 0 }
-  )
-
-  ctx.beginPath()
-  points.forEach((item, index) => {
-    if (index === 0) {
-      ctx.moveTo(item.x + x, item.y + y)
-    } else {
-      ctx.lineTo(item.x + x, item.y + y)
-    }
-  })
-
-  ctx.stroke()
 }
 
 export default function Brush (): ReactElement {
@@ -65,12 +39,17 @@ export default function Brush (): ReactElement {
   const checked = operation === 'Brush'
 
   const selectBrush = useCallback(() => {
+    operationDispatcher.set('Brush')
+    cursorDispatcher.set('default')
+  }, [operationDispatcher, cursorDispatcher])
+
+  const onSelectBrush = useCallback(() => {
     if (checked) {
       return
     }
-    operationDispatcher.set('Brush')
-    cursorDispatcher.set('default')
-  }, [checked, operationDispatcher, cursorDispatcher])
+    selectBrush()
+    historyDispatcher.clearSelect()
+  }, [checked, selectBrush, historyDispatcher])
 
   const onDrawSelect = useCallback(
     (action: HistoryItemSource<unknown, unknown>, e: MouseEvent) => {
@@ -117,7 +96,6 @@ export default function Brush (): ReactElement {
             }
           ]
         },
-        isSelected: false,
         editHistory: [],
         draw,
         isHit
@@ -132,7 +110,7 @@ export default function Brush (): ReactElement {
         return
       }
 
-      if (brushEditRef.current && brushEditRef.current.source.isSelected) {
+      if (brushEditRef.current) {
         brushEditRef.current.data.x2 = e.clientX
         brushEditRef.current.data.y2 = e.clientY
         if (history.top !== brushEditRef.current) {
@@ -164,9 +142,13 @@ export default function Brush (): ReactElement {
       return
     }
 
+    if (brushRef.current) {
+      historyDispatcher.clearSelect()
+    }
+
     brushRef.current = null
     brushEditRef.current = null
-  }, [checked])
+  }, [checked, historyDispatcher])
 
   useDrawSelect(onDrawSelect)
   useCanvasMousedown(onMousedown)
@@ -178,7 +160,7 @@ export default function Brush (): ReactElement {
       title='画笔'
       icon='icon-brush'
       checked={checked}
-      onClick={selectBrush}
+      onClick={onSelectBrush}
       option={<ScreenshotsSizeColor size={size} color={color} onSizeChange={setSize} onColorChange={setColor} />}
     />
   )
