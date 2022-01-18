@@ -12,9 +12,6 @@ export default defineConfig(({ command, mode }) => {
   if (mode === 'web') {
     return {
       base: './',
-      build: {
-        outDir: 'dist/web'
-      },
       plugins: [react()]
     }
   }
@@ -23,7 +20,7 @@ export default defineConfig(({ command, mode }) => {
     return {
       base: './',
       build: {
-        outDir: 'dist/electron',
+        outDir: 'electron',
         rollupOptions: {
           input: {
             index: './electron.html'
@@ -37,7 +34,7 @@ export default defineConfig(({ command, mode }) => {
   if (mode === 'lib') {
     return {
       build: {
-        outDir: 'dist/lib',
+        outDir: 'lib',
         lib: {
           entry: './src/Screenshots/index.tsx',
           formats: ['es', 'cjs'],

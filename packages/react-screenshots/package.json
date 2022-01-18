@@ -2,19 +2,20 @@
   "name": "react-screenshots",
   "version": "0.1.2",
   "description": "a picture clipping and graffiti tool by react",
-  "main": "./dist/lib/react-screenshots.cjs.js",
-  "module": "./dist/lib/react-screenshots.es.js",
-  "types": "./dist/declaration/index.d.ts",
+  "main": "./lib/react-screenshots.cjs.js",
+  "module": "./lib/react-screenshots.es.js",
+  "types": "./lib/types/index.d.ts",
   "files": [
-    "dist/**"
+    "lib/**",
+    "electron/**"
   ],
   "scripts": {
     "dev": "vite",
     "tsc": "tsc --watch",
-    "build": "tsc --project tsconfig.build.json && npm run build:web && npm run build:electron && npm run build:lib",
+    "build": "npm run build:web && npm run build:electron && npm run build:lib",
     "build:web": "vite build --mode web",
     "build:electron": "vite build --mode electron",
-    "build:lib": "vite build --mode lib",
+    "build:lib": "vite build --mode lib && tsc --project tsconfig.build.json",
     "lint": "eslint src --ext .js,.ts,.jsx,.tsx --fix",
     "preview": "vite preview"
   },

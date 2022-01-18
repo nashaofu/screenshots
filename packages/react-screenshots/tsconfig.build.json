@@ -3,7 +3,7 @@
   "compilerOptions": {
     "declaration": true,
     "emitDeclarationOnly": true,
-    "outDir": "./dist/declaration/",
+    "outDir": "./lib/types",
     "noEmit": false
   },
   "include": ["src/Screenshots"]

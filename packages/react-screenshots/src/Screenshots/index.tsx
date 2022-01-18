@@ -1,4 +1,4 @@
-import React, { ReactElement, useCallback, useRef, useState } from 'react'
+import React, { MouseEvent, ReactElement, useCallback, useRef, useState } from 'react'
 import ScreenshotsContext from './ScreenshotsContext'
 import ScreenshotsBackground from './ScreenshotsBackground'
 import ScreenshotsCanvas from './ScreenshotsCanvas'
@@ -18,8 +18,8 @@ export interface ScreenshotsProps {
 
 export default function Screenshots ({ url, width, height, className, ...props }: ScreenshotsProps): ReactElement {
   const image = useGetLoadedImage(url)
-  const emiterRef = useRef<Emiter>({})
   const canvasContextRef = useRef<CanvasRenderingContext2D>(null)
+  const emiterRef = useRef<Emiter>({})
   const [history, setHistory] = useState<History>({
     index: -1,
     stack: []
@@ -65,9 +65,50 @@ export default function Screenshots ({ url, width, height, className, ...props }
     classNames.push(className)
   }
 
+  const reset = () => {
+    emiterRef.current = {}
+    setHistory({
+      index: -1,
+      stack: []
+    })
+    setBounds(null)
+    setCursor('move')
+    setOperation(undefined)
+  }
+
+  const onDoubleClick = useCallback(
+    (e: MouseEvent) => {
+      if (e.button !== 0 || !bounds || !canvasContextRef.current) {
+        return
+      }
+      canvasContextRef.current.canvas.toBlob(blob => {
+        call('onOk', blob, bounds)
+        reset()
+      }, 'image/png')
+    },
+    [bounds, call]
+  )
+
+  const onContextMenu = useCallback(
+    (e: MouseEvent) => {
+      if (e.button !== 2) {
+        return
+      }
+      e.preventDefault()
+      call('onCancel')
+      reset()
+    },
+    [call]
+  )
+
   return (
     <ScreenshotsContext.Provider value={{ store, dispatcher }}>
-      <div className={classNames.join(' ')} style={{ width, height }}>
+      <div
+        className={classNames.join(' ')}
+        style={{ width, height }}
+        onDoubleClick={onDoubleClick}
+        onContextMenu={onContextMenu}
+      >
         <ScreenshotsBackground />
         <ScreenshotsCanvas ref={canvasContextRef} />
         <ScreenshotsOperations />

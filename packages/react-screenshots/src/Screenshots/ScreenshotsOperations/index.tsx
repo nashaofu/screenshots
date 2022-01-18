@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useRef, useState } from 'react'
+import React, { ReactElement, useCallback, useEffect, useRef, useState } from 'react'
 import useBounds from '../hooks/useBounds'
 import OperationButtons from '../operations'
 import './index.less'
@@ -14,6 +14,14 @@ export default function ScreenshotsOperations (): ReactElement | null {
   const [position, setPosition] = useState<Position | null>(null)
 
   const elRef = useRef<HTMLDivElement>(null)
+  const onDoubleClick = useCallback((e: MouseEvent) => {
+    e.stopPropagation()
+  }, [])
+
+  const onContextMenu = useCallback((e: MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+  }, [])
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
@@ -74,6 +82,8 @@ export default function ScreenshotsOperations (): ReactElement | null {
           left: position?.x,
           top: position?.y
         }}
+        onDoubleClick={onDoubleClick}
+        onContextMenu={onContextMenu}
       >
         <div className='screenshots-operations-buttons'>
           {OperationButtons.map((OperationButton, index) => {
