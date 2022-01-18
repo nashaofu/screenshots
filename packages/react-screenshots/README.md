@@ -11,107 +11,75 @@
 1. web 中使用
 
 ```js
-import React, { PureComponent } from 'react'
+import React, { useCallback } from 'react'
 import Screenshot from 'react-screenshots'
-import 'react-screenshots/dist/screenshots.css'
+import 'react-screenshots/lib/style.css'
 
-export default class App extends PureComponent {
-  state = {
-    width: window.innerWidth,
-    height: window.innerHeight
-  }
+import url from './Battlecry.jpg'
 
-  onSave = ({ viewer, dataURL }) => {
-    console.log('点击了保存按钮', dataURL, viewer)
-  }
+export default function App() {
+  const onSave = useCallback((blob, bounds) => {
+    console.log('save', blob, bounds)
+  }, [])
+  const onCancel = useCallback(() => {
+    console.log('cancel')
+  }, [])
+  const onOk = useCallback((blob, bounds) => {
+    console.log('ok', blob, bounds)
+  }, [])
 
-  onCancel = () => {
-    console.log('点击了取消按钮')
-  }
-
-  onOk = ({ dataURL, viewer }) => {
-    console.log('点击了确定按钮', dataURL, viewer)
-  }
-
-  render() {
-    const { width, height } = this.state
-    return (
-      <Screenshot
-        image="./demo.png"
-        width={width}
-        height={height}
-        onSave={this.onSave}
-        onCancel={this.onCancel}
-        onOk={this.onOk}
-      />
-    )
-  }
+  return (
+    <Screenshots
+      url={url}
+      width={window.innerWidth}
+      height={window.innerHeight}
+      onSave={onSave}
+      onCancel={onCancel}
+      onOk={onOk}
+    />
+  )
 }
 ```
 
 2. electron 中使用
 
-- electron 中使用可直接加载渲染进程的页面，页面路径为`require.resolve('react-screenshots/dist/index.html')`，不推荐自己手动开发主进程，推荐直接使用`electron-screenshots`模块
+- electron 中使用可直接加载渲染进程的页面，页面路径为`require.resolve('react-screenshots/electron/electron.html')`，不推荐自己手动开发主进程，推荐直接使用`electron-screenshots`模块
 
-```js
-const $win = new BrowserWindow({
-  /** 窗口参数 */
-})
-// 加载页面
-$win.loadURL(`file://${require.resolve('react-screenshots/dist/index.html')}`)
+```ts
+interface GlobalScreenshots {
+  ready: () => void
+  capture: (display: Display) => Promise<string>
+  captured: () => void
+  save: (arrayBuffer: ArrayBuffer, bounds: Bounds) => void
+  cancel: () => void
+  ok: (arrayBuffer: ArrayBuffer, bounds: Bounds) => void
+  on: (channel: string, fn: ScreenshotsListener) => void
+  off: (channel: string, fn: ScreenshotsListener) => void
+}
 
-// 渲染进程页面加载后通知主进程
-ipcMain.once('SCREENSHOTS.ready', () => {
-  // 发送需要截取的屏幕信息
-  // display = {
-  //   id, // 屏幕id
-  //   x, // 屏幕位置和大小
-  //   y,
-  //   width,
-  //   height
-  // }
-  $win.webContents.send('SCREENSHOTS::SEND-DISPLAY-DATA', display)
-})
-
-// 渲染进程完成桌面快照捕捉之后的回调
-// 通常在这个事件之后再显示窗口，避免截图窗口自己被截图
-ipcMain.once('SCREENSHOTS::CAPTURED', () => {
-  $win.show()
-  $win.focus()
-})
-
-// 点击保存按钮事件
-ipcMain.on('SCREENSHOTS::SAVE', (e, data) => {})
-// 点击取消按钮事件
-ipcMain.on('SCREENSHOTS::CANCEL', e => {})
-// 点击确定按钮事件
-ipcMain.on('SCREENSHOTS::OK', (e, data) => {})
+// 需要在electron的preload中提前初始化这个对象，用于渲染进程与主进程通信
+window.screenshots: GlobalScreenshots
 ```
 
 ## Props
 
 ```ts
 interface Bounds {
-  x1: number
-  y1: number
-  x2: number
-  y2: number
-}
-
-interface Data {
-  dataURL: string // 图片资源base64
-  bounds: Bounds // 截图区域坐标信息
+  x: number
+  y: number
+  width: number
+  height: number
 }
 ```
 
-| 名称     | 说明                 | 类型                           |
-| -------- | -------------------- | ------------------------------ |
-| image    | 要编辑的图像资源地址 | `string`                       |
-| width    | 画布宽度             | `number`                       |
-| height   | 画布宽度             | `number`                       |
-| onSave   | 保存按钮回调         | `function (data:Data):void {}` |
-| onCancel | 取消按钮回调         | `function ():void {}`          |
-| onOk     | 取消按钮回调         | `function (data:Data):void {}` |
+| 名称     | 说明                 | 类型                                   |
+| -------- | -------------------- | -------------------------------------- |
+| url      | 要编辑的图像资源地址 | `string`                               |
+| width    | 画布宽度             | `number`                               |
+| height   | 画布宽度             | `number`                               |
+| onSave   | 保存按钮回调         | `(blob: Blob, bounds: Bounds) => void` |
+| onCancel | 取消按钮回调         | `() => void`                           |
+| onOk     | 取消按钮回调         | `(blob: Blob, bounds: Bounds) => void` |
 
 ### example
 
@@ -121,7 +89,7 @@ import React from 'react'
 function App() {
   return (
     <Screenshot
-      image="./example.png"
+      url="./example.png"
       width={window.innerWidth}
       height={window.innerHeight}
       onSave={() => {}}

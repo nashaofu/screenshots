@@ -62,5 +62,9 @@ export default function App (): JSX.Element {
     }
   }, [onCancel])
 
-  return <Screenshots url={url} width={width} height={height} onSave={onSave} onCancel={onCancel} onOk={onOk} />
+  return (
+    <div className='body'>
+      <Screenshots url={url} width={width} height={height} onSave={onSave} onCancel={onCancel} onOk={onOk} />
+    </div>
+  )
 }

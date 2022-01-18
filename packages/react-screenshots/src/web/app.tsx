@@ -14,38 +14,15 @@ export default function App (): ReactElement {
   }, [])
   const onOk = useCallback((blob: Blob, bounds: Bounds) => {
     console.log('ok', blob, bounds)
+    console.log(URL.createObjectURL(blob))
   }, [])
 
   return (
     <div className='body'>
       <Screenshots
         url={url}
-        width={window.innerWidth / 2}
-        height={window.innerHeight / 2}
-        onSave={onSave}
-        onCancel={onCancel}
-        onOk={onOk}
-      />
-      <Screenshots
-        url={url}
-        width={window.innerWidth / 2}
-        height={window.innerHeight / 2}
-        onSave={onSave}
-        onCancel={onCancel}
-        onOk={onOk}
-      />
-      <Screenshots
-        url={url}
-        width={window.innerWidth / 2}
-        height={window.innerHeight / 2}
-        onSave={onSave}
-        onCancel={onCancel}
-        onOk={onOk}
-      />
-      <Screenshots
-        url={url}
-        width={window.innerWidth / 2}
-        height={window.innerHeight / 2}
+        width={window.innerWidth}
+        height={window.innerHeight}
         onSave={onSave}
         onCancel={onCancel}
         onOk={onOk}

@@ -37,7 +37,7 @@ export default class Screenshots extends Events {
   constructor () {
     super()
     this.listenIpc()
-    this.$view.webContents.loadURL(`file://${require.resolve('react-screenshots/dist/electron/electron.html')}`)
+    this.$view.webContents.loadURL(`file://${require.resolve('react-screenshots/electron/electron.html')}`)
   }
 
   /**
