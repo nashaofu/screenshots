@@ -13,6 +13,9 @@ export interface Bounds {
   height: number
 }
 
+export interface ScreenshotsOpts {
+  lang: Record<string, string>
+}
 export default class Screenshots extends Events {
   // 截图窗口对象
   public $win: BrowserWindow | null = null
@@ -34,10 +37,15 @@ export default class Screenshots extends Events {
     })
   })
 
-  constructor () {
+  constructor (opts?: ScreenshotsOpts) {
     super()
     this.listenIpc()
     this.$view.webContents.loadURL(`file://${require.resolve('react-screenshots/electron/electron.html')}`)
+    if (opts?.lang) {
+      this.isReady.then(() => {
+        this.setLang(opts.lang)
+      })
+    }
   }
 
   /**
@@ -76,6 +84,15 @@ export default class Screenshots extends Events {
     this.$win.setSimpleFullScreen(false)
     this.$win.close()
     this.$win = null
+  }
+
+  /**
+   * 设置语言
+   */
+  public setLang (lang: Record<string, string>): void {
+    logger('setLang', lang)
+
+    this.$view.webContents.send('SCREENSHOTS:setLang', lang)
   }
 
   /**

@@ -1,4 +1,5 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import useLang from '../hooks/useLang'
 import useStore from '../hooks/useStore'
 import { Position } from '../types'
 import './index.less'
@@ -13,6 +14,7 @@ const magnifierHeight = 80
 
 export default function ScreenshotsMagnifier ({ x, y }: ScreenshotsMagnifierProps) {
   const { width, height, image } = useStore()
+  const lang = useLang()
   const [position, setPosition] = useState<Position | null>(null)
   const elRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -101,7 +103,7 @@ export default function ScreenshotsMagnifier ({ x, y }: ScreenshotsMagnifierProp
       </div>
       <div className='screenshots-magnifier-footer'>
         <div className='screenshots-magnifier-footer-item'>
-          坐标: ({x},{y})
+          {lang.magnifier_coordinate_label}: ({x},{y})
         </div>
         <div className='screenshots-magnifier-footer-item'>RGB: #{rgb}</div>
       </div>

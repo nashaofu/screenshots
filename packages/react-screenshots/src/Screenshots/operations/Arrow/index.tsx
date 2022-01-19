@@ -12,6 +12,7 @@ import useCanvasContextRef from '../../hooks/useCanvasContextRef'
 import { isHit, isHitCircle } from '../utils'
 import useDrawSelect from '../../hooks/useDrawSelect'
 import draw, { getEditedArrowData } from './draw'
+import useLang from '../../hooks/useLang'
 
 export interface ArrowData {
   size: number
@@ -37,6 +38,7 @@ export interface ArrowEditData {
 }
 
 export default function Arrow (): ReactElement {
+  const lang = useLang()
   const [, cursorDispatcher] = useCursor()
   const [operation, operationDispatcher] = useOperation()
   const [history, historyDispatcher] = useHistory()
@@ -181,7 +183,7 @@ export default function Arrow (): ReactElement {
 
   return (
     <ScreenshotsButton
-      title='箭头'
+      title={lang.operation_arrow_title}
       icon='icon-arrow'
       checked={checked}
       onClick={onSelectArrow}

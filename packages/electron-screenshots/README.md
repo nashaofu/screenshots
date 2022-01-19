@@ -2,9 +2,19 @@
 
 > electron 截图插件
 
+## Prerequisites
+
+- electron >= 11
+
 ## Install
 
 [![NPM](https://nodei.co/npm/electron-screenshots.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/electron-screenshots/)
+
+## Features
+
+- 双击页面完成截图，触发`ok`事件
+- 右键点击取消截图，触发`cancel`事件
+- 多语言支持
 
 ## Usage
 
@@ -131,4 +141,4 @@ screenshots.startCapture()
 
 ## Screenshot
 
-![screenshot](https://raw.githubusercontent.com/nashaofu/screenshots/master/packages/electron-screenshots/screenshot.jpg)
+![screenshot](../../screenshot.jpg)

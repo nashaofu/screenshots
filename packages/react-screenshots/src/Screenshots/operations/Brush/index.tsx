@@ -12,6 +12,7 @@ import { HistoryItemEdit, HistoryItemSource, HistoryItemType, Point } from '../.
 import useDrawSelect from '../../hooks/useDrawSelect'
 import { isHit } from '../utils'
 import draw from './draw'
+import useLang from '../../hooks/useLang'
 
 export interface BrushData {
   size: number
@@ -27,6 +28,7 @@ export interface BrushEditData {
 }
 
 export default function Brush (): ReactElement {
+  const lang = useLang()
   const [, cursorDispatcher] = useCursor()
   const [operation, operationDispatcher] = useOperation()
   const canvasContextRef = useCanvasContextRef()
@@ -157,7 +159,7 @@ export default function Brush (): ReactElement {
 
   return (
     <ScreenshotsButton
-      title='画笔'
+      title={lang.operation_brush_title}
       icon='icon-brush'
       checked={checked}
       onClick={onSelectBrush}

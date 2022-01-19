@@ -6,6 +6,7 @@ import useCanvasMouseup from '../../hooks/useCanvasMouseup'
 import useCursor from '../../hooks/useCursor'
 import useDrawSelect from '../../hooks/useDrawSelect'
 import useHistory from '../../hooks/useHistory'
+import useLang from '../../hooks/useLang'
 import useOperation from '../../hooks/useOperation'
 import ScreenshotsButton from '../../ScreenshotsButton'
 import ScreenshotsSizeColor from '../../ScreenshotsSizeColor'
@@ -43,6 +44,7 @@ export interface EllipseEditData {
 }
 
 export default function Ellipse (): ReactElement {
+  const lang = useLang()
   const [history, historyDispatcher] = useHistory()
   const [operation, operationDispatcher] = useOperation()
   const [, cursorDispatcher] = useCursor()
@@ -233,7 +235,7 @@ export default function Ellipse (): ReactElement {
 
   return (
     <ScreenshotsButton
-      title='椭圆'
+      title={lang.operation_ellipse_title}
       icon='icon-ellipse'
       checked={checked}
       onClick={onSelectEllipse}
