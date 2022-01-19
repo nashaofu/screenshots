@@ -6,26 +6,39 @@
 
 [![NPM](https://nodei.co/npm/react-screenshots.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/react-screenshots/)
 
+## Features
+
+- 双击页面完成截图，触发`onOk`事件
+- 右键点击取消截图，触发`onCancel`事件
+- 多语言支持
+
 ## Usage
 
 1. web 中使用
 
-```js
-import React, { useCallback } from 'react'
-import Screenshot from 'react-screenshots'
-import 'react-screenshots/lib/style.css'
+```ts
+import React, { ReactElement, useCallback } from 'react'
+import Screenshots, { Bounds } from 'react-screenshots'
+import url from './image.jpg'
 
-import url from './Battlecry.jpg'
+interface Bounds {
+  x: number
+  y: number
+  width: number
+  height: number
+}
 
-export default function App() {
-  const onSave = useCallback((blob, bounds) => {
+export default function App(): ReactElement {
+  const onSave = useCallback((blob: Blob, bounds: Bounds) => {
     console.log('save', blob, bounds)
+    console.log(URL.createObjectURL(blob))
   }, [])
   const onCancel = useCallback(() => {
     console.log('cancel')
   }, [])
-  const onOk = useCallback((blob, bounds) => {
+  const onOk = useCallback((blob: Blob, bounds: Bounds) => {
     console.log('ok', blob, bounds)
+    console.log(URL.createObjectURL(blob))
   }, [])
 
   return (
@@ -33,6 +46,20 @@ export default function App() {
       url={url}
       width={window.innerWidth}
       height={window.innerHeight}
+      lang={{
+        magnifier_coordinate_label: 'Coor',
+        operation_ok_title: 'Ok',
+        operation_cancel_title: 'Cancel',
+        operation_save_title: 'Save',
+        operation_redo_title: 'Redo',
+        operation_undo_title: 'Undo',
+        operation_mosaic_title: 'Mosaic',
+        operation_text_title: 'Text',
+        operation_brush_title: 'Brush',
+        operation_arrow_title: 'Arrow',
+        operation_ellipse_title: 'Ellipse',
+        operation_rectangle_title: 'Rectangle'
+      }}
       onSave={onSave}
       onCancel={onCancel}
       onOk={onOk}
@@ -70,6 +97,21 @@ interface Bounds {
   width: number
   height: number
 }
+
+interface Lang {
+  magnifier_coordinate_label: string
+  operation_ok_title: string
+  operation_cancel_title: string
+  operation_save_title: string
+  operation_redo_title: string
+  operation_undo_title: string
+  operation_mosaic_title: string
+  operation_text_title: string
+  operation_brush_title: string
+  operation_arrow_title: string
+  operation_ellipse_title: string
+  operation_rectangle_title: string
+}
 ```
 
 | 名称     | 说明                 | 类型                                   |
@@ -77,6 +119,7 @@ interface Bounds {
 | url      | 要编辑的图像资源地址 | `string`                               |
 | width    | 画布宽度             | `number`                               |
 | height   | 画布宽度             | `number`                               |
+| lang     | 多语言支持，默认中文 | `Lang`                                 |
 | onSave   | 保存按钮回调         | `(blob: Blob, bounds: Bounds) => void` |
 | onCancel | 取消按钮回调         | `() => void`                           |
 | onOk     | 取消按钮回调         | `(blob: Blob, bounds: Bounds) => void` |
@@ -102,7 +145,7 @@ function App() {
 
 ## Screenshot
 
-![screenshot](https://raw.githubusercontent.com/nashaofu/screenshots/master/packages/react-screenshots/screenshot.jpg)
+![screenshot](../../screenshot.jpg)
 
 ## Icons
 

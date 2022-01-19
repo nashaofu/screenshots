@@ -1,11 +1,13 @@
 import React, { Dispatch, SetStateAction } from 'react'
 import { EmiterRef, History, Bounds, CanvasContextRef } from './types'
+import zhCN, { Lang } from './zh_CN'
 
 export interface ScreenshotsContextStore {
   url?: string
   image: HTMLImageElement | null
   width: number
   height: number
+  lang: Lang
   emiterRef: EmiterRef
   canvasContextRef: CanvasContextRef
   history: History
@@ -33,6 +35,7 @@ export default React.createContext<ScreenshotsContextValue>({
     image: null,
     width: 0,
     height: 0,
+    lang: zhCN,
     emiterRef: { current: {} },
     canvasContextRef: { current: null },
     history: {

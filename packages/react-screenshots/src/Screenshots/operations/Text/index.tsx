@@ -12,6 +12,7 @@ import useBounds from '../../hooks/useBounds'
 import useDrawSelect from '../../hooks/useDrawSelect'
 import useCanvasMousemove from '../../hooks/useCanvasMousemove'
 import useCanvasMouseup from '../../hooks/useCanvasMouseup'
+import useLang from '../../hooks/useLang'
 
 export interface TextData {
   size: number
@@ -95,6 +96,7 @@ function isHit (ctx: CanvasRenderingContext2D, action: HistoryItemSource<TextDat
 }
 
 export default function Text (): ReactElement {
+  const lang = useLang()
   const [history, historyDispatcher] = useHistory()
   const [bounds] = useBounds()
   const [operation, operationDispatcher] = useOperation()
@@ -251,7 +253,7 @@ export default function Text (): ReactElement {
   return (
     <>
       <ScreenshotsButton
-        title='文本'
+        title={lang.operation_text_title}
         icon='icon-text'
         checked={checked}
         onClick={onSelectText}

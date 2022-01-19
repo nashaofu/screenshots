@@ -11,6 +11,7 @@ import useStore from '../../hooks/useStore'
 import useBounds from '../../hooks/useBounds'
 import useHistory from '../../hooks/useHistory'
 import useCanvasContextRef from '../../hooks/useCanvasContextRef'
+import useLang from '../../hooks/useLang'
 
 export interface MosaicTile {
   x: number
@@ -48,6 +49,7 @@ function draw (ctx: CanvasRenderingContext2D, action: HistoryItemSource<MosaicDa
 }
 
 export default function Mosaic (): ReactElement {
+  const lang = useLang()
   const { image, width, height } = useStore()
   const [operation, operationDispatcher] = useOperation()
   const canvasContextRef = useCanvasContextRef()
@@ -211,7 +213,7 @@ export default function Mosaic (): ReactElement {
 
   return (
     <ScreenshotsButton
-      title='马赛克'
+      title={lang.operation_mosaic_title}
       icon='icon-mosaic'
       checked={checked}
       onClick={onSelectMosaic}

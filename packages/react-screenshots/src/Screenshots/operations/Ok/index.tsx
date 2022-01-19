@@ -3,10 +3,12 @@ import useBounds from '../../hooks/useBounds'
 import useCall from '../../hooks/useCall'
 import useCanvasContextref from '../../hooks/useCanvasContextRef'
 import useHistory from '../../hooks/useHistory'
+import useLang from '../../hooks/useLang'
 import useReset from '../../hooks/useReset'
 import ScreenshotsButton from '../../ScreenshotsButton'
 
 export default function Ok (): ReactElement {
+  const lang = useLang()
   const canvasContextRef = useCanvasContextref()
   const [, historyDispatcher] = useHistory()
   const call = useCall()
@@ -26,5 +28,5 @@ export default function Ok (): ReactElement {
     })
   }, [canvasContextRef, historyDispatcher, call, bounds, reset])
 
-  return <ScreenshotsButton title='确定' icon='icon-ok' onClick={onClick} />
+  return <ScreenshotsButton title={lang.operation_ok_title} icon='icon-ok' onClick={onClick} />
 }

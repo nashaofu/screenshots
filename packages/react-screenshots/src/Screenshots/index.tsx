@@ -7,16 +7,18 @@ import './screenshots.less'
 import './icons/iconfont.less'
 import { Bounds, Emiter, History } from './types'
 import useGetLoadedImage from './useGetLoadedImage'
+import zhCN, { Lang } from './zh_CN'
 
 export interface ScreenshotsProps {
   url?: string
   width: number
   height: number
+  lang?: Lang
   className?: string
   [key: string]: unknown
 }
 
-export default function Screenshots ({ url, width, height, className, ...props }: ScreenshotsProps): ReactElement {
+export default function Screenshots ({ url, width, height, lang, className, ...props }: ScreenshotsProps): ReactElement {
   const image = useGetLoadedImage(url)
   const canvasContextRef = useRef<CanvasRenderingContext2D>(null)
   const emiterRef = useRef<Emiter>({})
@@ -33,6 +35,10 @@ export default function Screenshots ({ url, width, height, className, ...props }
     width,
     height,
     image,
+    lang: {
+      ...zhCN,
+      ...lang
+    },
     emiterRef,
     canvasContextRef,
     history,

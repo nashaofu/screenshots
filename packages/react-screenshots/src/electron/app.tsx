@@ -1,6 +1,7 @@
 import React, { useCallback, useState, useEffect } from 'react'
 import Screenshots from '../Screenshots'
 import { Bounds } from '../Screenshots/types'
+import { Lang } from '../Screenshots/zh_CN'
 import './app.less'
 
 export interface Display {
@@ -15,6 +16,7 @@ export default function App (): JSX.Element {
   const [url, setUrl] = useState<string | undefined>(undefined)
   const [width, setWidth] = useState(window.innerWidth)
   const [height, setHeight] = useState(window.innerHeight)
+  const [lang, setLang] = useState<Lang | undefined>(undefined)
 
   const onSave = useCallback(async (blob: Blob, bounds: Bounds) => {
     window.screenshots.save(await blob.arrayBuffer(), bounds)
@@ -29,16 +31,23 @@ export default function App (): JSX.Element {
   }, [])
 
   useEffect(() => {
+    const onSetLang = (lang: Lang) => {
+      setLang(lang)
+    }
+
     const onCapture = async (display: Display) => {
       const dataURL = await window.screenshots.capture(display)
       setUrl(dataURL)
       window.screenshots.captured()
     }
+
+    window.screenshots.on('setLang', onSetLang)
     window.screenshots.on('capture', onCapture)
     // 告诉主进程页面准备完成
     window.screenshots.ready()
     return () => {
       window.screenshots.off('capture', onCapture)
+      window.screenshots.off('setLang', onSetLang)
     }
   }, [])
 
@@ -64,7 +73,15 @@ export default function App (): JSX.Element {
 
   return (
     <div className='body'>
-      <Screenshots url={url} width={width} height={height} onSave={onSave} onCancel={onCancel} onOk={onOk} />
+      <Screenshots
+        url={url}
+        width={width}
+        height={height}
+        lang={lang}
+        onSave={onSave}
+        onCancel={onCancel}
+        onOk={onOk}
+      />
     </div>
   )
 }

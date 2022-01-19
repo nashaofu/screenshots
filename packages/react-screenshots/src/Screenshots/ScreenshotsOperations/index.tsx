@@ -1,4 +1,4 @@
-import React, { ReactElement, useCallback, useEffect, useRef, useState } from 'react'
+import React, { MouseEvent, ReactElement, useCallback, useEffect, useRef, useState } from 'react'
 import useBounds from '../hooks/useBounds'
 import OperationButtons from '../operations'
 import './index.less'
