@@ -20,8 +20,8 @@ export default function App (): JSX.Element {
   const [lang, setLang] = useState<Lang | undefined>(undefined)
 
   const onSave = useCallback(
-    async (blob: Blob, bounds: Bounds) => {
-      if (!display) {
+    async (blob: Blob | null, bounds: Bounds) => {
+      if (!display || !blob) {
         return
       }
       window.screenshots.save(await blob.arrayBuffer(), { bounds, display })
@@ -34,8 +34,9 @@ export default function App (): JSX.Element {
   }, [])
 
   const onOk = useCallback(
-    async (blob: Blob, bounds: Bounds) => {
-      if (!display) {
+    async (blob: Blob | null, bounds: Bounds) => {
+      console.log(blob)
+      if (!display || !blob) {
         return
       }
       window.screenshots.ok(await blob.arrayBuffer(), { bounds, display })
