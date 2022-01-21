@@ -5,16 +5,16 @@ import './app.less'
 import { Bounds } from '../Screenshots/types'
 
 export default function App (): ReactElement {
-  const onSave = useCallback((blob: Blob, bounds: Bounds) => {
+  const onSave = useCallback((blob: Blob | null, bounds: Bounds) => {
     console.log('save', blob, bounds)
-    console.log(URL.createObjectURL(blob))
+    console.log(blob && URL.createObjectURL(blob))
   }, [])
   const onCancel = useCallback(() => {
     console.log('cancel')
   }, [])
-  const onOk = useCallback((blob: Blob, bounds: Bounds) => {
+  const onOk = useCallback((blob: Blob | null, bounds: Bounds) => {
     console.log('ok', blob, bounds)
-    console.log(URL.createObjectURL(blob))
+    console.log(blob && URL.createObjectURL(blob))
   }, [])
 
   return (
