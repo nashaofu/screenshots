@@ -6,12 +6,6 @@
 
 [![NPM](https://nodei.co/npm/react-screenshots.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/react-screenshots/)
 
-## Features
-
-- 双击页面完成截图，触发`onOk`事件
-- 右键点击取消截图，触发`onCancel`事件
-- 多语言支持
-
 ## Usage
 
 1. web 中使用
@@ -47,11 +41,6 @@ export default function App(): ReactElement {
       width={window.innerWidth}
       height={window.innerHeight}
       lang={{
-        magnifier_coordinate_label: 'Coor',
-        operation_ok_title: 'Ok',
-        operation_cancel_title: 'Cancel',
-        operation_save_title: 'Save',
-        operation_redo_title: 'Redo',
         operation_undo_title: 'Undo',
         operation_mosaic_title: 'Mosaic',
         operation_text_title: 'Text',
@@ -73,13 +62,18 @@ export default function App(): ReactElement {
 - electron 中使用可直接加载渲染进程的页面，页面路径为`require.resolve('react-screenshots/electron/electron.html')`，不推荐自己手动开发主进程，推荐直接使用`electron-screenshots`模块
 
 ```ts
+interface ScreenshotsData {
+  bounds: Bounds
+  display: Display
+}
+
 interface GlobalScreenshots {
   ready: () => void
   capture: (display: Display) => Promise<string>
   captured: () => void
-  save: (arrayBuffer: ArrayBuffer, bounds: Bounds) => void
+  save: (arrayBuffer: ArrayBuffer, data: ScreenshotsData) => void
   cancel: () => void
-  ok: (arrayBuffer: ArrayBuffer, bounds: Bounds) => void
+  ok: (arrayBuffer: ArrayBuffer, data: ScreenshotsData) => void
   on: (channel: string, fn: ScreenshotsListener) => void
   off: (channel: string, fn: ScreenshotsListener) => void
 }
@@ -99,7 +93,7 @@ interface Bounds {
 }
 
 interface Lang {
-  magnifier_coordinate_label: string
+  magnifier_position_label: string
   operation_ok_title: string
   operation_cancel_title: string
   operation_save_title: string
@@ -114,15 +108,15 @@ interface Lang {
 }
 ```
 
-| 名称     | 说明                 | 类型                                   |
-| -------- | -------------------- | -------------------------------------- |
-| url      | 要编辑的图像资源地址 | `string`                               |
-| width    | 画布宽度             | `number`                               |
-| height   | 画布宽度             | `number`                               |
-| lang     | 多语言支持，默认中文 | `Lang`                                 |
-| onSave   | 保存按钮回调         | `(blob: Blob, bounds: Bounds) => void` |
-| onCancel | 取消按钮回调         | `() => void`                           |
-| onOk     | 取消按钮回调         | `(blob: Blob, bounds: Bounds) => void` |
+| 名称     | 说明                 | 类型                                   | 是否必选 |
+| -------- | -------------------- | -------------------------------------- | -------- |
+| url      | 要编辑的图像资源地址 | `string`                               | 是       |
+| width    | 画布宽度             | `number`                               | 是       |
+| height   | 画布宽度             | `number`                               | 是       |
+| lang     | 多语言支持，默认中文 | `Partial<Lang>`                        | 否       |
+| onSave   | 保存按钮回调         | `(blob: Blob, bounds: Bounds) => void` | 否       |
+| onCancel | 取消按钮回调         | `() => void`                           | 否       |
+| onOk     | 取消按钮回调         | `(blob: Blob, bounds: Bounds) => void` | 否       |
 
 ### example
 

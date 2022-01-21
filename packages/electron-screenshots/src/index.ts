@@ -3,7 +3,11 @@ import { app, globalShortcut } from 'electron'
 import Screenshots from './screenshots'
 
 app.whenReady().then(() => {
-  const screenshots = new Screenshots()
+  const screenshots = new Screenshots({
+    lang: {
+      operation_rectangle_title: '矩形2323'
+    }
+  })
   globalShortcut.register('ctrl+shift+a', () => {
     screenshots.startCapture()
     screenshots.$view.webContents.openDevTools()
@@ -15,6 +19,10 @@ app.whenReady().then(() => {
   // 点击取消按钮回调事件
   screenshots.on('cancel', () => {
     console.log('capture', 'cancel1')
+    screenshots.setLang({
+      operation_ellipse_title: 'ellipse',
+      operation_rectangle_title: 'rectangle'
+    })
   })
   screenshots.on('cancel', e => {
     // 执行了preventDefault

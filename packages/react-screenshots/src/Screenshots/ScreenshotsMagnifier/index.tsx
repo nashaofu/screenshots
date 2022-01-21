@@ -103,7 +103,7 @@ export default function ScreenshotsMagnifier ({ x, y }: ScreenshotsMagnifierProp
       </div>
       <div className='screenshots-magnifier-footer'>
         <div className='screenshots-magnifier-footer-item'>
-          {lang.magnifier_coordinate_label}: ({x},{y})
+          {lang.magnifier_position_label}: ({x},{y})
         </div>
         <div className='screenshots-magnifier-footer-item'>RGB: #{rgb}</div>
       </div>

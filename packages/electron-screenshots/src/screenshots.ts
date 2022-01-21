@@ -5,17 +5,14 @@ import Events from 'events'
 import padStart from './padStart'
 import getBoundAndDisplay from './getBoundAndDisplay'
 import logger from './logger'
-
-export interface Bounds {
-  x: number
-  y: number
-  width: number
-  height: number
-}
+import { Bounds, Lang } from 'react-screenshots'
 
 export interface ScreenshotsOpts {
-  lang: Record<string, string>
+  lang: Partial<Lang>
 }
+
+export { Bounds, Lang }
+
 export default class Screenshots extends Events {
   // 截图窗口对象
   public $win: BrowserWindow | null = null
@@ -42,9 +39,7 @@ export default class Screenshots extends Events {
     this.listenIpc()
     this.$view.webContents.loadURL(`file://${require.resolve('react-screenshots/electron/electron.html')}`)
     if (opts?.lang) {
-      this.isReady.then(() => {
-        this.setLang(opts.lang)
-      })
+      this.setLang(opts.lang)
     }
   }
 
@@ -89,10 +84,12 @@ export default class Screenshots extends Events {
   /**
    * 设置语言
    */
-  public setLang (lang: Record<string, string>): void {
-    logger('setLang', lang)
+  public setLang (lang: Partial<Lang>): void {
+    this.isReady.then(() => {
+      logger('setLang', lang)
 
-    this.$view.webContents.send('SCREENSHOTS:setLang', lang)
+      this.$view.webContents.send('SCREENSHOTS:setLang', lang)
+    })
   }
 
   /**
@@ -122,7 +119,7 @@ export default class Screenshots extends Events {
       simpleFullscreen: true,
       backgroundColor: '#00000000',
       titleBarStyle: 'hidden',
-      // alwaysOnTop: true,
+      alwaysOnTop: true,
       enableLargerThanScreen: true,
       skipTaskbar: true,
       minimizable: false,

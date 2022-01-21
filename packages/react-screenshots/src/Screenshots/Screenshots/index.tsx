@@ -1,13 +1,13 @@
 import React, { MouseEvent, ReactElement, useCallback, useRef, useState } from 'react'
-import ScreenshotsContext from './ScreenshotsContext'
-import ScreenshotsBackground from './ScreenshotsBackground'
-import ScreenshotsCanvas from './ScreenshotsCanvas'
-import ScreenshotsOperations from './ScreenshotsOperations'
+import ScreenshotsContext from '../ScreenshotsContext'
+import ScreenshotsBackground from '../ScreenshotsBackground'
+import ScreenshotsCanvas from '../ScreenshotsCanvas'
+import ScreenshotsOperations from '../ScreenshotsOperations'
+import { Bounds, Emiter, History } from '../types'
+import useGetLoadedImage from '../useGetLoadedImage'
+import zhCN, { Lang } from '../zh_CN'
+import '../icons/iconfont.less'
 import './screenshots.less'
-import './icons/iconfont.less'
-import { Bounds, Emiter, History } from './types'
-import useGetLoadedImage from './useGetLoadedImage'
-import zhCN, { Lang } from './zh_CN'
 
 export interface ScreenshotsProps {
   url?: string

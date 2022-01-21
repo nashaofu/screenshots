@@ -4,14 +4,14 @@
   "description": "a picture clipping and graffiti tool by react",
   "main": "./lib/react-screenshots.cjs.js",
   "module": "./lib/react-screenshots.es.js",
-  "types": "./lib/types/index.d.ts",
+  "types": "./lib/types/exports.d.ts",
   "files": [
     "lib/**",
     "electron/**"
   ],
   "scripts": {
-    "dev": "vite",
-    "tsc": "tsc --watch",
+    "start": "vite",
+    "dev": "tsc --watch",
     "build": "npm run build:web && npm run build:electron && npm run build:lib",
     "build:web": "vite build --mode web",
     "build:electron": "vite build --mode electron",
