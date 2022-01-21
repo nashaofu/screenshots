@@ -16,19 +16,32 @@ export default function App (): JSX.Element {
   const [url, setUrl] = useState<string | undefined>(undefined)
   const [width, setWidth] = useState(window.innerWidth)
   const [height, setHeight] = useState(window.innerHeight)
+  const [display, setDisplay] = useState<Display | undefined>(undefined)
   const [lang, setLang] = useState<Lang | undefined>(undefined)
 
-  const onSave = useCallback(async (blob: Blob, bounds: Bounds) => {
-    window.screenshots.save(await blob.arrayBuffer(), bounds)
-  }, [])
+  const onSave = useCallback(
+    async (blob: Blob, bounds: Bounds) => {
+      if (!display) {
+        return
+      }
+      window.screenshots.save(await blob.arrayBuffer(), { bounds, display })
+    },
+    [display]
+  )
 
   const onCancel = useCallback(() => {
     window.screenshots.cancel()
   }, [])
 
-  const onOk = useCallback(async (blob: Blob, bounds: Bounds) => {
-    window.screenshots.ok(await blob.arrayBuffer(), bounds)
-  }, [])
+  const onOk = useCallback(
+    async (blob: Blob, bounds: Bounds) => {
+      if (!display) {
+        return
+      }
+      window.screenshots.ok(await blob.arrayBuffer(), { bounds, display })
+    },
+    [display]
+  )
 
   useEffect(() => {
     const onSetLang = (lang: Lang) => {
@@ -36,6 +49,7 @@ export default function App (): JSX.Element {
     }
 
     const onCapture = async (display: Display) => {
+      setDisplay(display)
       const dataURL = await window.screenshots.capture(display)
       setUrl(dataURL)
       window.screenshots.captured()

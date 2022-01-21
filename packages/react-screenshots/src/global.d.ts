@@ -3,13 +3,18 @@ import { Bounds } from './Screenshots/types'
 
 type ScreenshotsListener = (...args: never[]) => void
 
+interface ScreenshotsData {
+  bounds: Bounds
+  display: Display
+}
+
 interface GlobalScreenshots {
   ready: () => void
   capture: (display: Display) => Promise<string>
   captured: () => void
-  save: (arrayBuffer: ArrayBuffer, bounds: Bounds) => void
+  save: (arrayBuffer: ArrayBuffer, data: ScreenshotsData) => void
   cancel: () => void
-  ok: (arrayBuffer: ArrayBuffer, bounds: Bounds) => void
+  ok: (arrayBuffer: ArrayBuffer, data: ScreenshotsData) => void
   on: (channel: string, fn: ScreenshotsListener) => void
   off: (channel: string, fn: ScreenshotsListener) => void
 }

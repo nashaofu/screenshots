@@ -10,12 +10,6 @@
 
 [![NPM](https://nodei.co/npm/electron-screenshots.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/electron-screenshots/)
 
-## Features
-
-- 双击页面完成截图，触发`ok`事件
-- 右键点击取消截图，触发`cancel`事件
-- 多语言支持
-
 ## Usage
 
 ```ts
@@ -86,10 +80,20 @@ module.exports = {
 
 ## Methods
 
-| 名称         | 说明             | 参数 | 返回值 |
-| ------------ | ---------------- | ---- | ------ |
-| startCapture | 调用截图方法截图 | -    | -      |
-| endCapture   | 手动结束截图     | -    | -      |
+- `Lang`类型产考`react-screenshots`中的`Lang`类型
+
+```ts
+interface ScreenshotsOpts {
+  lang: Partial<Lang>
+}
+```
+
+| 名称                                 | 说明             | 返回值 |
+| ------------------------------------ | ---------------- | ------ |
+| `constructor(opts: ScreenshotsOpts)` | 调用截图方法截图 | -      |
+| `startCapture()`                     | 调用截图方法截图 | -      |
+| `endCapture() `                      | 手动结束截图     | -      |
+| `setLang(lang: Partial<Lang>)`       | 修改语言         | -      |
 
 ## Events
 
@@ -103,6 +107,19 @@ interface Bounds {
   height: number
 }
 
+export interface Display {
+  id: number
+  x: number
+  y: number
+  width: number
+  height: number
+}
+
+export interface ScreenshotsData {
+  bounds: Bounds
+  display: Display
+}
+
 class Event {
   public defaultPrevented = false
 
@@ -112,21 +129,37 @@ class Event {
 }
 ```
 
-| 名称   | 说明         | 回调参数                                                 |
-| ------ | ------------ | -------------------------------------------------------- |
-| ok     | 截图确认事件 | `(event: Event, buffer: Buffer, bounds: Bounds) => void` |
-| cancel | 截图取消事件 | `(event: Event) => void`                                 |
-| save   | 截图保存事件 | `(event: Event, buffer: Buffer, bounds: Bounds) => void` |
+| 名称   | 说明         | 回调参数                                                        |
+| ------ | ------------ | --------------------------------------------------------------- |
+| ok     | 截图确认事件 | `(event: Event, buffer: Buffer, data: ScreenshotsData) => void` |
+| cancel | 截图取消事件 | `(event: Event) => void`                                        |
+| save   | 截图保存事件 | `(event: Event, buffer: Buffer, data: ScreenshotsData) => void` |
 
 ### 说明
 
 - event: 事件对象
 - buffer: png 图片 buffer
 - bounds: 截图区域信息
+- display: 截图的屏幕
 - `event`对象可调用`preventDefault`方法来阻止默认事件，例如阻止默认保存事件
 
 ```ts
-const screenshots = new Screenshots()
+const screenshots = new Screenshots({
+  lang: {
+    magnifier_position_label: 'Position',
+    operation_ok_title: 'Ok',
+    operation_cancel_title: 'Cancel',
+    operation_save_title: 'Save',
+    operation_redo_title: 'Redo',
+    operation_undo_title: 'Undo',
+    operation_mosaic_title: 'Mosaic',
+    operation_text_title: 'Text',
+    operation_brush_title: 'Brush',
+    operation_arrow_title: 'Arrow',
+    operation_ellipse_title: 'Ellipse',
+    operation_rectangle_title: 'Rectangle'
+  }
+})
 
 screenshots.on('save', (e, buffer, bounds) => {
   // 阻止插件自带的保存功能

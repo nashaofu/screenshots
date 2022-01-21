@@ -1,5 +1,5 @@
 export interface Lang {
-  magnifier_coordinate_label: string
+  magnifier_position_label: string
   operation_ok_title: string
   operation_cancel_title: string
   operation_save_title: string
@@ -14,7 +14,7 @@ export interface Lang {
 }
 
 const zhCN: Lang = {
-  magnifier_coordinate_label: '坐标',
+  magnifier_position_label: '坐标',
   operation_ok_title: '确定',
   operation_cancel_title: '取消',
   operation_save_title: '保存',
