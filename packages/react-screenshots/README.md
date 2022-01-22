@@ -1,6 +1,6 @@
 # react-screenshots
 
-> a picture clipping and graffiti tool by react
+> a screenshot cropper tool by react
 
 ## Install
 

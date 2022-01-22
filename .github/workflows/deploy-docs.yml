@@ -6,8 +6,6 @@ name: Deploy Docs
 on:
   push:
     branches: [master]
-  pull_request:
-    branches: [master]
 
 jobs:
   deploy:
@@ -17,13 +15,17 @@ jobs:
       - name: Checkout 🛎️
         uses: actions/checkout@v2
 
-      - name: Install and Build 🔧
+      - name: Setup Node.js environment 🔥
         uses: actions/setup-node@v2
         with:
           node-version: 16.x
           cache: 'yarn'
-      - run: yarn --frozen-lockfile
-      - run: yarn build
+
+      - name: Install 💫
+        run: yarn --frozen-lockfile
+
+      - name: Build 🔧
+        run: yarn build
 
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4.2.2

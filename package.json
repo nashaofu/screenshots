@@ -1,10 +1,16 @@
 {
   "name": "root",
   "private": true,
+  "engines": {
+    "node": ">=14"
+  },
+  "packageManager": "yarn@1.22.17",
   "scripts": {
+    "preinstall": "npx only-allow yarn",
     "install": "npm run bootstrap",
     "bootstrap": "lerna bootstrap",
-    "dev": "lerna run dev",
+    "dev": "lerna run dev --parallel",
+    "start": "lerna run start --parallel",
     "build": "lerna run build",
     "clean": "lerna clean --yes",
     "release": "lerna publish",
