@@ -10,7 +10,7 @@ on:
     branches: [master]
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -22,7 +22,7 @@ jobs:
         with:
           node-version: 16.x
           cache: 'yarn'
-      - run: yarn ci
+      - run: yarn --frozen-lockfile
       - run: yarn build
 
       - name: Deploy 🚀
