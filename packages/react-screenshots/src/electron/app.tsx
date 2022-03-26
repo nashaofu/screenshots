@@ -35,7 +35,6 @@ export default function App (): JSX.Element {
 
   const onOk = useCallback(
     async (blob: Blob | null, bounds: Bounds) => {
-      console.log(blob)
       if (!display || !blob) {
         return
       }
@@ -49,11 +48,9 @@ export default function App (): JSX.Element {
       setLang(lang)
     }
 
-    const onCapture = async (display: Display) => {
+    const onCapture = async (display: Display, dataURL: string) => {
       setDisplay(display)
-      const dataURL = await window.screenshots.capture(display)
       setUrl(dataURL)
-      window.screenshots.captured()
     }
 
     window.screenshots.on('setLang', onSetLang)

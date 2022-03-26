@@ -1,9 +1,9 @@
-import { dialog, ipcMain, clipboard, nativeImage, BrowserWindow, BrowserView } from 'electron'
+import { dialog, ipcMain, clipboard, nativeImage, BrowserWindow, BrowserView, desktopCapturer } from 'electron'
 import fs from 'fs/promises'
 import Event from './event'
 import Events from 'events'
 import padStart from './padStart'
-import getBoundAndDisplay from './getBoundAndDisplay'
+import getBoundAndDisplay, { BoundAndDisplay } from './getBoundAndDisplay'
 import logger from './logger'
 import { Bounds, Lang } from 'react-screenshots'
 
@@ -53,13 +53,12 @@ export default class Screenshots extends Events {
       if (this.$win && !this.$win.isDestroyed()) {
         this.$win.close()
       }
-      this.createWindow()
+      const boundAndDisplay = getBoundAndDisplay()
+      this.createWindow(boundAndDisplay)
 
       // 捕捉桌面之后显示窗口
       // 避免截图窗口自己被截图
-      ipcMain.once('SCREENSHOTS:captured', () => {
-        logger('SCREENSHOTS:captured')
-
+      this.capture(boundAndDisplay).then(() => {
         if (!this.$win) return
         // linux截图存在黑屏，这里设置为false就不会出现这个问题
         this.$win.setFullScreen(true)
@@ -95,8 +94,7 @@ export default class Screenshots extends Events {
   /**
    * 初始化窗口
    */
-  private createWindow (): void {
-    const { bound, display } = getBoundAndDisplay()
+  private createWindow ({ bound }: BoundAndDisplay): void {
     this.$win = new BrowserWindow({
       title: 'screenshots',
       x: bound.x,
@@ -133,10 +131,38 @@ export default class Screenshots extends Events {
 
     this.$win.setBrowserView(this.$view)
     this.$view.setBounds(bound)
+  }
 
+  private async capture ({ display }: BoundAndDisplay): Promise<void> {
     logger('SCREENSHOTS:capture')
 
-    this.$view.webContents.send('SCREENSHOTS:capture', display)
+    const sources = await desktopCapturer.getSources({
+      types: ['screen'],
+      thumbnailSize: {
+        width: display.width,
+        height: display.height
+      }
+    })
+
+    let source
+    // Linux系统上，screen.getDisplayNearestPoint 返回的 Display 对象的 id 和 这儿 source 对象上的 display_id(Linux上，这个值是空字符串) 或 id 的中间部分，都不一致
+    // 但是，如果只有一个显示器的话，其实不用判断，直接返回就行
+    if (sources.length === 1) {
+      source = sources[0]
+    } else {
+      source = sources.find(source => {
+        return source.display_id === display.id.toString() || source.id.startsWith(`screen:${display.id}:`)
+      })
+    }
+
+    if (!source) {
+      console.error(sources)
+      console.error(display)
+      console.error("Can't find screen source")
+      return
+    }
+
+    this.$view.webContents.send('SCREENSHOTS:capture', display, source.thumbnail.toDataURL())
   }
 
   /**
