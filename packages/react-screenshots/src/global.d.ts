@@ -10,8 +10,6 @@ interface ScreenshotsData {
 
 interface GlobalScreenshots {
   ready: () => void
-  capture: (display: Display) => Promise<string>
-  captured: () => void
   save: (arrayBuffer: ArrayBuffer, data: ScreenshotsData) => void
   cancel: () => void
   ok: (arrayBuffer: ArrayBuffer, data: ScreenshotsData) => void
