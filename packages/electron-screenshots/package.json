@@ -36,6 +36,7 @@
   },
   "dependencies": {
     "debug": "^4.3.3",
+    "node-screenshots": "^0.0.2",
     "react-screenshots": "^0.3.0"
   },
   "peerDependencies": {
