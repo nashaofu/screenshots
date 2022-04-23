@@ -6,6 +6,7 @@ import padStart from './padStart'
 import getBoundAndDisplay, { BoundAndDisplay } from './getBoundAndDisplay'
 import logger from './logger'
 import { Bounds, Lang } from 'react-screenshots'
+import { Screenshots as NodeScreenshots } from 'node-screenshots'
 
 export interface ScreenshotsOpts {
   lang: Partial<Lang>
@@ -136,33 +137,46 @@ export default class Screenshots extends Events {
   private async capture ({ display }: BoundAndDisplay): Promise<void> {
     logger('SCREENSHOTS:capture')
 
-    const sources = await desktopCapturer.getSources({
-      types: ['screen'],
-      thumbnailSize: {
-        width: display.width,
-        height: display.height
+    try {
+      const capturer = NodeScreenshots.fromDisplay(display.id)
+      logger('SCREENSHOTS:NodeScreenshots.fromDisplay(%d) %o', display.id, capturer)
+      if (!capturer) {
+        throw new Error(`NodeScreenshots.fromDisplay(${display.id}) get null`)
       }
-    })
 
-    let source
-    // Linux系统上，screen.getDisplayNearestPoint 返回的 Display 对象的 id 和 这儿 source 对象上的 display_id(Linux上，这个值是空字符串) 或 id 的中间部分，都不一致
-    // 但是，如果只有一个显示器的话，其实不用判断，直接返回就行
-    if (sources.length === 1) {
-      source = sources[0]
-    } else {
-      source = sources.find(source => {
-        return source.display_id === display.id.toString() || source.id.startsWith(`screen:${display.id}:`)
+      const image = await capturer.capture()
+      this.$view.webContents.send('SCREENSHOTS:capture', display, `data:image/png;base64,${image.toString('base64')}`)
+    } catch (err) {
+      logger('SCREENSHOTS:capturer.capture() error %o', err)
+
+      const sources = await desktopCapturer.getSources({
+        types: ['screen'],
+        thumbnailSize: {
+          width: display.width,
+          height: display.height
+        }
       })
-    }
 
-    if (!source) {
-      console.error(sources)
-      console.error(display)
-      console.error("Can't find screen source")
-      return
-    }
+      let source
+      // Linux系统上，screen.getDisplayNearestPoint 返回的 Display 对象的 id 和 这儿 source 对象上的 display_id(Linux上，这个值是空字符串) 或 id 的中间部分，都不一致
+      // 但是，如果只有一个显示器的话，其实不用判断，直接返回就行
+      if (sources.length === 1) {
+        source = sources[0]
+      } else {
+        source = sources.find(source => {
+          return source.display_id === display.id.toString() || source.id.startsWith(`screen:${display.id}:`)
+        })
+      }
 
-    this.$view.webContents.send('SCREENSHOTS:capture', display, source.thumbnail.toDataURL())
+      if (!source) {
+        console.error(sources)
+        console.error(display)
+        console.error("Can't find screen source")
+        return
+      }
+
+      this.$view.webContents.send('SCREENSHOTS:capture', display, source.thumbnail.toDataURL())
+    }
   }
 
   /**
