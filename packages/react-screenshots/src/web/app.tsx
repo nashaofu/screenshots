@@ -1,6 +1,6 @@
 import React, { ReactElement, useCallback } from 'react'
 import Screenshots from '../Screenshots'
-import url from './image.jpg'
+import url from './image.png'
 import './app.less'
 import { Bounds } from '../Screenshots/types'
 

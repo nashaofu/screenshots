@@ -70,7 +70,8 @@ export default forwardRef<CanvasRenderingContext2D>(function ScreenshotsCanvas (
 
     const ctx = ctxRef.current
     ctx.imageSmoothingEnabled = true
-    ctx.imageSmoothingQuality = 'high'
+    // 设置太高，图片会模糊
+    ctx.imageSmoothingQuality = 'low'
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
     ctx.clearRect(0, 0, bounds.width, bounds.height)
     ctx.drawImage(

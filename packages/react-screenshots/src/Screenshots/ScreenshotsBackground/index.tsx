@@ -104,11 +104,9 @@ export default function ScreenshotsBackground (): ReactElement | null {
     <div
       ref={elRef}
       className='screenshots-background'
-      style={{
-        backgroundImage: `url("${url}")`
-      }}
       onMouseDown={onMouseDown}
     >
+      <img className='screenshots-background-image' src={url} />
       <div className='screenshots-background-mask' />
       {position && !bounds && <ScreenshotsMagnifier x={position?.x} y={position?.y} />}
     </div>
