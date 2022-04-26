@@ -1,11 +1,12 @@
 import debug, { Debugger } from 'debug'
-import { dialog, ipcMain, clipboard, nativeImage, BrowserWindow, BrowserView, desktopCapturer } from 'electron'
-import fs from 'fs-extra'
-import Event from './event'
+import { BrowserView, BrowserWindow, clipboard, desktopCapturer, dialog, ipcMain, nativeImage } from 'electron'
 import Events from 'events'
-import padStart from './padStart'
-import getBoundAndDisplay, { BoundAndDisplay } from './getBoundAndDisplay'
+import fs from 'fs-extra'
 import { Bounds, Lang } from 'react-screenshots'
+import Event from './event'
+import getBoundAndDisplay, { BoundAndDisplay } from './getBoundAndDisplay'
+import padStart from './padStart'
+import { ScreenshotsData } from './preload'
 
 export type LoggerFn = (...args: unknown[]) => void
 export type Logger = Debugger | LoggerFn
@@ -192,11 +193,11 @@ export default class Screenshots extends Events {
     /**
      * OK事件
      */
-    ipcMain.on('SCREENSHOTS:ok', (e, buffer: Buffer, bounds: Bounds) => {
-      this.logger('SCREENSHOTS:ok', buffer, bounds)
+    ipcMain.on('SCREENSHOTS:ok', (e, buffer: Buffer, data: ScreenshotsData) => {
+      this.logger('SCREENSHOTS:ok', buffer, data)
 
       const event = new Event()
-      this.emit('ok', event, buffer, bounds)
+      this.emit('ok', event, buffer, data)
       if (event.defaultPrevented) {
         return
       }
@@ -220,11 +221,11 @@ export default class Screenshots extends Events {
     /**
      * SAVE事件
      */
-    ipcMain.on('SCREENSHOTS:save', async (e, buffer: Buffer, bounds: Bounds) => {
-      this.logger('SCREENSHOTS:save', buffer, bounds)
+    ipcMain.on('SCREENSHOTS:save', async (e, buffer: Buffer, data: ScreenshotsData) => {
+      this.logger('SCREENSHOTS:save', buffer, data)
 
       const event = new Event()
-      this.emit('save', event, buffer, bounds)
+      this.emit('save', event, buffer, data)
       if (event.defaultPrevented || !this.$win) {
         return
       }
