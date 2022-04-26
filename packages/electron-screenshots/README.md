@@ -167,12 +167,12 @@ const screenshots = new Screenshots({
   }
 })
 
-screenshots.on('save', (e, buffer, bounds) => {
+screenshots.on('save', (e, buffer, data) => {
   // 阻止插件自带的保存功能
   // 用户自己控制保存功能
   e.preventDefault()
   // 用户可在这里自己定义保存功能
-  console.log('capture', buffer, bounds)
+  console.log('capture', buffer, data)
 })
 
 screenshots.startCapture()
