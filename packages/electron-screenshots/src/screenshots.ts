@@ -6,7 +6,6 @@ import padStart from './padStart'
 import getBoundAndDisplay, { BoundAndDisplay } from './getBoundAndDisplay'
 import logger from './logger'
 import { Bounds, Lang } from 'react-screenshots'
-import { Screenshots as NodeScreenshots } from 'node-screenshots'
 
 export interface ScreenshotsOpts {
   lang: Partial<Lang>
@@ -138,6 +137,7 @@ export default class Screenshots extends Events {
     logger('SCREENSHOTS:capture')
 
     try {
+      const { Screenshots: NodeScreenshots } = await import('node-screenshots')
       const capturer = NodeScreenshots.fromDisplay(display.id)
       logger('SCREENSHOTS:NodeScreenshots.fromDisplay(%d) %o', display.id, capturer)
       if (!capturer) {

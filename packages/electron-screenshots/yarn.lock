@@ -365,7 +365,14 @@ core-util-is@~1.0.0:
   resolved "https://registry.npmmirror.com/core-util-is/download/core-util-is-1.0.3.tgz#a6042d3634c2b27e9328f837b965fac83808db85"
   integrity sha1-pgQtNjTCsn6TKPg3uWX6yDgI24U=
 
-cross-spawn@^7.0.2:
+cross-env@^7.0.3:
+  version "7.0.3"
+  resolved "https://registry.npmmirror.com/cross-env/-/cross-env-7.0.3.tgz#865264b29677dc015ba8418918965dd232fc54cf"
+  integrity sha512-+/HKd6EgcQCJGh2PSjZuUitQBQynKor4wrFbRg4DtAgS1aWO+gU52xpH7M9ScGgXSYmAVS9bIJ8EzuaGw0oNAw==
+  dependencies:
+    cross-spawn "^7.0.1"
+
+cross-spawn@^7.0.1, cross-spawn@^7.0.2:
   version "7.0.3"
   resolved "https://registry.npmmirror.com/cross-spawn/download/cross-spawn-7.0.3.tgz#f73a85b9d5d41d045551c177e2882d4ac85728a6"
   integrity sha1-9zqFudXUHQRVUcF34ogtSshXKKY=
@@ -1552,10 +1559,10 @@ queue-microtask@^1.2.2:
   resolved "https://registry.npmmirror.com/queue-microtask/download/queue-microtask-1.2.3.tgz#4929228bbc724dfac43e0efb058caf7b6cfb6243"
   integrity sha1-SSkii7xyTfrEPg77BYyve2z7YkM=
 
-react-screenshots@^0.3.0:
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/react-screenshots/-/react-screenshots-0.3.0.tgz#b651220bb76014b8c335916f2c8135bde38136de"
-  integrity sha512-nGkPr2QUo6H5Tqvdi9Z2wEVtUBNCYrorPqzwbvkJd3g2WNNb1BuyrURmVR5fSjfRrqoUjkDwape/dscvzqBdlQ==
+react-screenshots@^0.3.1:
+  version "0.3.1"
+  resolved "https://registry.npmmirror.com/react-screenshots/-/react-screenshots-0.3.1.tgz#c5c6422533da3b611557aeb8111adbc53cc8c9c3"
+  integrity sha512-tJch9Ac/JcKlaQWzY+/WU3QthAK8iCUfjh7VElzeK1axYENCNwqIfGsuP7wIE69avx32LMRVtNdjlWZs6a/OQA==
 
 readable-stream@^2.2.2:
   version "2.3.7"

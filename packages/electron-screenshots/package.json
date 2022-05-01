@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "prepublishOnly": "npm run build",
-    "start": "DEBUG=screenshots electron lib/index.js",
+    "start": "cross-env DEBUG=screenshots electron lib/index.js",
     "dev": "tsc --sourceMap --watch",
     "build": "npm run lint && npm run clean && tsc",
     "lint": "eslint . --ext .js,.ts --fix",
@@ -46,6 +46,7 @@
     "@types/debug": "^4.1.7",
     "@typescript-eslint/eslint-plugin": "^5.10.0",
     "@typescript-eslint/parser": "^5.10.0",
+    "cross-env": "^7.0.3",
     "electron": "^16.0.7",
     "electron-debug": "^3.2.0",
     "eslint": "^8.7.0",
