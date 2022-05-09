@@ -1,14 +1,17 @@
+import debug, { Debugger } from 'debug'
 import { dialog, ipcMain, clipboard, nativeImage, BrowserWindow, BrowserView, desktopCapturer } from 'electron'
 import fs from 'fs/promises'
 import Event from './event'
 import Events from 'events'
 import padStart from './padStart'
 import getBoundAndDisplay, { BoundAndDisplay } from './getBoundAndDisplay'
-import logger from './logger'
 import { Bounds, Lang } from 'react-screenshots'
 
+export type LoggerFn = (...args: unknown[]) => void
+export type Logger = Debugger | LoggerFn
 export interface ScreenshotsOpts {
-  lang: Partial<Lang>
+  lang?: Partial<Lang>
+  logger?: Logger
 }
 
 export { Bounds, Lang }
@@ -26,9 +29,11 @@ export default class Screenshots extends Events {
     }
   })
 
+  private logger: Logger
+
   private isReady = new Promise<void>(resolve => {
     ipcMain.once('SCREENSHOTS:ready', () => {
-      logger('SCREENSHOTS:ready')
+      this.logger('SCREENSHOTS:ready')
 
       resolve()
     })
@@ -36,6 +41,7 @@ export default class Screenshots extends Events {
 
   constructor (opts?: ScreenshotsOpts) {
     super()
+    this.logger = opts?.logger || debug('electron-screenshots')
     this.listenIpc()
     this.$view.webContents.loadURL(`file://${require.resolve('react-screenshots/electron/electron.html')}`)
     if (opts?.lang) {
@@ -47,7 +53,7 @@ export default class Screenshots extends Events {
    * 开始截图
    */
   public startCapture (): void {
-    logger('startCapture')
+    this.logger('startCapture')
 
     this.isReady.then(() => {
       if (this.$win && !this.$win.isDestroyed()) {
@@ -72,7 +78,7 @@ export default class Screenshots extends Events {
    * 结束截图
    */
   public endCapture (): void {
-    logger('endCapture')
+    this.logger('endCapture')
 
     if (!this.$win) return
     this.$win.setSimpleFullScreen(false)
@@ -85,7 +91,7 @@ export default class Screenshots extends Events {
    */
   public setLang (lang: Partial<Lang>): void {
     this.isReady.then(() => {
-      logger('setLang', lang)
+      this.logger('setLang', lang)
 
       this.$view.webContents.send('SCREENSHOTS:setLang', lang)
     })
@@ -134,12 +140,12 @@ export default class Screenshots extends Events {
   }
 
   private async capture ({ display }: BoundAndDisplay): Promise<void> {
-    logger('SCREENSHOTS:capture')
+    this.logger('SCREENSHOTS:capture')
 
     try {
       const { Screenshots: NodeScreenshots } = await import('node-screenshots')
       const capturer = NodeScreenshots.fromDisplay(display.id)
-      logger('SCREENSHOTS:NodeScreenshots.fromDisplay(%d) %o', display.id, capturer)
+      this.logger('SCREENSHOTS:NodeScreenshots.fromDisplay(%d) %o', display.id, capturer)
       if (!capturer) {
         throw new Error(`NodeScreenshots.fromDisplay(${display.id}) get null`)
       }
@@ -147,7 +153,7 @@ export default class Screenshots extends Events {
       const image = await capturer.capture()
       this.$view.webContents.send('SCREENSHOTS:capture', display, `data:image/png;base64,${image.toString('base64')}`)
     } catch (err) {
-      logger('SCREENSHOTS:capturer.capture() error %o', err)
+      this.logger('SCREENSHOTS:capturer.capture() error %o', err)
 
       const sources = await desktopCapturer.getSources({
         types: ['screen'],
@@ -187,7 +193,7 @@ export default class Screenshots extends Events {
      * OK事件
      */
     ipcMain.on('SCREENSHOTS:ok', (e, buffer: Buffer, bounds: Bounds) => {
-      logger('SCREENSHOTS:ok', buffer, bounds)
+      this.logger('SCREENSHOTS:ok', buffer, bounds)
 
       const event = new Event()
       this.emit('ok', event, buffer, bounds)
@@ -201,7 +207,7 @@ export default class Screenshots extends Events {
      * CANCEL事件
      */
     ipcMain.on('SCREENSHOTS:cancel', () => {
-      logger('SCREENSHOTS:cancel')
+      this.logger('SCREENSHOTS:cancel')
 
       const event = new Event()
       this.emit('cancel', event)
@@ -215,7 +221,7 @@ export default class Screenshots extends Events {
      * SAVE事件
      */
     ipcMain.on('SCREENSHOTS:save', async (e, buffer: Buffer, bounds: Bounds) => {
-      logger('SCREENSHOTS:save', buffer, bounds)
+      this.logger('SCREENSHOTS:save', buffer, bounds)
 
       const event = new Event()
       this.emit('save', event, buffer, bounds)

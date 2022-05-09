@@ -81,10 +81,16 @@ module.exports = {
 ## Methods
 
 - `Lang`类型产考`react-screenshots`中的`Lang`类型
+- `Lang`类型产考`react-screenshots`中的`Lang`类型
 
 ```ts
-interface ScreenshotsOpts {
-  lang: Partial<Lang>
+export type LoggerFn = (...args: unknown[]) => void
+export type Logger = Debugger | LoggerFn
+export interface ScreenshotsOpts {
+  lang?: Partial<Lang>
+  // 调用日志，默认值为 debug('electron-screenshots')
+  // debug https://www.npmjs.com/package/debug
+  logger?: Logger
 }
 ```
 

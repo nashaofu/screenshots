@@ -6,7 +6,8 @@ app.whenReady().then(() => {
   const screenshots = new Screenshots({
     lang: {
       operation_rectangle_title: '矩形2323'
-    }
+    },
+    logger: (...args: unknown[]) => console.log(args)
   })
   globalShortcut.register('ctrl+shift+a', () => {
     screenshots.startCapture()
