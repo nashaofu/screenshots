@@ -1,6 +1,6 @@
 import debug, { Debugger } from 'debug'
 import { dialog, ipcMain, clipboard, nativeImage, BrowserWindow, BrowserView, desktopCapturer } from 'electron'
-import fs from 'fs/promises'
+import fs from 'fs-extra'
 import Event from './event'
 import Events from 'events'
 import padStart from './padStart'
