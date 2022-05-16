@@ -80,14 +80,29 @@ module.exports = {
 
 ## Methods
 
-- `Lang`类型产考`react-screenshots`中的`Lang`类型
-- `Lang`类型产考`react-screenshots`中的`Lang`类型
+- `Debugger`类型产考`debug`中的`Debugger`类型
 
 ```ts
 export type LoggerFn = (...args: unknown[]) => void
 export type Logger = Debugger | LoggerFn
+
+export interface Lang {
+  magnifier_position_label?: string
+  operation_ok_title?: string
+  operation_cancel_title?: string
+  operation_save_title?: string
+  operation_redo_title?: string
+  operation_undo_title?: string
+  operation_mosaic_title?: string
+  operation_text_title?: string
+  operation_brush_title?: string
+  operation_arrow_title?: string
+  operation_ellipse_title?: string
+  operation_rectangle_title?: string
+}
+
 export interface ScreenshotsOpts {
-  lang?: Partial<Lang>
+  lang?: Lang
   // 调用日志，默认值为 debug('electron-screenshots')
   // debug https://www.npmjs.com/package/debug
   logger?: Logger
@@ -99,7 +114,7 @@ export interface ScreenshotsOpts {
 | `constructor(opts: ScreenshotsOpts)` | 调用截图方法截图 | -      |
 | `startCapture()`                     | 调用截图方法截图 | -      |
 | `endCapture() `                      | 手动结束截图     | -      |
-| `setLang(lang: Partial<Lang>)`       | 修改语言         | -      |
+| `setLang(lang: Lang)`                | 修改语言         | -      |
 
 ## Events
 
