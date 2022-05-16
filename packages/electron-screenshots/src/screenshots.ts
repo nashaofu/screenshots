@@ -2,20 +2,35 @@ import debug, { Debugger } from 'debug'
 import { BrowserView, BrowserWindow, clipboard, desktopCapturer, dialog, ipcMain, nativeImage } from 'electron'
 import Events from 'events'
 import fs from 'fs-extra'
-import { Bounds, Lang } from 'react-screenshots'
 import Event from './event'
 import getBoundAndDisplay, { BoundAndDisplay } from './getBoundAndDisplay'
 import padStart from './padStart'
-import { ScreenshotsData } from './preload'
+import { Bounds, ScreenshotsData } from './preload'
 
 export type LoggerFn = (...args: unknown[]) => void
 export type Logger = Debugger | LoggerFn
+
+export interface Lang {
+  magnifier_position_label?: string
+  operation_ok_title?: string
+  operation_cancel_title?: string
+  operation_save_title?: string
+  operation_redo_title?: string
+  operation_undo_title?: string
+  operation_mosaic_title?: string
+  operation_text_title?: string
+  operation_brush_title?: string
+  operation_arrow_title?: string
+  operation_ellipse_title?: string
+  operation_rectangle_title?: string
+}
+
 export interface ScreenshotsOpts {
-  lang?: Partial<Lang>
+  lang?: Lang
   logger?: Logger
 }
 
-export { Bounds, Lang }
+export { Bounds }
 
 export default class Screenshots extends Events {
   // 截图窗口对象

@@ -1,9 +1,15 @@
 import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron'
 import { Display } from './getBoundAndDisplay'
-import { Bounds } from 'react-screenshots'
 
 type IpcRendererListener = (event: IpcRendererEvent, ...args: unknown[]) => void
 type ScreenshotsListener = (...args: unknown[]) => void
+
+export interface Bounds {
+  x: number
+  y: number
+  width: number
+  height: number
+}
 
 export interface ScreenshotsData {
   bounds: Bounds
