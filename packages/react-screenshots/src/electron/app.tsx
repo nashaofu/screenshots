@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import Screenshots from '../Screenshots'
 import { Bounds } from '../Screenshots/types'
 import { Lang } from '../Screenshots/zh_CN'
@@ -48,18 +48,25 @@ export default function App (): JSX.Element {
       setLang(lang)
     }
 
-    const onCapture = async (display: Display, dataURL: string) => {
+    const onCapture = (display: Display, dataURL: string) => {
       setDisplay(display)
       setUrl(dataURL)
     }
 
+    const onReset = () => {
+      setUrl(undefined)
+      setDisplay(undefined)
+    }
+
     window.screenshots.on('setLang', onSetLang)
     window.screenshots.on('capture', onCapture)
+    window.screenshots.on('reset', onReset)
     // 告诉主进程页面准备完成
     window.screenshots.ready()
     return () => {
       window.screenshots.off('capture', onCapture)
       window.screenshots.off('setLang', onSetLang)
+      window.screenshots.off('reset', onReset)
     }
   }, [])
 
@@ -85,15 +92,17 @@ export default function App (): JSX.Element {
 
   return (
     <div className='body'>
-      <Screenshots
-        url={url}
-        width={width}
-        height={height}
-        lang={lang}
-        onSave={onSave}
-        onCancel={onCancel}
-        onOk={onOk}
-      />
+      {url && (
+        <Screenshots
+          url={url}
+          width={width}
+          height={height}
+          lang={lang}
+          onSave={onSave}
+          onCancel={onCancel}
+          onOk={onOk}
+        />
+      )}
     </div>
   )
 }

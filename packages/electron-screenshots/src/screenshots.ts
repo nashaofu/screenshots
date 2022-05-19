@@ -68,35 +68,43 @@ export default class Screenshots extends Events {
   /**
    * 开始截图
    */
-  public startCapture (): void {
+  public async startCapture (): Promise<void> {
     this.logger('startCapture')
 
-    this.isReady.then(() => {
-      if (this.$win && !this.$win.isDestroyed()) {
-        this.$win.close()
-      }
-      const boundAndDisplay = getBoundAndDisplay()
-      this.createWindow(boundAndDisplay)
+    await this.isReady
 
-      // 捕捉桌面之后显示窗口
-      // 避免截图窗口自己被截图
-      this.capture(boundAndDisplay).then(() => {
-        if (!this.$win) return
-        // linux截图存在黑屏，这里设置为false就不会出现这个问题
-        this.$win.setFullScreen(true)
-        this.$win.show()
-        this.$win.focus()
-      })
-    })
+    // 先关闭上一次的窗口
+    // 防止用户连续截图
+    await this.endCapture()
+
+    const boundAndDisplay = getBoundAndDisplay()
+    this.createWindow(boundAndDisplay)
+
+    // 捕捉桌面之后显示窗口
+    // 避免截图窗口自己被截图
+    await this.capture(boundAndDisplay)
+
+    if (!this.$win) {
+      return
+    }
+    this.$win.show()
+    this.$win.focus()
   }
 
   /**
    * 结束截图
    */
-  public endCapture (): void {
+  public async endCapture (): Promise<void> {
     this.logger('endCapture')
+    this.$view.webContents.send('SCREENSHOTS:reset')
 
-    if (!this.$win) return
+    // 保证 UI 有足够的时间渲染
+    await new Promise<void>(resolve => setTimeout(() => resolve(), 77))
+
+    if (!this.$win) {
+      return
+    }
+    this.$win.setBrowserView(null)
     this.$win.setSimpleFullScreen(false)
     this.$win.close()
     this.$win = null
@@ -130,18 +138,16 @@ export default class Screenshots extends Events {
       transparent: true,
       resizable: false,
       movable: false,
-      focusable: true,
-      // 为true，截屏显示为黑屏
-      // 所以在截屏图像生成后再设置为true
-      // 参考48-49行
-      fullscreen: false,
-      // 设为true mac全屏窗口没有桌面滚动效果
+      focusable: false,
+      fullscreen: true,
+      // 设为true 防止mac新开一个桌面，影响效果
       simpleFullscreen: true,
       backgroundColor: '#00000000',
       titleBarStyle: 'hidden',
       alwaysOnTop: true,
       enableLargerThanScreen: true,
       skipTaskbar: true,
+      hasShadow: false,
       minimizable: false,
       maximizable: false,
       webPreferences: {
@@ -153,6 +159,8 @@ export default class Screenshots extends Events {
 
     this.$win.setBrowserView(this.$view)
     this.$view.setBounds(bound)
+    // 重置截图区域
+    this.$view.webContents.send('SCREENSHOTS:reset')
   }
 
   private async capture ({ display }: BoundAndDisplay): Promise<void> {

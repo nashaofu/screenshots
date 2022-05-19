@@ -1,0 +1,14 @@
+{
+  "folders": [
+    {
+      "path": "."
+    },
+    {
+      "path": "packages/react-screenshots"
+    },
+    {
+      "path": "packages/electron-screenshots"
+    }
+  ],
+  "settings": {}
+}
