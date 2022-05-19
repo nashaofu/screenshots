@@ -82,8 +82,6 @@ export default class Screenshots extends Events {
       // 避免截图窗口自己被截图
       this.capture(boundAndDisplay).then(() => {
         if (!this.$win) return
-        // linux截图存在黑屏，这里设置为false就不会出现这个问题
-        this.$win.setFullScreen(true)
         this.$win.show()
         this.$win.focus()
       })
@@ -131,11 +129,8 @@ export default class Screenshots extends Events {
       resizable: false,
       movable: false,
       focusable: true,
-      // 为true，截屏显示为黑屏
-      // 所以在截屏图像生成后再设置为true
-      // 参考48-49行
-      fullscreen: false,
-      // 设为true mac全屏窗口没有桌面滚动效果
+      fullscreen: true,
+      // 设为true 防止mac新开一个桌面，影响效果
       simpleFullscreen: true,
       backgroundColor: '#00000000',
       titleBarStyle: 'hidden',
@@ -151,7 +146,7 @@ export default class Screenshots extends Events {
       }
     })
 
-    this.$win.setBrowserView(this.$view)
+    this.$win.setTopBrowserView(this.$view)
     this.$view.setBounds(bound)
   }
 

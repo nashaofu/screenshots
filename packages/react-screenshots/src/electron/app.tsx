@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import Screenshots from '../Screenshots'
 import { Bounds } from '../Screenshots/types'
 import { Lang } from '../Screenshots/zh_CN'
@@ -19,28 +19,36 @@ export default function App (): JSX.Element {
   const [display, setDisplay] = useState<Display | undefined>(undefined)
   const [lang, setLang] = useState<Lang | undefined>(undefined)
 
+  const reset = useCallback(() => {
+    setUrl(undefined)
+    setDisplay(undefined)
+  }, [])
+
   const onSave = useCallback(
     async (blob: Blob | null, bounds: Bounds) => {
       if (!display || !blob) {
         return
       }
+      reset()
       window.screenshots.save(await blob.arrayBuffer(), { bounds, display })
     },
-    [display]
+    [display, reset]
   )
 
   const onCancel = useCallback(() => {
+    reset()
     window.screenshots.cancel()
-  }, [])
+  }, [reset])
 
   const onOk = useCallback(
     async (blob: Blob | null, bounds: Bounds) => {
       if (!display || !blob) {
         return
       }
+      reset()
       window.screenshots.ok(await blob.arrayBuffer(), { bounds, display })
     },
-    [display]
+    [display, reset]
   )
 
   useEffect(() => {
