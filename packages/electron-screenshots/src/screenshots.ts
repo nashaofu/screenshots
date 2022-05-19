@@ -95,7 +95,6 @@ export default class Screenshots extends Events {
     this.logger('endCapture')
 
     if (!this.$win) return
-    this.$win.setBrowserView(null)
     this.$win.setSimpleFullScreen(false)
     this.$win.close()
     this.$win = null
@@ -130,9 +129,7 @@ export default class Screenshots extends Events {
       resizable: false,
       movable: false,
       focusable: false,
-      closable: false,
       fullscreen: true,
-      fullscreenable: false,
       // 设为true 防止mac新开一个桌面，影响效果
       simpleFullscreen: true,
       backgroundColor: '#00000000',
