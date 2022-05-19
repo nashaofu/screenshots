@@ -95,6 +95,7 @@ export default class Screenshots extends Events {
     this.logger('endCapture')
 
     if (!this.$win) return
+    this.$win.setBrowserView(null)
     this.$win.setSimpleFullScreen(false)
     this.$win.close()
     this.$win = null
@@ -128,8 +129,10 @@ export default class Screenshots extends Events {
       transparent: true,
       resizable: false,
       movable: false,
-      focusable: true,
+      focusable: false,
+      closable: false,
       fullscreen: true,
+      fullscreenable: false,
       // 设为true 防止mac新开一个桌面，影响效果
       simpleFullscreen: true,
       backgroundColor: '#00000000',
@@ -137,8 +140,10 @@ export default class Screenshots extends Events {
       alwaysOnTop: true,
       enableLargerThanScreen: true,
       skipTaskbar: true,
+      hasShadow: false,
       minimizable: false,
       maximizable: false,
+      roundedCorners: false,
       webPreferences: {
         nodeIntegration: false,
         contextIsolation: false,
@@ -146,7 +151,10 @@ export default class Screenshots extends Events {
       }
     })
 
-    this.$win.setTopBrowserView(this.$view)
+    this.$win.setBrowserView(this.$view)
+    this.$win.setMenu(null)
+    this.$win.setMenuBarVisibility(false)
+    this.$win.removeMenu()
     this.$view.setBounds(bound)
   }
 
