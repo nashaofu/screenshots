@@ -81,7 +81,9 @@ export default class Screenshots extends Events {
       // 捕捉桌面之后显示窗口
       // 避免截图窗口自己被截图
       this.capture(boundAndDisplay).then(() => {
-        if (!this.$win) return
+        if (!this.$win) {
+          return
+        }
         this.$win.show()
         this.$win.focus()
       })
@@ -94,7 +96,11 @@ export default class Screenshots extends Events {
   public endCapture (): void {
     this.logger('endCapture')
 
-    if (!this.$win) return
+    if (!this.$win) {
+      return
+    }
+    this.$view.webContents.send('SCREENSHOTS:reset')
+    this.$win.setBrowserView(null)
     this.$win.setSimpleFullScreen(false)
     this.$win.close()
     this.$win = null

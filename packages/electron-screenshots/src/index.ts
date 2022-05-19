@@ -1,5 +1,5 @@
-import debug from 'electron-debug'
 import { app, globalShortcut } from 'electron'
+import debug from 'electron-debug'
 import Screenshots from './screenshots'
 
 app.whenReady().then(() => {

@@ -19,36 +19,28 @@ export default function App (): JSX.Element {
   const [display, setDisplay] = useState<Display | undefined>(undefined)
   const [lang, setLang] = useState<Lang | undefined>(undefined)
 
-  const reset = useCallback(() => {
-    setUrl(undefined)
-    setDisplay(undefined)
-  }, [])
-
   const onSave = useCallback(
     async (blob: Blob | null, bounds: Bounds) => {
       if (!display || !blob) {
         return
       }
-      reset()
       window.screenshots.save(await blob.arrayBuffer(), { bounds, display })
     },
-    [display, reset]
+    [display]
   )
 
   const onCancel = useCallback(() => {
-    reset()
     window.screenshots.cancel()
-  }, [reset])
+  }, [])
 
   const onOk = useCallback(
     async (blob: Blob | null, bounds: Bounds) => {
       if (!display || !blob) {
         return
       }
-      reset()
       window.screenshots.ok(await blob.arrayBuffer(), { bounds, display })
     },
-    [display, reset]
+    [display]
   )
 
   useEffect(() => {
@@ -61,13 +53,20 @@ export default function App (): JSX.Element {
       setUrl(dataURL)
     }
 
+    const onReset = () => {
+      setUrl(undefined)
+      setDisplay(undefined)
+    }
+
     window.screenshots.on('setLang', onSetLang)
     window.screenshots.on('capture', onCapture)
+    window.screenshots.on('reset', onReset)
     // 告诉主进程页面准备完成
     window.screenshots.ready()
     return () => {
       window.screenshots.off('capture', onCapture)
       window.screenshots.off('setLang', onSetLang)
+      window.screenshots.off('reset', onReset)
     }
   }, [])
 
