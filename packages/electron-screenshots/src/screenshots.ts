@@ -146,7 +146,6 @@ export default class Screenshots extends Events {
       hasShadow: false,
       minimizable: false,
       maximizable: false,
-      roundedCorners: false,
       webPreferences: {
         nodeIntegration: false,
         contextIsolation: false,
@@ -155,9 +154,6 @@ export default class Screenshots extends Events {
     })
 
     this.$win.setBrowserView(this.$view)
-    this.$win.setMenu(null)
-    this.$win.setMenuBarVisibility(false)
-    this.$win.removeMenu()
     this.$view.setBounds(bound)
   }
 
