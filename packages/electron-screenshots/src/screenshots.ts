@@ -72,9 +72,10 @@ export default class Screenshots extends Events {
     this.logger('startCapture')
 
     this.isReady.then(() => {
-      if (this.$win && !this.$win.isDestroyed()) {
-        this.$win.close()
-      }
+      // 先关闭上一次的窗口
+      // 防止用户连续截图
+      this.endCapture()
+
       const boundAndDisplay = getBoundAndDisplay()
       this.createWindow(boundAndDisplay)
 
@@ -95,11 +96,11 @@ export default class Screenshots extends Events {
    */
   public endCapture (): void {
     this.logger('endCapture')
+    this.$view.webContents.send('SCREENSHOTS:reset')
 
     if (!this.$win) {
       return
     }
-    this.$view.webContents.send('SCREENSHOTS:reset')
     this.$win.setBrowserView(null)
     this.$win.setSimpleFullScreen(false)
     this.$win.close()

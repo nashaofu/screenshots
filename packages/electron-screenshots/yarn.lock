@@ -1589,11 +1589,6 @@ queue-microtask@^1.2.2:
   resolved "https://registry.npmmirror.com/queue-microtask/download/queue-microtask-1.2.3.tgz#4929228bbc724dfac43e0efb058caf7b6cfb6243"
   integrity sha1-SSkii7xyTfrEPg77BYyve2z7YkM=
 
-react-screenshots@^0.4.3-alpha.0:
-  version "0.4.3-alpha.0"
-  resolved "https://registry.npmmirror.com/react-screenshots/-/react-screenshots-0.4.3-alpha.0.tgz#7a7cb5d2fb8beb762f3289ca0ee26bb5864de7b4"
-  integrity sha512-FTPZp69iK5x5nGwOvJndWyWJm0Ie93OWpHfMtawhOgd1m0mYCfQM+2/ft3X7QwtFqddGY2cGVSKKYnzLTEXqeQ==
-
 readable-stream@^2.2.2:
   version "2.3.7"
   resolved "https://registry.npmmirror.com/readable-stream/download/readable-stream-2.3.7.tgz#1eca1cf711aef814c04f62252a36a62f6cb23b57"
