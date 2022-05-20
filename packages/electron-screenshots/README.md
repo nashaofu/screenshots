@@ -111,10 +111,10 @@ export interface ScreenshotsOpts {
 
 | 名称                                 | 说明             | 返回值 |
 | ------------------------------------ | ---------------- | ------ |
-| `constructor(opts: ScreenshotsOpts)` | 调用截图方法截图 | -      |
-| `startCapture()`                     | 调用截图方法截图 | -      |
-| `endCapture() `                      | 手动结束截图     | -      |
-| `setLang(lang: Lang)`                | 修改语言         | -      |
+| `constructor(opts: ScreenshotsOpts): Screenshots` | 调用截图方法截图 | -      |
+| `startCapture(): Promise<void>`                     | 调用截图方法截图 | -      |
+| `endCapture(): Promise<void>`                      | 手动结束截图     | -      |
+| `setLang(lang: Lang): void`                | 修改语言         | -      |
 
 ## Events
 

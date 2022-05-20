@@ -48,7 +48,7 @@ export default function App (): JSX.Element {
       setLang(lang)
     }
 
-    const onCapture = async (display: Display, dataURL: string) => {
+    const onCapture = (display: Display, dataURL: string) => {
       setDisplay(display)
       setUrl(dataURL)
     }
@@ -92,15 +92,17 @@ export default function App (): JSX.Element {
 
   return (
     <div className='body'>
-      <Screenshots
-        url={url}
-        width={width}
-        height={height}
-        lang={lang}
-        onSave={onSave}
-        onCancel={onCancel}
-        onOk={onOk}
-      />
+      {url && (
+        <Screenshots
+          url={url}
+          width={width}
+          height={height}
+          lang={lang}
+          onSave={onSave}
+          onCancel={onCancel}
+          onOk={onOk}
+        />
+      )}
     </div>
   )
 }

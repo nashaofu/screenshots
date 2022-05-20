@@ -68,35 +68,38 @@ export default class Screenshots extends Events {
   /**
    * 开始截图
    */
-  public startCapture (): void {
+  public async startCapture (): Promise<void> {
     this.logger('startCapture')
 
-    this.isReady.then(() => {
-      // 先关闭上一次的窗口
-      // 防止用户连续截图
-      this.endCapture()
+    await this.isReady
 
-      const boundAndDisplay = getBoundAndDisplay()
-      this.createWindow(boundAndDisplay)
+    // 先关闭上一次的窗口
+    // 防止用户连续截图
+    await this.endCapture()
 
-      // 捕捉桌面之后显示窗口
-      // 避免截图窗口自己被截图
-      this.capture(boundAndDisplay).then(() => {
-        if (!this.$win) {
-          return
-        }
-        this.$win.show()
-        this.$win.focus()
-      })
-    })
+    const boundAndDisplay = getBoundAndDisplay()
+    this.createWindow(boundAndDisplay)
+
+    // 捕捉桌面之后显示窗口
+    // 避免截图窗口自己被截图
+    await this.capture(boundAndDisplay)
+
+    if (!this.$win) {
+      return
+    }
+    this.$win.show()
+    this.$win.focus()
   }
 
   /**
    * 结束截图
    */
-  public endCapture (): void {
+  public async endCapture (): Promise<void> {
     this.logger('endCapture')
     this.$view.webContents.send('SCREENSHOTS:reset')
+
+    // 保证 UI 有足够的时间渲染
+    await new Promise<void>(resolve => setTimeout(() => resolve(), 77))
 
     if (!this.$win) {
       return
@@ -156,6 +159,8 @@ export default class Screenshots extends Events {
 
     this.$win.setBrowserView(this.$view)
     this.$view.setBounds(bound)
+    // 重置截图区域
+    this.$view.webContents.send('SCREENSHOTS:reset')
   }
 
   private async capture ({ display }: BoundAndDisplay): Promise<void> {
