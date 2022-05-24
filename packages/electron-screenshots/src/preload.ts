@@ -24,6 +24,11 @@ contextBridge.exposeInMainWorld('screenshots', {
 
     ipcRenderer.send('SCREENSHOTS:ready')
   },
+  reset: () => {
+    console.log('contextBridge reset')
+
+    ipcRenderer.send('SCREENSHOTS:reset')
+  },
   save: (arrayBuffer: ArrayBuffer, data: ScreenshotsData) => {
     console.log('contextBridge save', arrayBuffer, data)
 
@@ -42,7 +47,10 @@ contextBridge.exposeInMainWorld('screenshots', {
   on: (channel: string, fn: ScreenshotsListener) => {
     console.log('contextBridge on', fn)
 
-    const listener = (event: IpcRendererEvent, ...args: unknown[]) => fn(...args)
+    const listener = (event: IpcRendererEvent, ...args: unknown[]) => {
+      console.log('contextBridge on', channel, fn, ...args)
+      fn(...args)
+    }
 
     const listeners = map.get(fn) ?? {}
     listeners[channel] = listener

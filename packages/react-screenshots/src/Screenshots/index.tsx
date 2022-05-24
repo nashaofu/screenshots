@@ -1,13 +1,13 @@
-import React, { MouseEvent, ReactElement, useCallback, useRef, useState } from 'react'
-import ScreenshotsContext from './ScreenshotsContext'
+import React, { MouseEvent, ReactElement, useCallback, useLayoutEffect, useRef, useState } from 'react'
+import './icons/iconfont.less'
+import './screenshots.less'
 import ScreenshotsBackground from './ScreenshotsBackground'
 import ScreenshotsCanvas from './ScreenshotsCanvas'
+import ScreenshotsContext from './ScreenshotsContext'
 import ScreenshotsOperations from './ScreenshotsOperations'
 import { Bounds, Emiter, History } from './types'
 import useGetLoadedImage from './useGetLoadedImage'
 import zhCN, { Lang } from './zh_CN'
-import './icons/iconfont.less'
-import './screenshots.less'
 
 export interface ScreenshotsProps {
   url?: string
@@ -106,6 +106,13 @@ export default function Screenshots ({ url, width, height, lang, className, ...p
     },
     [call]
   )
+
+  // 图片变化，重置截图区域
+  useLayoutEffect(() => {
+    if (!image) {
+      reset()
+    }
+  }, [image])
 
   return (
     <ScreenshotsContext.Provider value={{ store, dispatcher }}>

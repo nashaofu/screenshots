@@ -83,12 +83,7 @@ export default class Screenshots extends Events {
     // 捕捉桌面之后显示窗口
     // 避免截图窗口自己被截图
     await this.capture(boundAndDisplay)
-
-    if (!this.$win) {
-      return
-    }
-    this.$win.show()
-    this.$win.focus()
+    this.$win?.show()
   }
 
   /**
@@ -96,10 +91,7 @@ export default class Screenshots extends Events {
    */
   public async endCapture (): Promise<void> {
     this.logger('endCapture')
-    this.$view.webContents.send('SCREENSHOTS:reset')
-
-    // 保证 UI 有足够的时间渲染
-    await new Promise<void>(resolve => setTimeout(() => resolve(), 77))
+    await this.reset()
 
     if (!this.$win) {
       return
@@ -121,6 +113,17 @@ export default class Screenshots extends Events {
     })
   }
 
+  private async reset () {
+    // 重置截图区域
+    this.$view.webContents.send('SCREENSHOTS:reset')
+
+    // 保证 UI 有足够的时间渲染
+    await Promise.race([
+      new Promise<void>(resolve => setTimeout(() => resolve(), 500)),
+      new Promise<void>(resolve => ipcMain.once('SCREENSHOTS:reset', () => resolve()))
+    ])
+  }
+
   /**
    * 初始化窗口
    */
@@ -138,7 +141,8 @@ export default class Screenshots extends Events {
       transparent: true,
       resizable: false,
       movable: false,
-      focusable: false,
+      // focusable: true, 否则窗口不能及时响应esc按键
+      focusable: true,
       fullscreen: true,
       // 设为true 防止mac新开一个桌面，影响效果
       simpleFullscreen: true,
@@ -149,18 +153,16 @@ export default class Screenshots extends Events {
       skipTaskbar: true,
       hasShadow: false,
       minimizable: false,
-      maximizable: false,
-      webPreferences: {
-        nodeIntegration: false,
-        contextIsolation: false,
-        nativeWindowOpen: false
-      }
+      maximizable: false
     })
 
     this.$win.setBrowserView(this.$view)
     this.$view.setBounds(bound)
-    // 重置截图区域
-    this.$view.webContents.send('SCREENSHOTS:reset')
+
+    // 确保获得焦点
+    this.$win.once('show', () => {
+      this.$win?.focus()
+    })
   }
 
   private async capture ({ display }: BoundAndDisplay): Promise<void> {

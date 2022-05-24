@@ -56,6 +56,8 @@ export default function App (): JSX.Element {
     const onReset = () => {
       setUrl(undefined)
       setDisplay(undefined)
+      // 确保前一次编辑被清除
+      requestAnimationFrame(() => window.screenshots.reset())
     }
 
     window.screenshots.on('setLang', onSetLang)
@@ -92,17 +94,15 @@ export default function App (): JSX.Element {
 
   return (
     <div className='body'>
-      {url && (
-        <Screenshots
-          url={url}
-          width={width}
-          height={height}
-          lang={lang}
-          onSave={onSave}
-          onCancel={onCancel}
-          onOk={onOk}
-        />
-      )}
+      <Screenshots
+        url={url}
+        width={width}
+        height={height}
+        lang={lang}
+        onSave={onSave}
+        onCancel={onCancel}
+        onOk={onOk}
+      />
     </div>
   )
 }
