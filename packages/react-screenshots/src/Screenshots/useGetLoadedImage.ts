@@ -5,8 +5,10 @@ export default function useGetLoadedImage (url?: string): HTMLImageElement | nul
 
   useEffect(() => {
     if (url == null) {
+      setImage(null)
       return
     }
+
     const $image = document.createElement('img')
 
     const onLoad = () => setImage($image)
