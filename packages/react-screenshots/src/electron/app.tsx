@@ -56,7 +56,7 @@ export default function App (): JSX.Element {
     const onReset = () => {
       setUrl(undefined)
       setDisplay(undefined)
-      // 确保前一次编辑被清除
+      // 确保截图区域被重置
       requestAnimationFrame(() => window.screenshots.reset())
     }
 
