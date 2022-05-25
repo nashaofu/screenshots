@@ -164,7 +164,16 @@ export default class Screenshots extends Events {
         skipTaskbar: true,
         hasShadow: false,
         minimizable: false,
-        maximizable: false
+        maximizable: false,
+        paintWhenInitiallyHidden: false
+      })
+
+      // 确保获得焦点
+      this.$win.on('show', () => {
+        this.$win?.focus()
+        setImmediate(() => {
+          this.$win?.focus()
+        })
       })
     }
 
@@ -175,11 +184,6 @@ export default class Screenshots extends Events {
       y: 0,
       width: bound.width,
       height: bound.height
-    })
-
-    // 确保获得焦点
-    this.$win.once('show', () => {
-      this.$win?.focus()
     })
   }
 
