@@ -107,12 +107,10 @@ export default function Screenshots ({ url, width, height, lang, className, ...p
     [call]
   )
 
-  // 图片变化，重置截图区域
+  // url变化，重置截图区域
   useLayoutEffect(() => {
-    if (!image) {
-      reset()
-    }
-  }, [image])
+    reset()
+  }, [url])
 
   return (
     <ScreenshotsContext.Provider value={{ store, dispatcher }}>
