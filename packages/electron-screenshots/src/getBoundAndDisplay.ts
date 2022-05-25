@@ -1,4 +1,4 @@
-import { screen, Rectangle } from 'electron'
+import { Rectangle, screen } from 'electron'
 
 export interface Display extends Rectangle {
   id: number

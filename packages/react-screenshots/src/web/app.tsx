@@ -1,8 +1,8 @@
 import React, { ReactElement, useCallback } from 'react'
 import Screenshots from '../Screenshots'
-import url from './image.png'
-import './app.less'
 import { Bounds } from '../Screenshots/types'
+import './app.less'
+import imageUrl from './image.png'
 
 export default function App (): ReactElement {
   const onSave = useCallback((blob: Blob | null, bounds: Bounds) => {
@@ -20,7 +20,7 @@ export default function App (): ReactElement {
   return (
     <div className='body'>
       <Screenshots
-        url={url}
+        url={imageUrl}
         width={window.innerWidth}
         height={window.innerHeight}
         lang={{

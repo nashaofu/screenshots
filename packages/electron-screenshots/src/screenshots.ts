@@ -1,9 +1,18 @@
 import debug, { Debugger } from 'debug'
-import { BrowserView, BrowserWindow, clipboard, desktopCapturer, dialog, ipcMain, nativeImage } from 'electron'
+import {
+  BrowserView,
+  BrowserWindow,
+  clipboard,
+  desktopCapturer,
+  dialog,
+  ipcMain,
+  nativeImage,
+  Rectangle
+} from 'electron'
 import Events from 'events'
 import fs from 'fs-extra'
 import Event from './event'
-import getBoundAndDisplay, { BoundAndDisplay } from './getBoundAndDisplay'
+import getBoundAndDisplay, { Display } from './getBoundAndDisplay'
 import padStart from './padStart'
 import { Bounds, ScreenshotsData } from './preload'
 
@@ -71,19 +80,18 @@ export default class Screenshots extends Events {
   public async startCapture (): Promise<void> {
     this.logger('startCapture')
 
-    await this.isReady
+    const { bound, display } = getBoundAndDisplay()
 
-    // 先关闭上一次的窗口
+    const [imageUrl] = await Promise.all([this.capture(display), this.isReady])
+    this.createWindow(bound)
+
     // 防止用户连续截图
-    await this.endCapture()
+    await this.reset()
 
-    const boundAndDisplay = getBoundAndDisplay()
-    this.createWindow(boundAndDisplay)
+    this.$view.webContents.send('SCREENSHOTS:capture', display, imageUrl)
 
-    // 捕捉桌面之后显示窗口
-    // 避免截图窗口自己被截图
-    await this.capture(boundAndDisplay)
     this.$win?.show()
+    this.$win?.focus()
   }
 
   /**
@@ -127,34 +135,37 @@ export default class Screenshots extends Events {
   /**
    * 初始化窗口
    */
-  private createWindow ({ bound }: BoundAndDisplay): void {
-    this.$win = new BrowserWindow({
-      title: 'screenshots',
-      x: bound.x,
-      y: bound.y,
-      width: bound.width,
-      height: bound.height,
-      useContentSize: true,
-      frame: false,
-      show: false,
-      autoHideMenuBar: true,
-      transparent: true,
-      resizable: false,
-      movable: false,
-      // focusable: true, 否则窗口不能及时响应esc按键
-      focusable: true,
-      fullscreen: true,
-      // 设为true 防止mac新开一个桌面，影响效果
-      simpleFullscreen: true,
-      backgroundColor: '#00000000',
-      titleBarStyle: 'hidden',
-      alwaysOnTop: true,
-      enableLargerThanScreen: true,
-      skipTaskbar: true,
-      hasShadow: false,
-      minimizable: false,
-      maximizable: false
-    })
+  private createWindow (bound: Rectangle): void {
+    // 复用未销毁的窗口
+    if (!this.$win || this.$win?.isDestroyed?.()) {
+      this.$win = new BrowserWindow({
+        title: 'screenshots',
+        x: bound.x,
+        y: bound.y,
+        width: bound.width,
+        height: bound.height,
+        useContentSize: true,
+        frame: false,
+        show: false,
+        autoHideMenuBar: true,
+        transparent: true,
+        resizable: false,
+        movable: false,
+        // focusable: true, 否则窗口不能及时响应esc按键，输入框也不能输入
+        focusable: true,
+        fullscreen: true,
+        // 设为true 防止mac新开一个桌面，影响效果
+        simpleFullscreen: true,
+        backgroundColor: '#00000000',
+        titleBarStyle: 'hidden',
+        alwaysOnTop: true,
+        enableLargerThanScreen: true,
+        skipTaskbar: true,
+        hasShadow: false,
+        minimizable: false,
+        maximizable: false
+      })
+    }
 
     this.$win.setBrowserView(this.$view)
     this.$view.setBounds(bound)
@@ -165,21 +176,21 @@ export default class Screenshots extends Events {
     })
   }
 
-  private async capture ({ display }: BoundAndDisplay): Promise<void> {
+  private async capture (display: Display): Promise<string> {
     this.logger('SCREENSHOTS:capture')
 
     try {
       const { Screenshots: NodeScreenshots } = await import('node-screenshots')
       const capturer = NodeScreenshots.fromDisplay(display.id)
-      this.logger('SCREENSHOTS:NodeScreenshots.fromDisplay(%d) %o', display.id, capturer)
+      this.logger('SCREENSHOTS:capture NodeScreenshots.fromDisplay(%d) %o', display.id, capturer)
       if (!capturer) {
         throw new Error(`NodeScreenshots.fromDisplay(${display.id}) get null`)
       }
 
       const image = await capturer.capture()
-      this.$view.webContents.send('SCREENSHOTS:capture', display, `data:image/png;base64,${image.toString('base64')}`)
+      return `data:image/png;base64,${image.toString('base64')}`
     } catch (err) {
-      this.logger('SCREENSHOTS:capturer.capture() error %o', err)
+      this.logger('SCREENSHOTS:capture NodeScreenshots capture() error %o', err)
 
       const sources = await desktopCapturer.getSources({
         types: ['screen'],
@@ -190,7 +201,8 @@ export default class Screenshots extends Events {
       })
 
       let source
-      // Linux系统上，screen.getDisplayNearestPoint 返回的 Display 对象的 id 和 这儿 source 对象上的 display_id(Linux上，这个值是空字符串) 或 id 的中间部分，都不一致
+      // Linux系统上，screen.getDisplayNearestPoint 返回的 Display 对象的 id
+      // 和这里 source 对象上的 display_id(Linux上，这个值是空字符串) 或 id 的中间部分，都不一致
       // 但是，如果只有一个显示器的话，其实不用判断，直接返回就行
       if (sources.length === 1) {
         source = sources[0]
@@ -201,13 +213,11 @@ export default class Screenshots extends Events {
       }
 
       if (!source) {
-        console.error(sources)
-        console.error(display)
-        console.error("Can't find screen source")
-        return
+        this.logger("SCREENSHOTS:capture Can't find screen source. sources: %o, display: %o", sources, display)
+        throw new Error("Can't find screen source")
       }
 
-      this.$view.webContents.send('SCREENSHOTS:capture', display, source.thumbnail.toDataURL())
+      return source.thumbnail.toDataURL()
     }
   }
 

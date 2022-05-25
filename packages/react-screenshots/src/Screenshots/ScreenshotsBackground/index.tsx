@@ -1,13 +1,13 @@
 import React, { ReactElement, useCallback, useEffect, useRef, useState } from 'react'
-import ScreenshotsMagnifier from '../ScreenshotsMagnifier'
-import './index.less'
-import getBoundsByPoints from './getBoundsByPoints'
-import { Point, Position } from '../types'
 import useBounds from '../hooks/useBounds'
 import useStore from '../hooks/useStore'
+import ScreenshotsMagnifier from '../ScreenshotsMagnifier'
+import { Point, Position } from '../types'
+import getBoundsByPoints from './getBoundsByPoints'
+import './index.less'
 
 export default function ScreenshotsBackground (): ReactElement | null {
-  const { url, width, height } = useStore()
+  const { url, image, width, height } = useStore()
   const [bounds, boundsDispatcher] = useBounds()
 
   const elRef = useRef<HTMLDivElement>(null)
@@ -96,7 +96,8 @@ export default function ScreenshotsBackground (): ReactElement | null {
     }
   }, [updateBounds])
 
-  if (!url) {
+  // 没有加载完不显示图片
+  if (!url || !image) {
     return null
   }
 
