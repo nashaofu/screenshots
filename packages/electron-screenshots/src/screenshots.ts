@@ -83,10 +83,8 @@ export default class Screenshots extends Events {
     const { bound, display } = getBoundAndDisplay()
 
     const [imageUrl] = await Promise.all([this.capture(display), this.isReady])
-    this.createWindow(bound)
 
-    // 防止用户连续截图
-    await this.reset()
+    await this.createWindow(bound)
 
     this.$view.webContents.send('SCREENSHOTS:capture', display, imageUrl)
 
@@ -135,7 +133,10 @@ export default class Screenshots extends Events {
   /**
    * 初始化窗口
    */
-  private createWindow (bound: Rectangle): void {
+  private async createWindow (bound: Rectangle): Promise<void> {
+    // 重置截图区域
+    await this.reset()
+
     // 复用未销毁的窗口
     if (!this.$win || this.$win?.isDestroyed?.()) {
       this.$win = new BrowserWindow({
@@ -167,8 +168,14 @@ export default class Screenshots extends Events {
       })
     }
 
+    this.$win.setBounds(bound)
     this.$win.setBrowserView(this.$view)
-    this.$view.setBounds(bound)
+    this.$view.setBounds({
+      x: 0,
+      y: 0,
+      width: bound.width,
+      height: bound.height
+    })
 
     // 确保获得焦点
     this.$win.once('show', () => {
