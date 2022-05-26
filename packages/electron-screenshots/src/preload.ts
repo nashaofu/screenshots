@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron'
-import { Display } from './getBoundAndDisplay'
+import { Display } from './getDisplay'
 
 type IpcRendererListener = (event: IpcRendererEvent, ...args: unknown[]) => void
 type ScreenshotsListener = (...args: unknown[]) => void

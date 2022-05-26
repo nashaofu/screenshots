@@ -1,18 +1,9 @@
 import debug, { Debugger } from 'debug'
-import {
-  BrowserView,
-  BrowserWindow,
-  clipboard,
-  desktopCapturer,
-  dialog,
-  ipcMain,
-  nativeImage,
-  Rectangle
-} from 'electron'
+import { BrowserView, BrowserWindow, clipboard, desktopCapturer, dialog, ipcMain, nativeImage } from 'electron'
 import Events from 'events'
 import fs from 'fs-extra'
 import Event from './event'
-import getBoundAndDisplay, { Display } from './getBoundAndDisplay'
+import getDisplay, { Display } from './getDisplay'
 import padStart from './padStart'
 import { Bounds, ScreenshotsData } from './preload'
 
@@ -80,16 +71,18 @@ export default class Screenshots extends Events {
   public async startCapture (): Promise<void> {
     this.logger('startCapture')
 
-    const { bound, display } = getBoundAndDisplay()
+    const display = getDisplay()
 
     const [imageUrl] = await Promise.all([this.capture(display), this.isReady])
 
-    await this.createWindow(bound)
+    await this.createWindow(display)
 
     this.$view.webContents.send('SCREENSHOTS:capture', display, imageUrl)
 
-    this.$win?.show()
-    this.$win?.focus()
+    if (!this.$win) {
+      return
+    }
+    this.$win.show()
   }
 
   /**
@@ -104,6 +97,7 @@ export default class Screenshots extends Events {
     }
     this.$win.setBrowserView(null)
     this.$win.setSimpleFullScreen(false)
+    this.$win.setKiosk(false)
     this.$win.close()
     this.$win = null
   }
@@ -133,7 +127,7 @@ export default class Screenshots extends Events {
   /**
    * 初始化窗口
    */
-  private async createWindow (bound: Rectangle): Promise<void> {
+  private async createWindow (display: Display): Promise<void> {
     // 重置截图区域
     await this.reset()
 
@@ -141,10 +135,10 @@ export default class Screenshots extends Events {
     if (!this.$win || this.$win?.isDestroyed?.()) {
       this.$win = new BrowserWindow({
         title: 'screenshots',
-        x: bound.x,
-        y: bound.y,
-        width: bound.width,
-        height: bound.height,
+        x: display.x,
+        y: display.y,
+        width: display.width,
+        height: display.height,
         useContentSize: true,
         frame: false,
         show: false,
@@ -154,9 +148,10 @@ export default class Screenshots extends Events {
         movable: false,
         // focusable: true, 否则窗口不能及时响应esc按键，输入框也不能输入
         focusable: true,
-        fullscreen: true,
+        // fullscreen 设置为 false, 否则 linux 下不能全屏显示在最上层
+        fullscreen: false,
         // 设为true 防止mac新开一个桌面，影响效果
-        simpleFullscreen: true,
+        simpleFullscreen: process.platform === 'darwin',
         backgroundColor: '#00000000',
         titleBarStyle: 'hidden',
         alwaysOnTop: true,
@@ -167,23 +162,19 @@ export default class Screenshots extends Events {
         maximizable: false,
         paintWhenInitiallyHidden: false
       })
-
-      // 确保获得焦点
       this.$win.on('show', () => {
+        this.$win?.setKiosk(true)
         this.$win?.focus()
-        setImmediate(() => {
-          this.$win?.focus()
-        })
       })
     }
 
-    this.$win.setBounds(bound)
+    this.$win.setBounds(display)
     this.$win.setBrowserView(this.$view)
     this.$view.setBounds({
       x: 0,
       y: 0,
-      width: bound.width,
-      height: bound.height
+      width: display.width,
+      height: display.height
     })
   }
 
