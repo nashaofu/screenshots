@@ -25,12 +25,6 @@ app.whenReady().then(() => {
       operation_rectangle_title: 'rectangle'
     })
   })
-  screenshots.on('cancel', e => {
-    // 执行了preventDefault
-    // 点击取消不会关闭截图窗口
-    e.preventDefault()
-    console.log('capture', 'cancel2')
-  })
   // 点击保存按钮回调事件
   screenshots.on('save', (e, buffer, bounds) => {
     console.log('capture', buffer, bounds)

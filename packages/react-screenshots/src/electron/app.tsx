@@ -78,17 +78,9 @@ export default function App (): JSX.Element {
       setHeight(window.innerHeight)
     }
 
-    const onKeyup = ({ code }: KeyboardEvent) => {
-      if (code === 'Escape') {
-        onCancel()
-      }
-    }
-
     window.addEventListener('resize', onResize)
-    window.addEventListener('keyup', onKeyup)
     return () => {
       window.removeEventListener('resize', onResize)
-      window.removeEventListener('keyup', onKeyup)
     }
   }, [onCancel])
 
