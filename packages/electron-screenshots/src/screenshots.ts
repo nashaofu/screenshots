@@ -148,8 +148,9 @@ export default class Screenshots extends Events {
         movable: false,
         // focusable: true, 否则窗口不能及时响应esc按键，输入框也不能输入
         focusable: true,
-        // fullscreen 设置为 false, 否则 linux 下不能全屏显示在最上层
-        fullscreen: false,
+        // linux 下必须设置为false，否则不能全屏显示在最上层
+        // mac 下设置为true，鼠标移动到屏幕上方菜单栏处，才不会唤出菜单栏
+        fullscreen: process.platform === 'darwin',
         // 设为true 防止mac新开一个桌面，影响效果
         simpleFullscreen: process.platform === 'darwin',
         backgroundColor: '#00000000',
@@ -162,7 +163,10 @@ export default class Screenshots extends Events {
         maximizable: false,
         paintWhenInitiallyHidden: false
       })
+
       this.$win.on('show', () => {
+        // 在窗口显示时设置，防止与 fullscreen、x、y、width、height 等冲突
+        // 导致显示效果不符合预期
         this.$win?.setKiosk(true)
         this.$win?.focus()
       })
