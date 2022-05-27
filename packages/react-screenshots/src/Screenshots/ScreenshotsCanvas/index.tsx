@@ -8,15 +8,14 @@ import React, {
   useRef
 } from 'react'
 import useBounds from '../hooks/useBounds'
-import dpr from '../dpr'
-import getPoints from './getPoints'
-import getBoundsByPoints from './getBoundsByPoints'
-import { Bounds, HistoryItemType, Point } from '../types'
+import useCursor from '../hooks/useCursor'
 import useEmiter from '../hooks/useEmiter'
 import useHistory from '../hooks/useHistory'
-import useCursor from '../hooks/useCursor'
 import useOperation from '../hooks/useOperation'
 import useStore from '../hooks/useStore'
+import { Bounds, HistoryItemType, Point } from '../types'
+import getBoundsByPoints from './getBoundsByPoints'
+import getPoints from './getPoints'
 import './index.less'
 import isPointInDraw from './isPointInDraw'
 
@@ -72,7 +71,7 @@ export default forwardRef<CanvasRenderingContext2D>(function ScreenshotsCanvas (
     ctx.imageSmoothingEnabled = true
     // 设置太高，图片会模糊
     ctx.imageSmoothingQuality = 'low'
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+    ctx.setTransform(window.devicePixelRatio, 0, 0, window.devicePixelRatio, 0, 0)
     ctx.clearRect(0, 0, bounds.width, bounds.height)
     ctx.drawImage(
       image,
@@ -199,8 +198,8 @@ export default forwardRef<CanvasRenderingContext2D>(function ScreenshotsCanvas (
     >
       <canvas
         ref={canvasRef}
-        width={bounds.width * dpr}
-        height={bounds.height * dpr}
+        width={bounds.width * window.devicePixelRatio}
+        height={bounds.height * window.devicePixelRatio}
         style={{
           width: bounds.width,
           height: bounds.height
