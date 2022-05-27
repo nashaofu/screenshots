@@ -1,5 +1,6 @@
 import React, { MouseEvent, ReactElement, useCallback, useLayoutEffect, useRef, useState } from 'react'
 import './icons/iconfont.less'
+import imageToBlob from './imageToBlob'
 import './screenshots.less'
 import ScreenshotsBackground from './ScreenshotsBackground'
 import ScreenshotsCanvas from './ScreenshotsCanvas'
@@ -83,16 +84,27 @@ export default function Screenshots ({ url, width, height, lang, className, ...p
   }
 
   const onDoubleClick = useCallback(
-    (e: MouseEvent) => {
-      if (e.button !== 0 || !bounds || !canvasContextRef.current) {
+    async (e: MouseEvent) => {
+      if (e.button !== 0 || !image) {
         return
       }
-      canvasContextRef.current.canvas.toBlob(blob => {
-        call('onOk', blob, bounds)
+      if (bounds && canvasContextRef.current) {
+        canvasContextRef.current.canvas.toBlob(blob => {
+          call('onOk', blob, bounds)
+          reset()
+        }, 'image/png')
+      } else {
+        const blob = await imageToBlob(image, { width, height })
+        call('onOk', blob, {
+          x: 0,
+          y: 0,
+          width,
+          height
+        })
         reset()
-      }, 'image/png')
+      }
     },
-    [bounds, call]
+    [image, bounds, width, height, call]
   )
 
   const onContextMenu = useCallback(
