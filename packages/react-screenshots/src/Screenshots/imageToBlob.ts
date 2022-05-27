@@ -1,5 +1,3 @@
-import dpr from './dpr'
-
 export interface TargetSize {
   width: number
   height: number
@@ -13,8 +11,8 @@ export default function imageToBlob (image: HTMLImageElement, { width, height }:
     }
 
     const $canvas = document.createElement('canvas')
-    const targetWidth = width * dpr
-    const targetHeight = height * dpr
+    const targetWidth = width * window.devicePixelRatio
+    const targetHeight = height * window.devicePixelRatio
     $canvas.width = targetWidth
     $canvas.height = targetHeight
 
