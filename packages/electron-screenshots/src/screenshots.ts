@@ -28,6 +28,7 @@ export interface Lang {
 export interface ScreenshotsOpts {
   lang?: Lang
   logger?: Logger
+  singleWindow?: boolean
 }
 
 export { Bounds }
@@ -47,6 +48,8 @@ export default class Screenshots extends Events {
 
   private logger: Logger
 
+  private singleWindow: boolean
+
   private isReady = new Promise<void>(resolve => {
     ipcMain.once('SCREENSHOTS:ready', () => {
       this.logger('SCREENSHOTS:ready')
@@ -58,6 +61,7 @@ export default class Screenshots extends Events {
   constructor (opts?: ScreenshotsOpts) {
     super()
     this.logger = opts?.logger || debug('electron-screenshots')
+    this.singleWindow = opts?.singleWindow || false
     this.listenIpc()
     this.$view.webContents.loadURL(`file://${require.resolve('react-screenshots/electron/electron.html')}`)
     if (opts?.lang) {
@@ -82,6 +86,8 @@ export default class Screenshots extends Events {
     if (!this.$win) {
       return
     }
+
+    this.$win.blur()
     this.$win.show()
   }
 
@@ -95,22 +101,27 @@ export default class Screenshots extends Events {
     if (!this.$win) {
       return
     }
-    this.$win.setBrowserView(null)
     this.$win.setSimpleFullScreen(false)
     this.$win.setKiosk(false)
-    this.$win.close()
-    this.$win = null
+    this.$win.blur()
+    this.$win.setBrowserView(null)
+    if (this.singleWindow) {
+      this.$win.hide()
+    } else {
+      this.$win.close()
+      this.$win = null
+    }
   }
 
   /**
    * 设置语言
    */
-  public setLang (lang: Partial<Lang>): void {
-    this.isReady.then(() => {
-      this.logger('setLang', lang)
+  public async setLang (lang: Partial<Lang>): Promise<void> {
+    this.logger('setLang', lang)
 
-      this.$view.webContents.send('SCREENSHOTS:setLang', lang)
-    })
+    await this.isReady
+
+    this.$view.webContents.send('SCREENSHOTS:setLang', lang)
   }
 
   private async reset () {
@@ -146,6 +157,9 @@ export default class Screenshots extends Events {
         transparent: true,
         resizable: false,
         movable: false,
+        closable: false,
+        minimizable: false,
+        maximizable: false,
         // focusable: true, 否则窗口不能及时响应esc按键，输入框也不能输入
         focusable: true,
         // linux 下必须设置为false，否则不能全屏显示在最上层
@@ -159,21 +173,20 @@ export default class Screenshots extends Events {
         enableLargerThanScreen: true,
         skipTaskbar: true,
         hasShadow: false,
-        minimizable: false,
-        maximizable: false,
-        paintWhenInitiallyHidden: false
+        paintWhenInitiallyHidden: false,
+        acceptFirstMouse: true
       })
 
       this.$win.on('show', () => {
+        this.$win?.focus()
         // 在窗口显示时设置，防止与 fullscreen、x、y、width、height 等冲突
         // 导致显示效果不符合预期
         this.$win?.setKiosk(true)
-        this.$win?.focus()
       })
     }
 
-    this.$win.setBounds(display)
     this.$win.setBrowserView(this.$view)
+    this.$win.setBounds(display)
     this.$view.setBounds({
       x: 0,
       y: 0,

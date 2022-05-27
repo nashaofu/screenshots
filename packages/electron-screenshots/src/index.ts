@@ -1,5 +1,4 @@
 import { app, globalShortcut } from 'electron'
-import debug from 'electron-debug'
 import Screenshots from './screenshots'
 
 app.whenReady().then(() => {
@@ -7,11 +6,13 @@ app.whenReady().then(() => {
     lang: {
       operation_rectangle_title: '矩形2323'
     },
-    logger: (...args: unknown[]) => console.log(args)
+    logger: (...args: unknown[]) => console.log(args),
+    singleWindow: true
   })
+  screenshots.$view.webContents.openDevTools()
+
   globalShortcut.register('ctrl+shift+a', () => {
     screenshots.startCapture()
-    screenshots.$view.webContents.openDevTools()
   })
   // 点击确定按钮回调事件
   screenshots.on('ok', (e, buffer, bounds) => {
@@ -29,7 +30,6 @@ app.whenReady().then(() => {
   screenshots.on('save', (e, buffer, bounds) => {
     console.log('capture', buffer, bounds)
   })
-  debug({ showDevTools: true, devToolsMode: 'undocked' })
 })
 
 app.on('window-all-closed', () => {

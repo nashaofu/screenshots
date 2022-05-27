@@ -106,15 +106,19 @@ export interface ScreenshotsOpts {
   // 调用日志，默认值为 debug('electron-screenshots')
   // debug https://www.npmjs.com/package/debug
   logger?: Logger
+  // 是否复用截图窗口，加快截图窗口显示，默认值为 false
+  // 如果设置为 true 则会在第一次调用截图窗口时创建，后续调用时直接使用
+  // 且由于窗口不会 close，所以不会触发 app 的 `window-all-closed` 事件
+  singleWindow?: boolean
 }
 ```
 
-| 名称                                 | 说明             | 返回值 |
-| ------------------------------------ | ---------------- | ------ |
+| 名称                                              | 说明             | 返回值 |
+| ------------------------------------------------- | ---------------- | ------ |
 | `constructor(opts: ScreenshotsOpts): Screenshots` | 调用截图方法截图 | -      |
-| `startCapture(): Promise<void>`                     | 调用截图方法截图 | -      |
-| `endCapture(): Promise<void>`                      | 手动结束截图     | -      |
-| `setLang(lang: Lang): void`                | 修改语言         | -      |
+| `startCapture(): Promise<void>`                   | 调用截图方法截图 | -      |
+| `endCapture(): Promise<void>`                     | 手动结束截图     | -      |
+| `setLang(lang: Lang): Promise<void>`              | 修改语言         | -      |
 
 ## Events
 
