@@ -1,4 +1,4 @@
-import React, { ReactElement, useCallback, useEffect, useRef, useState } from 'react'
+import React, { ReactElement, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import useBounds from '../hooks/useBounds'
 import useStore from '../hooks/useStore'
 import ScreenshotsMagnifier from '../ScreenshotsMagnifier'
@@ -103,6 +103,13 @@ export default function ScreenshotsBackground (): ReactElement | null {
       window.removeEventListener('mouseup', onMouseUp)
     }
   }, [updateBounds])
+
+  useLayoutEffect(() => {
+    if (!image || bounds) {
+      // 重置位置
+      setPosition(null)
+    }
+  }, [image, bounds])
 
   // 没有加载完不显示图片
   if (!url || !image) {
