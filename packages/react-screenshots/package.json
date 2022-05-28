@@ -1,6 +1,6 @@
 {
   "name": "react-screenshots",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "a screenshot cropper tool by react",
   "main": "./lib/react-screenshots.cjs.js",
   "module": "./lib/react-screenshots.es.js",
