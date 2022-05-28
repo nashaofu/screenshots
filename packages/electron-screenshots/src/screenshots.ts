@@ -105,6 +105,10 @@ export default class Screenshots extends Events {
     this.$win.setKiosk(false)
     this.$win.blur()
     this.$win.setBrowserView(null)
+    // 必须设置为 closable 为 true
+    // 否者不能关闭窗口
+    this.$win.setClosable(true)
+
     if (this.singleWindow) {
       this.$win.hide()
     } else {
@@ -185,6 +189,8 @@ export default class Screenshots extends Events {
       })
     }
 
+    // 设置为 false，mac 就不显示左上角关闭按钮
+    this.$win.setClosable(false)
     this.$win.setBrowserView(this.$view)
     this.$win.setBounds(display)
     this.$view.setBounds({
