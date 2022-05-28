@@ -78,6 +78,27 @@ module.exports = {
 }
 ```
 
+- esc 取消截图，可用以下代码实现按 esc 取消截图
+
+```js
+globalShortcut.register('esc', () => {
+  if (screenshots.$win?.isFocused()) {
+    screenshots.endCapture()
+  }
+})
+```
+
+- 加速截图界面展示，不销毁`BrowserWindow`，减少创建窗口的开销，可用以下代码实现。**需注意，启用该功能，会导致`window-all-closed`事件不触发，因此需要手动关闭截图窗口**
+
+```js
+// 是否复用截图窗口，加快截图窗口显示，默认值为 false
+// 如果设置为 true 则会在第一次调用截图窗口时创建，后续调用时直接使用
+// 且由于窗口不会 close，所以不会触发 app 的 `window-all-closed` 事件
+const screenshots = new Screenshots({
+  singleWindow: true
+})
+```
+
 ## Methods
 
 - `Debugger`类型产考`debug`中的`Debugger`类型
