@@ -101,8 +101,11 @@ export default class Screenshots extends Events {
     if (!this.$win) {
       return
     }
-    this.$win.setSimpleFullScreen(false)
+
+    // 先清除 Kiosk 模式，然后取消全屏才有效
     this.$win.setKiosk(false)
+    this.$win.setFullScreen(false)
+    this.$win.setSimpleFullScreen(false)
     this.$win.blur()
     this.$win.setBrowserView(null)
     // 必须设置为 closable 为 true
@@ -189,6 +192,7 @@ export default class Screenshots extends Events {
       })
     }
 
+    this.$win.setFullScreen(process.platform === 'darwin')
     // 设置为 false，mac 就不显示左上角关闭按钮
     this.$win.setClosable(false)
     this.$win.setBrowserView(this.$view)

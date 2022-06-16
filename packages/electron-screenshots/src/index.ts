@@ -14,6 +14,12 @@ app.whenReady().then(() => {
   globalShortcut.register('ctrl+shift+a', () => {
     screenshots.startCapture()
   })
+
+  // 防止不能关闭截图界面
+  globalShortcut.register('ctrl+shift+q', () => {
+    app.quit()
+  })
+
   // 点击确定按钮回调事件
   screenshots.on('ok', (e, buffer, bounds) => {
     console.log('capture', buffer, bounds)
