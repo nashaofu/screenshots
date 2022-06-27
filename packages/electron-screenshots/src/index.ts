@@ -1,4 +1,4 @@
-import { app, globalShortcut } from 'electron'
+import { app, BrowserWindow, globalShortcut } from 'electron'
 import Screenshots from './screenshots'
 
 app.whenReady().then(() => {
@@ -36,6 +36,13 @@ app.whenReady().then(() => {
   screenshots.on('save', (e, buffer, bounds) => {
     console.log('capture', buffer, bounds)
   })
+
+  const mainWin = new BrowserWindow({
+    fullscreen: true,
+    show: true
+  })
+  mainWin.removeMenu()
+  mainWin.loadURL('https://github.com/nashaofu')
 })
 
 app.on('window-all-closed', () => {

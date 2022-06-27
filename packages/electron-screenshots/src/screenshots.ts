@@ -82,13 +82,6 @@ export default class Screenshots extends Events {
     await this.createWindow(display)
 
     this.$view.webContents.send('SCREENSHOTS:capture', display, imageUrl)
-
-    if (!this.$win) {
-      return
-    }
-
-    this.$win.blur()
-    this.$win.show()
   }
 
   /**
@@ -107,10 +100,9 @@ export default class Screenshots extends Events {
     this.$win.setFullScreen(false)
     this.$win.setSimpleFullScreen(false)
     this.$win.blur()
-    this.$win.setBrowserView(null)
-    // 必须设置为 closable 为 true
-    // 否者不能关闭窗口
-    this.$win.setClosable(true)
+    this.$win.blurWebView()
+    this.$win.unmaximize()
+    this.$win.removeBrowserView(this.$view)
 
     if (this.singleWindow) {
       this.$win.hide()
@@ -162,11 +154,9 @@ export default class Screenshots extends Events {
         show: false,
         autoHideMenuBar: true,
         transparent: true,
-        resizable: false,
+        // resizable 设置为 false 会导致页面崩溃
+        // resizable: false,
         movable: false,
-        closable: false,
-        minimizable: false,
-        maximizable: false,
         // focusable: true, 否则窗口不能及时响应esc按键，输入框也不能输入
         focusable: true,
         // linux 下必须设置为false，否则不能全屏显示在最上层
@@ -192,10 +182,17 @@ export default class Screenshots extends Events {
       })
     }
 
-    this.$win.setFullScreen(process.platform === 'darwin')
-    // 设置为 false，mac 就不显示左上角关闭按钮
-    this.$win.setClosable(false)
     this.$win.setBrowserView(this.$view)
+    this.$win.setWindowButtonVisibility(false)
+    this.$win.setVisibleOnAllWorkspaces(true, {
+      visibleOnFullScreen: true,
+      skipTransformProcessType: true
+    })
+    this.$win.blur()
+    this.$win.setKiosk(false)
+    this.$win.setFullScreen(process.platform === 'darwin')
+    this.$win.setSimpleFullScreen(process.platform === 'darwin')
+
     this.$win.setBounds(display)
     this.$view.setBounds({
       x: 0,
@@ -203,6 +200,8 @@ export default class Screenshots extends Events {
       width: display.width,
       height: display.height
     })
+
+    this.$win.show()
   }
 
   private async capture (display: Display): Promise<string> {
@@ -306,7 +305,6 @@ export default class Screenshots extends Events {
       this.$win.setAlwaysOnTop(false)
 
       const { canceled, filePath } = await dialog.showSaveDialog(this.$win, {
-        title: '保存图片',
         defaultPath: `${year}${month}${date}${hours}${minutes}${seconds}${milliseconds}.png`
       })
 
