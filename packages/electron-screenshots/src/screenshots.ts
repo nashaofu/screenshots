@@ -58,7 +58,7 @@ export default class Screenshots extends Events {
     })
   })
 
-  constructor(opts?: ScreenshotsOpts) {
+  constructor (opts?: ScreenshotsOpts) {
     super()
     this.logger = opts?.logger || debug('electron-screenshots')
     this.singleWindow = opts?.singleWindow || false
@@ -72,7 +72,7 @@ export default class Screenshots extends Events {
   /**
    * 开始截图
    */
-  public async startCapture(): Promise<void> {
+  public async startCapture (): Promise<void> {
     this.logger('startCapture')
 
     const display = getDisplay()
@@ -87,7 +87,7 @@ export default class Screenshots extends Events {
   /**
    * 结束截图
    */
-  public async endCapture(): Promise<void> {
+  public async endCapture (): Promise<void> {
     this.logger('endCapture')
     await this.reset()
 
@@ -115,7 +115,7 @@ export default class Screenshots extends Events {
   /**
    * 设置语言
    */
-  public async setLang(lang: Partial<Lang>): Promise<void> {
+  public async setLang (lang: Partial<Lang>): Promise<void> {
     this.logger('setLang', lang)
 
     await this.isReady
@@ -123,7 +123,7 @@ export default class Screenshots extends Events {
     this.$view.webContents.send('SCREENSHOTS:setLang', lang)
   }
 
-  private async reset() {
+  private async reset () {
     // 重置截图区域
     this.$view.webContents.send('SCREENSHOTS:reset')
 
@@ -137,7 +137,7 @@ export default class Screenshots extends Events {
   /**
    * 初始化窗口
    */
-  private async createWindow(display: Display): Promise<void> {
+  private async createWindow (display: Display): Promise<void> {
     // 重置截图区域
     await this.reset()
 
@@ -183,12 +183,19 @@ export default class Screenshots extends Events {
     }
 
     this.$win.setBrowserView(this.$view)
-    //适定平台
-    process.platform === 'darwin' && this.$win.setWindowButtonVisibility(false)
-    process.platform !== 'win32' && this.$win.setVisibleOnAllWorkspaces(true, {
-      visibleOnFullScreen: true,
-      skipTransformProcessType: true
-    })
+
+    // 适定平台
+    if (process.platform === 'darwin') {
+      this.$win.setWindowButtonVisibility(false)
+    }
+
+    if (process.platform !== 'win32') {
+      this.$win.setVisibleOnAllWorkspaces(true, {
+        visibleOnFullScreen: true,
+        skipTransformProcessType: true
+      })
+    }
+
     this.$win.blur()
     this.$win.setKiosk(false)
     this.$win.setFullScreen(process.platform === 'darwin')
@@ -205,7 +212,7 @@ export default class Screenshots extends Events {
     this.$win.show()
   }
 
-  private async capture(display: Display): Promise<string> {
+  private async capture (display: Display): Promise<string> {
     this.logger('SCREENSHOTS:capture')
 
     try {
@@ -253,7 +260,7 @@ export default class Screenshots extends Events {
   /**
    * 绑定ipc时间处理
    */
-  private listenIpc(): void {
+  private listenIpc (): void {
     /**
      * OK事件
      */
