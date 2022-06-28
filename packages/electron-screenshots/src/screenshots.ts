@@ -183,8 +183,9 @@ export default class Screenshots extends Events {
     }
 
     this.$win.setBrowserView(this.$view)
+    //适定平台
     process.platform === 'darwin' && this.$win.setWindowButtonVisibility(false)
-    this.$win.setVisibleOnAllWorkspaces(true, {
+    process.platform !== 'win32' && this.$win.setVisibleOnAllWorkspaces(true, {
       visibleOnFullScreen: true,
       skipTransformProcessType: true
     })
