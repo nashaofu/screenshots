@@ -6,7 +6,7 @@ app.whenReady().then(() => {
     lang: {
       operation_rectangle_title: '矩形2323'
     },
-    logger: (...args: unknown[]) => console.log(args),
+    // logger: (...args: unknown[]) => console.log(args),
     singleWindow: true
   })
   screenshots.$view.webContents.openDevTools()
