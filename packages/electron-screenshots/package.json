@@ -37,7 +37,7 @@
   "dependencies": {
     "debug": "^4.3.3",
     "fs-extra": "^10.1.0",
-    "node-screenshots": "^0.0.6",
+    "node-screenshots": "^0.0.7",
     "react-screenshots": "^0.5.1"
   },
   "peerDependencies": {
