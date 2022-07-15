@@ -107,8 +107,7 @@ export default class Screenshots extends Events {
     if (this.singleWindow) {
       this.$win.hide()
     } else {
-      this.$win.close()
-      this.$win = null
+      this.$win.destroy()
     }
   }
 
@@ -179,6 +178,10 @@ export default class Screenshots extends Events {
         // 在窗口显示时设置，防止与 fullscreen、x、y、width、height 等冲突
         // 导致显示效果不符合预期
         this.$win?.setKiosk(true)
+      })
+
+      this.$win.on('closed', () => {
+        this.$win = null
       })
     }
 
