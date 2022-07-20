@@ -1,4 +1,4 @@
-import React, { ReactElement, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import React, { memo, ReactElement, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import useBounds from '../hooks/useBounds'
 import useStore from '../hooks/useStore'
 import ScreenshotsMagnifier from '../ScreenshotsMagnifier'
@@ -6,7 +6,7 @@ import { Point, Position } from '../types'
 import getBoundsByPoints from './getBoundsByPoints'
 import './index.less'
 
-export default function ScreenshotsBackground (): ReactElement | null {
+export default memo(function ScreenshotsBackground (): ReactElement | null {
   const { url, image, width, height } = useStore()
   const [bounds, boundsDispatcher] = useBounds()
 
@@ -123,4 +123,4 @@ export default function ScreenshotsBackground (): ReactElement | null {
       {position && !bounds && <ScreenshotsMagnifier x={position?.x} y={position?.y} />}
     </div>
   )
-}
+})

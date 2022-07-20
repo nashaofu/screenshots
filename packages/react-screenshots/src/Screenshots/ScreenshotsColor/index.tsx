@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react'
+import React, { memo, ReactElement } from 'react'
 import './index.less'
 
 export interface ColorProps {
@@ -6,7 +6,7 @@ export interface ColorProps {
   onChange: (value: string) => void
 }
 
-export default function ScreenshotsColor ({ value, onChange }: ColorProps): ReactElement {
+export default memo(function ScreenshotsColor ({ value, onChange }: ColorProps): ReactElement {
   const colors = ['#ee5126', '#fceb4d', '#90e746', '#51c0fa', '#7a7a7a', '#ffffff']
   return (
     <div className='screenshots-color'>
@@ -26,4 +26,4 @@ export default function ScreenshotsColor ({ value, onChange }: ColorProps): Reac
       })}
     </div>
   )
-}
+})

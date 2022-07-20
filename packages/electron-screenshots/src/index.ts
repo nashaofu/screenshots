@@ -37,7 +37,6 @@ app.whenReady().then(() => {
   })
 
   const mainWin = new BrowserWindow({
-    fullscreen: true,
     show: true
   })
   mainWin.removeMenu()
