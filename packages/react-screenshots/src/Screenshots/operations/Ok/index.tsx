@@ -1,32 +1,37 @@
 import React, { ReactElement, useCallback } from 'react'
-import useBounds from '../../hooks/useBounds'
+import useStore from '../../hooks/useStore'
 import useCall from '../../hooks/useCall'
-import useCanvasContextref from '../../hooks/useCanvasContextRef'
+import useCanvasContextRef from '../../hooks/useCanvasContextRef'
 import useHistory from '../../hooks/useHistory'
-import useLang from '../../hooks/useLang'
 import useReset from '../../hooks/useReset'
 import ScreenshotsButton from '../../ScreenshotsButton'
+import composeImage from '../../composeImage'
 
 export default function Ok (): ReactElement {
-  const lang = useLang()
-  const canvasContextRef = useCanvasContextref()
+  const { image, width, height, history, bounds, lang } = useStore()
+  const canvasContextRef = useCanvasContextRef()
   const [, historyDispatcher] = useHistory()
   const call = useCall()
-  const [bounds] = useBounds()
   const reset = useReset()
 
   const onClick = useCallback(() => {
     historyDispatcher.clearSelect()
     setTimeout(() => {
-      if (!canvasContextRef.current) {
+      if (!canvasContextRef.current || !image || !bounds) {
         return
       }
-      canvasContextRef.current.canvas.toBlob(blob => {
+      composeImage({
+        image,
+        width,
+        height,
+        history,
+        bounds
+      }).then(blob => {
         call('onOk', blob, bounds)
         reset()
-      }, 'image/png')
+      })
     })
-  }, [canvasContextRef, historyDispatcher, call, bounds, reset])
+  }, [canvasContextRef, historyDispatcher, image, width, height, history, bounds, call, reset])
 
   return <ScreenshotsButton title={lang.operation_ok_title} icon='icon-ok' onClick={onClick} />
 }

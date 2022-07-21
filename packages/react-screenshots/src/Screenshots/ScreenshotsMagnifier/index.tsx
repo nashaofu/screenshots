@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import React, { memo, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import useLang from '../hooks/useLang'
 import useStore from '../hooks/useStore'
 import { Position } from '../types'
@@ -12,7 +12,7 @@ export interface ScreenshotsMagnifierProps {
 const magnifierWidth = 100
 const magnifierHeight = 80
 
-export default function ScreenshotsMagnifier ({ x, y }: ScreenshotsMagnifierProps) {
+export default memo(function ScreenshotsMagnifier ({ x, y }: ScreenshotsMagnifierProps) {
   const { width, height, image } = useStore()
   const lang = useLang()
   const [position, setPosition] = useState<Position | null>(null)
@@ -109,4 +109,4 @@ export default function ScreenshotsMagnifier ({ x, y }: ScreenshotsMagnifierProp
       </div>
     </div>
   )
-}
+})

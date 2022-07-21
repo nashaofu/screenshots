@@ -1,13 +1,13 @@
-import React, { MouseEvent, ReactElement, useCallback, useEffect, useRef, useState } from 'react'
+import React, { memo, MouseEvent, ReactElement, useCallback, useEffect, useRef, useState } from 'react'
 import useBounds from '../hooks/useBounds'
-import OperationButtons from '../operations'
-import './index.less'
 import useStore from '../hooks/useStore'
+import OperationButtons from '../operations'
 import { Bounds, Position } from '../types'
+import './index.less'
 
 export const ScreenshotsOperationsCtx = React.createContext<Bounds | null>(null)
 
-export default function ScreenshotsOperations (): ReactElement | null {
+export default memo(function ScreenshotsOperations (): ReactElement | null {
   const { width, height } = useStore()
   const [bounds] = useBounds()
   const [operationsRect, setOperationsRect] = useState<Bounds | null>(null)
@@ -79,8 +79,7 @@ export default function ScreenshotsOperations (): ReactElement | null {
         className='screenshots-operations'
         style={{
           visibility: position ? 'visible' : 'hidden',
-          left: position?.x,
-          top: position?.y
+          transform: `translate(${position?.x ?? 0}px, ${position?.y ?? 0}px)`
         }}
         onDoubleClick={onDoubleClick}
         onContextMenu={onContextMenu}
@@ -97,4 +96,4 @@ export default function ScreenshotsOperations (): ReactElement | null {
       </div>
     </ScreenshotsOperationsCtx.Provider>
   )
-}
+})

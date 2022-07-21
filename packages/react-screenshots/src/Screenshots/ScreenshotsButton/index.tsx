@@ -1,4 +1,4 @@
-import React, { ReactElement, ReactNode, useCallback } from 'react'
+import React, { memo, ReactElement, ReactNode, useCallback } from 'react'
 import ScreenshotsOption from '../ScreenshotsOption'
 import './index.less'
 
@@ -11,7 +11,7 @@ export interface ScreenshotsButtonProps {
   onClick?: (e: PointerEvent) => unknown
 }
 
-export default function ScreenshotsButton ({
+export default memo(function ScreenshotsButton ({
   title,
   icon,
   checked,
@@ -45,4 +45,4 @@ export default function ScreenshotsButton ({
       </div>
     </ScreenshotsOption>
   )
-}
+})

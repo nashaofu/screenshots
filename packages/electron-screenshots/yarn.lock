@@ -1328,53 +1328,53 @@ natural-compare@^1.4.0:
   resolved "https://registry.npmmirror.com/natural-compare/download/natural-compare-1.4.0.tgz#4abebfeed7541f2c27acfb29bdbbd15c8d5ba4f7"
   integrity sha1-Sr6/7tdUHywnrPspvbvRXI1bpPc=
 
-node-screenshots-darwin-arm64@0.0.7:
-  version "0.0.7"
-  resolved "https://registry.npmmirror.com/node-screenshots-darwin-arm64/-/node-screenshots-darwin-arm64-0.0.7.tgz#6073defed5168dcb89d770a710fca9b247b87c47"
-  integrity sha512-OpuBCnOlFB6BnbfyC6bS8rWKAWhB9wL38iKY2vk6xqm7cY3GWP/33GndHhyA40CPfxqst1fmLTjeH1qn29Lzbg==
+node-screenshots-darwin-arm64@0.0.9:
+  version "0.0.9"
+  resolved "https://registry.npmmirror.com/node-screenshots-darwin-arm64/-/node-screenshots-darwin-arm64-0.0.9.tgz#b0799d572c6960cef3dacf389d28354997ffd82a"
+  integrity sha512-W2d98EjP3TRd6LrgMUovf1p+f4MFADAItD+e+dEPxj4j04aWrCRPe2Z9mieApRcQpCtIZv4U9cCykwFo+HrRBw==
 
-node-screenshots-darwin-x64@0.0.7:
-  version "0.0.7"
-  resolved "https://registry.npmmirror.com/node-screenshots-darwin-x64/-/node-screenshots-darwin-x64-0.0.7.tgz#4061a84f0209737130c51c4db3d0b633e4b6293c"
-  integrity sha512-nlzOX6Rx0wVz+YJrfjEfz7FjdOcpMXD0q1l+o/uGr+N6v4Cmvac+Sj3asZNqxsERa+qrqZ4Urp5yS92LqDhrOg==
+node-screenshots-darwin-x64@0.0.9:
+  version "0.0.9"
+  resolved "https://registry.npmmirror.com/node-screenshots-darwin-x64/-/node-screenshots-darwin-x64-0.0.9.tgz#9a78b1fa273bca96e85cd9ceaf1099c39c85f5d1"
+  integrity sha512-P39IPYYlJtQHd0c4bym1+tqLR9g8G7psvp4r2r5KNl+wQjLQVN6mQd0xYvopjjI25ZpZm0BAZVwrKvvRS2xZTw==
 
-node-screenshots-linux-x64-gnu@0.0.7:
-  version "0.0.7"
-  resolved "https://registry.npmmirror.com/node-screenshots-linux-x64-gnu/-/node-screenshots-linux-x64-gnu-0.0.7.tgz#6780826020c4abc2180cc5c844cacced0eceb5bf"
-  integrity sha512-TUdCiRNozMRpFzpTOGTAEC5zQ/to96GcKvVxoD4Qwfa7dMTM419PHjYmGFcgF7ivkymF2vKLmTud7VvpoKEdbw==
+node-screenshots-linux-x64-gnu@0.0.9:
+  version "0.0.9"
+  resolved "https://registry.npmmirror.com/node-screenshots-linux-x64-gnu/-/node-screenshots-linux-x64-gnu-0.0.9.tgz#61fcd883163db9a683294aad35bf68c80f0291ad"
+  integrity sha512-E4NoGMHkE9u1XcIhgw+9J085xUFAjXOteLFxVdWe6TM+OU91iBb38SXpzsZ2wselGwT/lHvC2VnTlV4wayoXBg==
 
-node-screenshots-linux-x64-musl@0.0.7:
-  version "0.0.7"
-  resolved "https://registry.npmmirror.com/node-screenshots-linux-x64-musl/-/node-screenshots-linux-x64-musl-0.0.7.tgz#64e3083e22f54e2b5c86801c2141ce1ac2b7e26c"
-  integrity sha512-o3k32mkQMVCjwQeY2lAqBYj4pY4Ulo50yiTFx8fMe0LOHOCIOwDk3+je1a95DPNv+IZ49ly6H9ipdL/sjsCBgw==
+node-screenshots-linux-x64-musl@0.0.9:
+  version "0.0.9"
+  resolved "https://registry.npmmirror.com/node-screenshots-linux-x64-musl/-/node-screenshots-linux-x64-musl-0.0.9.tgz#38c13f9b42d4bf7cee79a560d7fb2383504f7f68"
+  integrity sha512-FbOmFyTdFhujsFYjgCd2ONpOJMaThwg67T79qS9PhopoAgbgszagHFXbvfTHKcXzmJsfxHR9Q0mYCnrO7hIGnA==
 
-node-screenshots-win32-arm64-msvc@0.0.7:
-  version "0.0.7"
-  resolved "https://registry.npmmirror.com/node-screenshots-win32-arm64-msvc/-/node-screenshots-win32-arm64-msvc-0.0.7.tgz#b0c1c78cea722d025375f74d0a87ae1ef1e84568"
-  integrity sha512-QQ0KjM+j8G0KZtSoDDOSpzQ6Vq//dYXVcObCbowXnL38VeKvnwRxPPppuVy9TQMNXiF9NoYp6FJlx7za9SwsNw==
+node-screenshots-win32-arm64-msvc@0.0.9:
+  version "0.0.9"
+  resolved "https://registry.npmmirror.com/node-screenshots-win32-arm64-msvc/-/node-screenshots-win32-arm64-msvc-0.0.9.tgz#feca2714af7106d61cb8d9d05d7a6c3b0a56da25"
+  integrity sha512-eXh0q21CFGF6gCYD/tBgdtCBSubgg1c8M46ujaDIZ2upZU44dBmQCfDI8m88f7tReQ/MLRBa73OUDgaRjL+HOQ==
 
-node-screenshots-win32-ia32-msvc@0.0.7:
-  version "0.0.7"
-  resolved "https://registry.npmmirror.com/node-screenshots-win32-ia32-msvc/-/node-screenshots-win32-ia32-msvc-0.0.7.tgz#75e8692491d87ac6dad71d13e0628d5fd2c6cecc"
-  integrity sha512-DTS/sseOkUf83LDj5fb6WevX/iJkVj0G0ah6ru1vvh5MZiz/rf1pLoLppn+AvZu1/36g5y32a1yPxZOew0o3Xw==
+node-screenshots-win32-ia32-msvc@0.0.9:
+  version "0.0.9"
+  resolved "https://registry.npmmirror.com/node-screenshots-win32-ia32-msvc/-/node-screenshots-win32-ia32-msvc-0.0.9.tgz#8bedf2a7a3553caa2fe795483b75f2f6d5cf0660"
+  integrity sha512-5RdNxc4awHhlb6do9iODHF3t79HYSOa33bFEqs78r1xfUUnTbRj/PZYU9xix2rN4QAQr/WqhvxkRb2BKPuhgoQ==
 
-node-screenshots-win32-x64-msvc@0.0.7:
-  version "0.0.7"
-  resolved "https://registry.npmmirror.com/node-screenshots-win32-x64-msvc/-/node-screenshots-win32-x64-msvc-0.0.7.tgz#aa546745d1e87d21c1964210bb5da5680167390c"
-  integrity sha512-jV9BzxfVy5frBHl/ZosLnJ7CGE7vraEQ6or6nseaItvrsdKm9fi69E9g47mVZ7h8vZV8mRml9zKRWlp5AogpHA==
+node-screenshots-win32-x64-msvc@0.0.9:
+  version "0.0.9"
+  resolved "https://registry.npmmirror.com/node-screenshots-win32-x64-msvc/-/node-screenshots-win32-x64-msvc-0.0.9.tgz#13fd9ef5d87df3df61c3262b3d19fbac61d732ce"
+  integrity sha512-sOth+6x91Wg+jPYbjvfgmyK1f3DVJsKnmS2V68051vpaNk+bQ30g44e75rXYL0dFd0ZHQ/MusQvn/8mEnNclaA==
 
-node-screenshots@^0.0.7:
-  version "0.0.7"
-  resolved "https://registry.npmmirror.com/node-screenshots/-/node-screenshots-0.0.7.tgz#2eeea38951c179750b4b1c4c03b73900a46f7768"
-  integrity sha512-vQGkC0bV/47qUnGLEw62E1t2UU/YnwWpZmRWBKyzuAh7Lm1+eX+YZNwDkHtrKp/M8KKEHtuzdG6cGSjjefqmng==
+node-screenshots@^0.0.9:
+  version "0.0.9"
+  resolved "https://registry.npmmirror.com/node-screenshots/-/node-screenshots-0.0.9.tgz#c5614869afe45f1c7ee346fe1979ad09ae7f94e6"
+  integrity sha512-i+2Dj198fzTa5AL6xyZx7XfbD0yM0gdYdvyB29mQY0vgtXlca7XOyQ7h/KZpDe5WhM+6YbihMLgbeP4czLWH8g==
   optionalDependencies:
-    node-screenshots-darwin-arm64 "0.0.7"
-    node-screenshots-darwin-x64 "0.0.7"
-    node-screenshots-linux-x64-gnu "0.0.7"
-    node-screenshots-linux-x64-musl "0.0.7"
-    node-screenshots-win32-arm64-msvc "0.0.7"
-    node-screenshots-win32-ia32-msvc "0.0.7"
-    node-screenshots-win32-x64-msvc "0.0.7"
+    node-screenshots-darwin-arm64 "0.0.9"
+    node-screenshots-darwin-x64 "0.0.9"
+    node-screenshots-linux-x64-gnu "0.0.9"
+    node-screenshots-linux-x64-musl "0.0.9"
+    node-screenshots-win32-arm64-msvc "0.0.9"
+    node-screenshots-win32-ia32-msvc "0.0.9"
+    node-screenshots-win32-x64-msvc "0.0.9"
 
 normalize-url@^4.1.0:
   version "4.5.1"
@@ -1550,11 +1550,6 @@ queue-microtask@^1.2.2:
   version "1.2.3"
   resolved "https://registry.npmmirror.com/queue-microtask/download/queue-microtask-1.2.3.tgz#4929228bbc724dfac43e0efb058caf7b6cfb6243"
   integrity sha1-SSkii7xyTfrEPg77BYyve2z7YkM=
-
-react-screenshots@^0.5.1:
-  version "0.5.1"
-  resolved "https://registry.yarnpkg.com/react-screenshots/-/react-screenshots-0.5.1.tgz#45d839ae8c8ec47009a39fe5b06a78c79e4a0694"
-  integrity sha512-GmELGHFD8bCC17kr35apE0dR92jFwmfguTcl0ZBSlqX9y0pnj8tcs0q/D8BXbku5nZtEl2jjVY3adLjSu3GKIw==
 
 readable-stream@^2.2.2:
   version "2.3.7"
