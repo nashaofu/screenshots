@@ -46,18 +46,21 @@ export default memo(function ScreenshotsOperations (): ReactElement | null {
       y = height - elRect.height - 10
     }
 
-    if (position?.x !== x || position.y !== y) {
+    // 小数存在精度问题
+    if (!position || Math.abs(position.x - x) > 1 || Math.abs(position.y - y) > 1) {
       setPosition({
         x,
         y
       })
     }
 
+    // 小数存在精度问题
     if (
-      operationsRect?.x !== elRect.x ||
-      operationsRect.y !== elRect.y ||
-      operationsRect.width !== elRect.width ||
-      operationsRect.height !== elRect.height
+      !operationsRect ||
+      Math.abs(operationsRect.x - elRect.x) > 1 ||
+      Math.abs(operationsRect.y - elRect.y) > 1 ||
+      Math.abs(operationsRect.width - elRect.width) > 1 ||
+      Math.abs(operationsRect.height - elRect.height) > 1
     ) {
       setOperationsRect({
         x: elRect.x,
