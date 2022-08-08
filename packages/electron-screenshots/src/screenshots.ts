@@ -97,7 +97,6 @@ export default class Screenshots extends Events {
 
     // 先清除 Kiosk 模式，然后取消全屏才有效
     this.$win.setKiosk(false)
-    this.$win.setFullScreen(false)
     this.$win.setSimpleFullScreen(false)
     this.$win.blur()
     this.$win.blurWebView()
@@ -158,9 +157,12 @@ export default class Screenshots extends Events {
         movable: false,
         // focusable: true, 否则窗口不能及时响应esc按键，输入框也不能输入
         focusable: true,
-        // linux 下必须设置为false，否则不能全屏显示在最上层
-        // mac 下设置为true，鼠标移动到屏幕上方菜单栏处，才不会唤出菜单栏
-        fullscreen: process.platform === 'darwin',
+        /**
+         * linux 下必须设置为false，否则不能全屏显示在最上层
+         * mac 下设置为false，否则可能会导致程序坞不恢复问题
+         * https://github.com/nashaofu/screenshots/issues/148
+         */
+        // fullscreen: process.platform === 'darwin',
         // 设为true 防止mac新开一个桌面，影响效果
         simpleFullscreen: process.platform === 'darwin',
         backgroundColor: '#00000000',
@@ -175,9 +177,11 @@ export default class Screenshots extends Events {
 
       this.$win.on('show', () => {
         this.$win?.focus()
-        // 在窗口显示时设置，防止与 fullscreen、x、y、width、height 等冲突
-        // 导致显示效果不符合预期
-        this.$win?.setKiosk(true)
+        /**
+         * 在窗口显示时设置，防止与 fullscreen、x、y、width、height 等冲突, 导致显示效果不符合预期
+         * mac 下不设置 kiosk 模式，https://github.com/nashaofu/screenshots/issues/148
+         */
+        this.$win?.setKiosk(process.platform !== 'darwin')
       })
 
       this.$win.on('closed', () => {
@@ -201,8 +205,10 @@ export default class Screenshots extends Events {
 
     this.$win.blur()
     this.$win.setKiosk(false)
-    this.$win.setFullScreen(process.platform === 'darwin')
-    this.$win.setSimpleFullScreen(process.platform === 'darwin')
+
+    if (process.platform === 'darwin') {
+      this.$win.setSimpleFullScreen(true)
+    }
 
     this.$win.setBounds(display)
     this.$view.setBounds({
