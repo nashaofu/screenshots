@@ -39,6 +39,7 @@ export default class Screenshots extends Events {
 
   public $view: BrowserView = new BrowserView({
     webPreferences: {
+      sandbox: false,
       preload: require.resolve('./preload.js'),
       nodeIntegration: false,
       contextIsolation: true,
