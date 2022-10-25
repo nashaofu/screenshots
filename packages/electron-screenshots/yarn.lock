@@ -1388,54 +1388,6 @@ natural-compare@^1.4.0:
   resolved "https://registry.yarnpkg.com/natural-compare/-/natural-compare-1.4.0.tgz#4abebfeed7541f2c27acfb29bdbbd15c8d5ba4f7"
   integrity sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==
 
-node-screenshots-darwin-arm64@0.0.11:
-  version "0.0.11"
-  resolved "https://registry.npmmirror.com/node-screenshots-darwin-arm64/-/node-screenshots-darwin-arm64-0.0.11.tgz#33e9669c00b9d9863647132d11fae0afcc5cbdd3"
-  integrity sha512-koLc7YiSSmeseXM7sLzD4jssbtF9xVlW0AWfuvcgWFl1myIpWfwD++hd+5apMy0gjHtJtnJCdHg07yMh4dQ9CA==
-
-node-screenshots-darwin-x64@0.0.11:
-  version "0.0.11"
-  resolved "https://registry.npmmirror.com/node-screenshots-darwin-x64/-/node-screenshots-darwin-x64-0.0.11.tgz#36e95daa1bbeff8959f58647d4e5b66d6fb0ece7"
-  integrity sha512-SeEf4LfpAy8NSG95w2sUeF+8UZNmregEYO9UWuPB0qJvwSQqdYghmfgFPwcUXYmzlz04LIeRblHQMBa7RWL33g==
-
-node-screenshots-linux-x64-gnu@0.0.11:
-  version "0.0.11"
-  resolved "https://registry.npmmirror.com/node-screenshots-linux-x64-gnu/-/node-screenshots-linux-x64-gnu-0.0.11.tgz#8d6b49c499fa93e23c8006badcbdd0c9eeddef64"
-  integrity sha512-rihMiZQis78XMw8T5DShW122c0Ah/HR28V/7YN30jnVLOzY0EC3Ek2U3yVY4NxzierO/zdyVl1LJpYF/gxzclw==
-
-node-screenshots-linux-x64-musl@0.0.11:
-  version "0.0.11"
-  resolved "https://registry.npmmirror.com/node-screenshots-linux-x64-musl/-/node-screenshots-linux-x64-musl-0.0.11.tgz#0d1fcdf596ed2dc6e1cdfd059fd9536bb74e7011"
-  integrity sha512-9+1PdH4hTqu7TUkcoDxdS/b5zUlq49q0P7dhb5QFI0SmxicAKTPlSS0QaAEkx/NRD4wM8T6kn8bobqcTv2DkmQ==
-
-node-screenshots-win32-arm64-msvc@0.0.11:
-  version "0.0.11"
-  resolved "https://registry.npmmirror.com/node-screenshots-win32-arm64-msvc/-/node-screenshots-win32-arm64-msvc-0.0.11.tgz#4f6c528b1ccbef50209ccc19cf89d340b89cc491"
-  integrity sha512-w4dzuUohQZvMdUwMEDeug9E0aunz/XuyeRhLByZNDtbE8vc0R6mQCEHZdwy55NfLqdfnc0F3wKa38dRU7V2UBw==
-
-node-screenshots-win32-ia32-msvc@0.0.11:
-  version "0.0.11"
-  resolved "https://registry.npmmirror.com/node-screenshots-win32-ia32-msvc/-/node-screenshots-win32-ia32-msvc-0.0.11.tgz#2bd94c03300d2b34865d275c4ab48f71b0a910a7"
-  integrity sha512-vEHBxG/a38nzvpqJjlVqK8In/QhBUYfBjmUsrvNCOOX6+y8zlELEsrc1nAxyIHtgr3HO6LjCms/yktFlxQ6N9g==
-
-node-screenshots-win32-x64-msvc@0.0.11:
-  version "0.0.11"
-  resolved "https://registry.npmmirror.com/node-screenshots-win32-x64-msvc/-/node-screenshots-win32-x64-msvc-0.0.11.tgz#da2435a7b515f8adbccfc0323095394b74fa4102"
-  integrity sha512-qX9o0xda5+5M6lZJHGvseJnJjdI4g/I9dMMB1A1yOxrGiMcEiu5f2qMiHOQGOx9B3wiFcubIuTCIqq8EuitHOw==
-
-node-screenshots@^0.0.11:
-  version "0.0.11"
-  resolved "https://registry.npmmirror.com/node-screenshots/-/node-screenshots-0.0.11.tgz#ba638ed763b0512a129b1bcecf81f217a586e94a"
-  integrity sha512-u8wAvfc5YWZ6sh1QPkWUjciaf8NXAtnoO1WMLgBXY2IGzdsJexdHSEFkEUZNbwfzeBM3oes6/BLtT6Qf3kZT+Q==
-  optionalDependencies:
-    node-screenshots-darwin-arm64 "0.0.11"
-    node-screenshots-darwin-x64 "0.0.11"
-    node-screenshots-linux-x64-gnu "0.0.11"
-    node-screenshots-linux-x64-musl "0.0.11"
-    node-screenshots-win32-arm64-msvc "0.0.11"
-    node-screenshots-win32-ia32-msvc "0.0.11"
-    node-screenshots-win32-x64-msvc "0.0.11"
-
 normalize-url@^4.1.0:
   version "4.5.1"
   resolved "https://registry.yarnpkg.com/normalize-url/-/normalize-url-4.5.1.tgz#0dd90cf1288ee1d1313b87081c9a5932ee48518a"
