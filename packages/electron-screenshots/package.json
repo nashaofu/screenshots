@@ -11,7 +11,7 @@
     "prepublishOnly": "npm run build",
     "start": "cross-env DEBUG=electron-screenshots electron lib/index.js",
     "dev": "tsc --sourceMap --watch",
-    "build": "npm run lint && npm run clean",
+    "build": "npm run lint && npm run clean && tsc",
     "lint": "eslint . --ext .js,.ts --fix",
     "clean": "rimraf lib"
   },
