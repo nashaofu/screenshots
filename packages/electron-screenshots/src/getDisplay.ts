@@ -8,7 +8,6 @@ export default (): Display => {
   const point = screen.getCursorScreenPoint()
   const { id, bounds } = screen.getDisplayNearestPoint(point)
 
-  // https://github.com/nashaofu/screenshots/issues/98
   return {
     id,
     x: Math.floor(bounds.x),
