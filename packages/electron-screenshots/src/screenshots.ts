@@ -50,8 +50,7 @@ export default class Screenshots extends Events {
     webPreferences: {
       preload: require.resolve('./preload.js'),
       nodeIntegration: false,
-      contextIsolation: true,
-      nativeWindowOpen: false
+      contextIsolation: true
     }
   })
 
