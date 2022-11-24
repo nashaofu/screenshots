@@ -1,6 +1,6 @@
 {
   "name": "akey-react-screenshots",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "a screenshot cropper tool by react",
   "main": "./lib/react-screenshots.cjs.js",
   "module": "./lib/react-screenshots.es.js",
