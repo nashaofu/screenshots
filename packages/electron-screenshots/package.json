@@ -1,6 +1,6 @@
 {
   "name": "akey-electron-screenshots",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "electron 截图插件",
   "types": "lib/screenshots.d.ts",
   "main": "lib/screenshots.js",
@@ -35,7 +35,7 @@
     "registry": "https://registry.npmjs.org/"
   },
   "dependencies": {
-    "akey-react-screenshots": "^0.0.7",
+    "akey-react-screenshots": "^0.0.8",
     "debug": "^4.3.3",
     "fs-extra": "^10.1.0",
     "screenshot-desktop": "^1.12.7"
