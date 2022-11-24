@@ -36,9 +36,9 @@
   },
   "dependencies": {
     "debug": "^4.3.3",
-    "electron-screenshots": "^0.5.13",
     "fs-extra": "^10.1.0",
-    "react-screenshots": "^0.5.10"
+    "react-screenshots": "^0.5.10",
+    "screenshot-desktop": "^1.12.7"
   },
   "peerDependencies": {
     "electron": ">=14"
