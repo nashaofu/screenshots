@@ -35,7 +35,6 @@
     "registry": "https://registry.npmjs.org/"
   },
   "dependencies": {
-    "@types/screenshot-desktop": "^1.12.0",
     "debug": "^4.3.3",
     "electron-screenshots": "^0.5.13",
     "fs-extra": "^10.1.0",
@@ -47,6 +46,7 @@
   "devDependencies": {
     "@types/debug": "^4.1.7",
     "@types/fs-extra": "^9.0.13",
+    "@types/screenshot-desktop": "^1.12.0",
     "@typescript-eslint/eslint-plugin": "^5.10.0",
     "@typescript-eslint/parser": "^5.10.0",
     "cross-env": "^7.0.3",
