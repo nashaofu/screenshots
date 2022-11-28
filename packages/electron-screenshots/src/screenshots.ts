@@ -123,6 +123,8 @@ export default class Screenshots extends Events {
     } else {
       this.$win.destroy()
     }
+
+    fs.unlinkSync(this.screenshotPath)
   }
 
   /**
