@@ -1,5 +1,6 @@
 import debug, { Debugger } from 'debug'
 import {
+  app,
   BrowserView,
   BrowserWindow,
   clipboard,
@@ -8,6 +9,7 @@ import {
   ipcMain,
   nativeImage
 } from 'electron'
+import path from 'path'
 import Events from 'events'
 import screenshot from 'screenshot-desktop'
 import fs from 'fs-extra'
@@ -58,6 +60,8 @@ export default class Screenshots extends Events {
 
   private singleWindow: boolean
 
+  private screenshotPath: string
+
   private isReady = new Promise<void>((resolve) => {
     ipcMain.once('SCREENSHOTS:ready', () => {
       this.logger('SCREENSHOTS:ready')
@@ -70,6 +74,7 @@ export default class Screenshots extends Events {
     super()
     this.logger = opts?.logger || debug('electron-screenshots')
     this.singleWindow = opts?.singleWindow || false
+    this.screenshotPath = path.join(app.getPath('userData'), '/shot.png')
     this.listenIpc()
     this.$view.webContents.loadURL(
       `file://${require.resolve('akey-react-screenshots/electron/electron.html')}`
@@ -236,7 +241,7 @@ export default class Screenshots extends Events {
   private async capture (display: Display): Promise<string> {
     this.logger('SCREENSHOTS:capture')
 
-    const imgPath = await screenshot({ filename: 'shot.jpg' })
+    const imgPath = await screenshot({ filename: this.screenshotPath })
 
     return `file://${imgPath}`
   }
