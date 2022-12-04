@@ -1,6 +1,6 @@
 {
   "name": "electron-screenshots",
-  "version": "0.5.13",
+  "version": "0.5.14",
   "description": "electron 截图插件",
   "types": "lib/screenshots.d.ts",
   "main": "lib/screenshots.js",
