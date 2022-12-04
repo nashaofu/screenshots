@@ -41,8 +41,7 @@ export default class Screenshots extends Events {
     webPreferences: {
       preload: require.resolve('./preload.js'),
       nodeIntegration: false,
-      contextIsolation: true,
-      nativeWindowOpen: false
+      contextIsolation: true
     }
   })
 
@@ -224,32 +223,46 @@ export default class Screenshots extends Events {
   private async capture (display: Display): Promise<string> {
     this.logger('SCREENSHOTS:capture')
 
-    const sources = await desktopCapturer.getSources({
-      types: ['screen'],
-      thumbnailSize: {
-        width: display.width,
-        height: display.height
+    try {
+      const { Screenshots: NodeScreenshots } = await import('node-screenshots')
+      const capturer = NodeScreenshots.fromDisplay(display.id)
+      this.logger('SCREENSHOTS:capture NodeScreenshots.fromDisplay(%d) %o', display.id, capturer)
+      if (!capturer) {
+        throw new Error(`NodeScreenshots.fromDisplay(${display.id}) get null`)
       }
-    })
 
-    let source
-    // Linux系统上，screen.getDisplayNearestPoint 返回的 Display 对象的 id
-    // 和这里 source 对象上的 display_id(Linux上，这个值是空字符串) 或 id 的中间部分，都不一致
-    // 但是，如果只有一个显示器的话，其实不用判断，直接返回就行
-    if (sources.length === 1) {
-      source = sources[0]
-    } else {
-      source = sources.find(source => {
-        return source.display_id === display.id.toString() || source.id.startsWith(`screen:${display.id}:`)
+      const image = await capturer.capture()
+      return `data:image/png;base64,${image.toString('base64')}`
+    } catch (err) {
+      this.logger('SCREENSHOTS:capture NodeScreenshots capture() error %o', err)
+
+      const sources = await desktopCapturer.getSources({
+        types: ['screen'],
+        thumbnailSize: {
+          width: display.width,
+          height: display.height
+        }
       })
-    }
 
-    if (!source) {
-      this.logger("SCREENSHOTS:capture Can't find screen source. sources: %o, display: %o", sources, display)
-      throw new Error("Can't find screen source")
-    }
+      let source
+      // Linux系统上，screen.getDisplayNearestPoint 返回的 Display 对象的 id
+      // 和这里 source 对象上的 display_id(Linux上，这个值是空字符串) 或 id 的中间部分，都不一致
+      // 但是，如果只有一个显示器的话，其实不用判断，直接返回就行
+      if (sources.length === 1) {
+        source = sources[0]
+      } else {
+        source = sources.find(source => {
+          return source.display_id === display.id.toString() || source.id.startsWith(`screen:${display.id}:`)
+        })
+      }
 
-    return source.thumbnail.toDataURL()
+      if (!source) {
+        this.logger("SCREENSHOTS:capture Can't find screen source. sources: %o, display: %o", sources, display)
+        throw new Error("Can't find screen source")
+      }
+
+      return source.thumbnail.toDataURL()
+    }
   }
 
   /**
