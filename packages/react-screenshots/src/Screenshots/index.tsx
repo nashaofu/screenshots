@@ -1,4 +1,4 @@
-import React, { MouseEvent, ReactElement, useCallback, useLayoutEffect, useRef, useState } from 'react'
+import React, { MouseEvent, ReactElement, useCallback, useLayoutEffect, useRef, useState, useEffect } from 'react'
 import composeImage from './composeImage'
 import './icons/iconfont.less'
 import './screenshots.less'
@@ -20,7 +20,7 @@ export interface ScreenshotsProps {
 }
 
 export default function Screenshots ({ url, width, height, lang, className, ...props }: ScreenshotsProps): ReactElement {
-  const image = useGetLoadedImage(url)
+  const image = useGetLoadedImage(url)!
   const canvasContextRef = useRef<CanvasRenderingContext2D>(null)
   const emiterRef = useRef<Emiter>({})
   const [history, setHistory] = useState<History>({
@@ -132,6 +132,45 @@ export default function Screenshots ({ url, width, height, lang, className, ...p
     },
     [call]
   )
+
+  const handleKeyDown = () => {
+    if (bounds && canvasContextRef.current) {
+      composeImage({
+        image,
+        width,
+        height,
+        history,
+        bounds
+      }).then(blob => {
+        call('onOk', blob, bounds)
+        reset()
+      })
+    } else {
+      const targetBounds = {
+        x: 0,
+        y: 0,
+        width,
+        height
+      }
+      composeImage({
+        image,
+        width,
+        height,
+        history,
+        bounds: targetBounds
+      }).then(blob => {
+        call('onOk', blob, targetBounds)
+        reset()
+      })
+    }
+  }
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown)
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  })
 
   // url变化，重置截图区域
   useLayoutEffect(() => {
