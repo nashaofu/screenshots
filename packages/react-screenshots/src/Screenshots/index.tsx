@@ -133,7 +133,10 @@ export default function Screenshots ({ url, width, height, lang, className, ...p
     [call]
   )
 
-  const handleKeyDown = () => {
+  const handleKeyDown = (e: any) => {
+    if (e.keyCode !== 13) {
+      return
+    }
     if (bounds && canvasContextRef.current) {
       composeImage({
         image,
