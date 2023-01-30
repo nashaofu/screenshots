@@ -973,11 +973,6 @@ ajv@^6.12.3:
     json-schema-traverse "^0.4.1"
     uri-js "^4.2.2"
 
-akey-react-screenshots@^0.0.6:
-  version "0.0.6"
-  resolved "https://registry.npmjs.org/akey-react-screenshots/-/akey-react-screenshots-0.0.6.tgz#6e4f2a0c609083e7e60fed944453689b141da3df"
-  integrity sha512-GFnTJDfFSh1uObm4MjstW51l7NFA2Rm0TiM69gDoRCp88lrkliFJi+MMQzhitgU8g7ZC05RTIwyk3aIxH/aVfQ==
-
 ansi-escapes@^4.2.1:
   version "4.3.2"
   resolved "https://registry.npmmirror.com/ansi-escapes/-/ansi-escapes-4.3.2.tgz#6b2291d1db7d98b6521d5f1efa42d0f3a9feb65e"

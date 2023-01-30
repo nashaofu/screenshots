@@ -135,6 +135,7 @@ export default function Screenshots ({ url, width, height, lang, className, ...p
 
   const handleKeyDown = (e: any) => {
     if (e.keyCode !== 13) {
+      console.log(e)
       return
     }
     if (bounds && canvasContextRef.current) {
