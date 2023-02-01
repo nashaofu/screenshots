@@ -91,7 +91,6 @@ export default class Screenshots extends Events {
     this.logger('startCapture')
     this.screenshotPath = path.join(app.getPath('userData'), `/shot-${Date.now()}.png`)
     this.logger('startCapture1')
-
     const display = getDisplay()
 
     const [imageUrl] = await Promise.all([this.capture(display), this.isReady])
