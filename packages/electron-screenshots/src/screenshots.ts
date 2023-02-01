@@ -90,12 +90,15 @@ export default class Screenshots extends Events {
   public async startCapture (): Promise<void> {
     this.logger('startCapture')
     this.screenshotPath = path.join(app.getPath('userData'), `/shot-${Date.now()}.png`)
+    this.logger('startCapture1')
 
     const display = getDisplay()
 
     const [imageUrl] = await Promise.all([this.capture(display), this.isReady])
+    this.logger('startCapture2')
 
     await this.createWindow(display)
+    this.logger('startCapture3')
 
     this.$view.webContents.send('SCREENSHOTS:capture', display, imageUrl)
   }
