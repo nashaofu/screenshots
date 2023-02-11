@@ -225,8 +225,24 @@ export default class Screenshots extends Events {
 
     try {
       const { Screenshots: NodeScreenshots } = await import('node-screenshots')
-      const capturer = NodeScreenshots.fromDisplay(display.id)
-      this.logger('SCREENSHOTS:capture NodeScreenshots.fromDisplay(%d) %o', display.id, capturer)
+      const capturer = NodeScreenshots.fromPoint(display.x + display.width / 2, display.y + display.height / 2)
+      this.logger('SCREENSHOTS:capture NodeScreenshots.fromPoint arguments %o', display)
+      this.logger(
+        'SCREENSHOTS:capture NodeScreenshots.fromPoint return %o',
+        capturer
+          ? {
+              id: capturer.id,
+              x: capturer.x,
+              y: capturer.y,
+              width: capturer.width,
+              height: capturer.height,
+              rotation: capturer.rotation,
+              scaleFactor: capturer.scaleFactor,
+              isPrimary: capturer.isPrimary
+            }
+          : null
+      )
+
       if (!capturer) {
         throw new Error(`NodeScreenshots.fromDisplay(${display.id}) get null`)
       }
