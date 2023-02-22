@@ -206,7 +206,7 @@ export default memo(
         {borders.map(border => {
           return <div key={border} className={`screenshots-canvas-border-${border}`} />
         })}
-        {resizePoints.map(resizePoint => {
+        {bounds && resizePoints.map(resizePoint => {
           return (
             <div
               key={resizePoint}
