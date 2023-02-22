@@ -216,7 +216,7 @@ export default class Screenshots extends Events {
       width: display.width,
       height: display.height
     })
-
+    this.$win.setAlwaysOnTop(true)
     this.$win.show()
   }
 
