@@ -6,6 +6,7 @@ import Event from './event'
 import getDisplay, { Display } from './getDisplay'
 import padStart from './padStart'
 import { Bounds, ScreenshotsData } from './preload'
+import { screenCapture } from './utils'
 
 export type LoggerFn = (...args: unknown[]) => void
 export type Logger = Debugger | LoggerFn
@@ -76,7 +77,8 @@ export default class Screenshots extends Events {
 
     const display = getDisplay()
 
-    const [imageUrl] = await Promise.all([this.capture(display), this.isReady])
+    // const [imageUrl] = await Promise.all([this.capture(display), this.isReady])
+    const [imageUrl] = await Promise.all([screenCapture(), this.isReady])
 
     await this.createWindow(display)
 
