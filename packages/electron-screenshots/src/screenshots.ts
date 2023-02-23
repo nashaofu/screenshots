@@ -255,8 +255,8 @@ export default class Screenshots extends Events {
       const sources = await desktopCapturer.getSources({
         types: ['screen'],
         thumbnailSize: {
-          width: display.width,
-          height: display.height
+          width: display.width * display.scaleFactor,
+          height: display.height * display.scaleFactor
         }
       })
 
@@ -289,7 +289,7 @@ export default class Screenshots extends Events {
      * OK事件
      */
     ipcMain.on('SCREENSHOTS:ok', (e, buffer: Buffer, data: ScreenshotsData) => {
-      this.logger('SCREENSHOTS:ok', buffer, data)
+      this.logger('SCREENSHOTS:ok buffer.length %d, data: %o', buffer.length, data)
 
       const event = new Event()
       this.emit('ok', event, buffer, data)
@@ -317,7 +317,7 @@ export default class Screenshots extends Events {
      * SAVE事件
      */
     ipcMain.on('SCREENSHOTS:save', async (e, buffer: Buffer, data: ScreenshotsData) => {
-      this.logger('SCREENSHOTS:save', buffer, data)
+      this.logger('SCREENSHOTS:save buffer.length %d, data: %o', buffer.length, data)
 
       const event = new Event()
       this.emit('save', event, buffer, data)
