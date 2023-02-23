@@ -1,6 +1,6 @@
 {
   "name": "electron-screenshots",
-  "version": "0.5.17",
+  "version": "0.5.18",
   "description": "electron 截图插件",
   "types": "lib/screenshots.d.ts",
   "main": "lib/screenshots.js",
@@ -38,7 +38,7 @@
     "debug": "^4.3.3",
     "fs-extra": "^10.1.0",
     "node-screenshots": "^0.1.1",
-    "react-screenshots": "^0.5.16"
+    "react-screenshots": "^0.5.18"
   },
   "peerDependencies": {
     "electron": ">=14"
