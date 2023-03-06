@@ -212,6 +212,18 @@ export default class Screenshots extends Events {
     }
 
     this.$win.setBrowserView(this.$view)
+    
+    this.$win.webContents.once('crashed', (e) => {
+      this.logger.error(e)
+    })
+
+    this.$win.webContents.once('render-process-gone', async (event, { reason }) => {
+      const msg = `The renderer process has crashed unexpected or is killed (${reason}).`
+      this.logger.error(msg)
+    
+      // if (reason == 'crashed') {
+      // }
+    })
 
     // 适定平台
     if (process.platform === 'darwin') {
