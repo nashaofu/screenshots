@@ -96,7 +96,12 @@ export default class Screenshots extends Events {
     const [imageUrl] = await Promise.all([this.capture(display), this.isReady])
     this.logger('startCapture2')
 
-    await this.createWindow(display)
+    // await this.createWindow(display)
+    try {
+      await this.createWindow(display)
+    } catch (error) {
+      this.logger(error)
+    }
     this.logger('startCapture3')
 
     this.$view.webContents.send('SCREENSHOTS:capture', display, imageUrl)
