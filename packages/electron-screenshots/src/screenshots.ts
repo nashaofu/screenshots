@@ -262,8 +262,12 @@ export default class Screenshots extends Events {
 
   private async capture (display: Display): Promise<string> {
     this.logger('SCREENSHOTS:capture')
-
-    const imgPath = await screenshot({ filename: this.screenshotPath })
+    
+    let index = display.id - 1
+    if (index < 0) {
+      index = 0
+    }
+    const imgPath = await screenshot({ filename: this.screenshotPath, screen: index})
 
     return `file://${imgPath}`
   }
