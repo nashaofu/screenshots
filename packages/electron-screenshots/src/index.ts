@@ -1,5 +1,5 @@
 import { app, BrowserWindow, globalShortcut } from 'electron'
-import Screenshots from './screenshots'
+import { Screenshots } from './screenshots'
 
 app.whenReady().then(() => {
   const screenshots = new Screenshots({

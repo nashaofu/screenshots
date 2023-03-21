@@ -44,7 +44,7 @@ export interface ScreenshotsOpts {
 
 export { Bounds }
 
-export default class Screenshots extends Events {
+export class Screenshots extends Events {
   // 截图窗口对象
   public $win: BrowserWindow | null = null
 
@@ -147,9 +147,11 @@ export default class Screenshots extends Events {
   }
 
   private async reset () {
+    this.logger('reset')
     // 重置截图区域
     this.$view.webContents.send('SCREENSHOTS:reset')
 
+    this.logger('reset1')
     // 保证 UI 有足够的时间渲染
     await Promise.race([
       new Promise<void>((resolve) => setTimeout(() => resolve(), 500)),
@@ -163,9 +165,11 @@ export default class Screenshots extends Events {
    * 初始化窗口
    */
   private async createWindow (display: Display): Promise<void> {
+    this.logger('createWindow')
     // 重置截图区域
     await this.reset()
 
+    this.logger('createWindow1')
     // 复用未销毁的窗口
     if (!this.$win || this.$win?.isDestroyed?.()) {
       this.$win = new BrowserWindow({
@@ -216,6 +220,7 @@ export default class Screenshots extends Events {
       })
     }
 
+    this.logger('createWindow2')
     this.$win.setBrowserView(this.$view)
 
     this.$win.webContents.once('crashed', (e) => {
@@ -241,6 +246,8 @@ export default class Screenshots extends Events {
         skipTransformProcessType: true
       })
     }
+
+    this.logger('createWindow3')
 
     this.$win.blur()
     this.$win.setKiosk(false)
