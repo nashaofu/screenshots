@@ -31,7 +31,7 @@ export enum ResizePoints {
   ResizeBottomLeft = 'bottom-left',
   ResizeLeft = 'left',
   ResizeLeftTop = 'left-top',
-  Move = 'move'
+  Move = 'move',
 }
 
 const resizePoints = [
@@ -46,7 +46,10 @@ const resizePoints = [
 ]
 
 export default memo(
-  forwardRef<CanvasRenderingContext2D>(function ScreenshotsCanvas (props, ref): ReactElement | null {
+  forwardRef<CanvasRenderingContext2D>(function ScreenshotsCanvas (
+    props,
+    ref
+  ): ReactElement | null {
     const { url, image, width, height } = useStore()
 
     const emiter = useEmiter()
@@ -61,6 +64,8 @@ export default memo(
     const canvasRef = useRef<HTMLCanvasElement | null>(null)
     const ctxRef = useRef<CanvasRenderingContext2D | null>(null)
 
+    const isCanResize = bounds && !history.stack.length && !operation
+
     const draw = useCallback(() => {
       if (!bounds || !ctxRef.current) {
         return
@@ -72,7 +77,7 @@ export default memo(
       ctx.imageSmoothingQuality = 'low'
       ctx.clearRect(0, 0, bounds.width, bounds.height)
 
-      history.stack.slice(0, history.index + 1).forEach(item => {
+      history.stack.slice(0, history.index + 1).forEach((item) => {
         if (item.type === HistoryItemType.Source) {
           item.draw(ctx, item)
         }
@@ -97,7 +102,12 @@ export default memo(
             height: bounds.height
           }
         } else {
-          const draw = isPointInDraw(bounds, canvasRef.current, history, e.nativeEvent)
+          const draw = isPointInDraw(
+            bounds,
+            canvasRef.current,
+            history,
+            e.nativeEvent
+          )
           if (draw) {
             emiter.emit('drawselect', draw, e.nativeEvent)
           } else {
@@ -110,11 +120,30 @@ export default memo(
 
     const updateBounds = useCallback(
       (e: MouseEvent) => {
-        if (!resizeOrMoveRef.current || !pointRef.current || !boundsRef.current || !bounds) {
+        if (
+          !resizeOrMoveRef.current ||
+          !pointRef.current ||
+          !boundsRef.current ||
+          !bounds
+        ) {
           return
         }
-        const points = getPoints(e, resizeOrMoveRef.current, pointRef.current, boundsRef.current)
-        boundsDispatcher.set(getBoundsByPoints(points[0], points[1], bounds, width, height, resizeOrMoveRef.current))
+        const points = getPoints(
+          e,
+          resizeOrMoveRef.current,
+          pointRef.current,
+          boundsRef.current
+        )
+        boundsDispatcher.set(
+          getBoundsByPoints(
+            points[0],
+            points[1],
+            bounds,
+            width,
+            height,
+            resizeOrMoveRef.current
+          )
+        )
       },
       [width, height, bounds, boundsDispatcher]
     )
@@ -135,7 +164,11 @@ export default memo(
     useEffect(() => {
       const onMouseMove = (e: MouseEvent) => {
         if (!operation) {
-          if (!resizeOrMoveRef.current || !pointRef.current || !boundsRef.current) {
+          if (
+            !resizeOrMoveRef.current ||
+            !pointRef.current ||
+            !boundsRef.current
+          ) {
             return
           }
           updateBounds(e)
@@ -146,7 +179,11 @@ export default memo(
 
       const onMouseUp = (e: MouseEvent) => {
         if (!operation) {
-          if (!resizeOrMoveRef.current || !pointRef.current || !boundsRef.current) {
+          if (
+            !resizeOrMoveRef.current ||
+            !pointRef.current ||
+            !boundsRef.current
+          ) {
             return
           }
           updateBounds(e)
@@ -167,7 +204,10 @@ export default memo(
     }, [updateBounds, operation, emiter])
 
     // 放到最后，保证ctxRef.current存在
-    useImperativeHandle<CanvasRenderingContext2D | null, CanvasRenderingContext2D | null>(ref, () => ctxRef.current)
+    useImperativeHandle<
+      CanvasRenderingContext2D | null,
+      CanvasRenderingContext2D | null
+    >(ref, () => ctxRef.current)
 
     return (
       <div
@@ -175,7 +215,9 @@ export default memo(
         style={{
           width: bounds?.width || 0,
           height: bounds?.height || 0,
-          transform: bounds ? `translate(${bounds.x}px, ${bounds.y}px)` : 'none'
+          transform: bounds
+            ? `translate(${bounds.x}px, ${bounds.y}px)`
+            : 'none'
         }}
       >
         <div className='screenshots-canvas-body'>
@@ -186,7 +228,9 @@ export default memo(
             style={{
               width,
               height,
-              transform: bounds ? `translate(${-bounds.x}px, ${-bounds.y}px)` : 'none'
+              transform: bounds
+                ? `translate(${-bounds.x}px, ${-bounds.y}px)`
+                : 'none'
             }}
           />
           <canvas
@@ -201,20 +245,32 @@ export default memo(
           style={{
             cursor
           }}
-          onMouseDown={e => onMouseDown(e, 'move')}
-        />
-        {borders.map(border => {
-          return <div key={border} className={`screenshots-canvas-border-${border}`} />
-        })}
-        {bounds && resizePoints.map(resizePoint => {
+          onMouseDown={(e) => onMouseDown(e, 'move')}
+        >
+          {isCanResize && (
+            <div className='screenshots-canvas-size'>
+              {bounds.width} &times; {bounds.height}
+            </div>
+          )}
+        </div>
+        {borders.map((border) => {
           return (
             <div
-              key={resizePoint}
-              className={`screenshots-canvas-point-${resizePoint}`}
-              onMouseDown={e => onMouseDown(e, resizePoint)}
+              key={border}
+              className={`screenshots-canvas-border-${border}`}
             />
           )
         })}
+        {isCanResize &&
+          resizePoints.map((resizePoint) => {
+            return (
+              <div
+                key={resizePoint}
+                className={`screenshots-canvas-point-${resizePoint}`}
+                onMouseDown={(e) => onMouseDown(e, resizePoint)}
+              />
+            )
+          })}
       </div>
     )
   })

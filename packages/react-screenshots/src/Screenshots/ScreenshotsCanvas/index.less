@@ -1,4 +1,4 @@
-@import '../var.less';
+@import "../var.less";
 
 .screenshots-canvas {
   position: absolute;
@@ -37,6 +37,20 @@
     right: 0;
     bottom: 0;
     will-change: width, height;
+  }
+
+  &-size {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    font-size: 12px;
+    padding: 3px 4px;
+    border-radius: 2px;
+    white-space: nowrap;
+    pointer-events: none;
   }
 
   each(@borders, {
