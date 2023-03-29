@@ -15,7 +15,7 @@ export default function useBounds (): BoundsValueDispatcher {
   const { setBounds } = useDispatcher()
 
   const set = useCallback(
-    bounds => {
+    (bounds: Bounds) => {
       setBounds?.(bounds)
     },
     [setBounds]
