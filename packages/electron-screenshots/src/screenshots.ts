@@ -1,5 +1,13 @@
 import debug, { Debugger } from 'debug'
-import { BrowserView, BrowserWindow, clipboard, desktopCapturer, dialog, ipcMain, nativeImage } from 'electron'
+import {
+  BrowserView,
+  BrowserWindow,
+  clipboard,
+  desktopCapturer,
+  dialog,
+  ipcMain,
+  nativeImage
+} from 'electron'
 import Events from 'events'
 import fs from 'fs-extra'
 import Event from './event'
@@ -7,28 +15,28 @@ import getDisplay, { Display } from './getDisplay'
 import padStart from './padStart'
 import { Bounds, ScreenshotsData } from './preload'
 
-export type LoggerFn = (...args: unknown[]) => void
-export type Logger = Debugger | LoggerFn
+export type LoggerFn = (...args: unknown[]) => void;
+export type Logger = Debugger | LoggerFn;
 
 export interface Lang {
-  magnifier_position_label?: string
-  operation_ok_title?: string
-  operation_cancel_title?: string
-  operation_save_title?: string
-  operation_redo_title?: string
-  operation_undo_title?: string
-  operation_mosaic_title?: string
-  operation_text_title?: string
-  operation_brush_title?: string
-  operation_arrow_title?: string
-  operation_ellipse_title?: string
-  operation_rectangle_title?: string
+  magnifier_position_label?: string;
+  operation_ok_title?: string;
+  operation_cancel_title?: string;
+  operation_save_title?: string;
+  operation_redo_title?: string;
+  operation_undo_title?: string;
+  operation_mosaic_title?: string;
+  operation_text_title?: string;
+  operation_brush_title?: string;
+  operation_arrow_title?: string;
+  operation_ellipse_title?: string;
+  operation_rectangle_title?: string;
 }
 
 export interface ScreenshotsOpts {
-  lang?: Lang
-  logger?: Logger
-  singleWindow?: boolean
+  lang?: Lang;
+  logger?: Logger;
+  singleWindow?: boolean;
 }
 
 export { Bounds }
@@ -49,7 +57,7 @@ export default class Screenshots extends Events {
 
   private singleWindow: boolean
 
-  private isReady = new Promise<void>(resolve => {
+  private isReady = new Promise<void>((resolve) => {
     ipcMain.once('SCREENSHOTS:ready', () => {
       this.logger('SCREENSHOTS:ready')
 
@@ -62,7 +70,9 @@ export default class Screenshots extends Events {
     this.logger = opts?.logger || debug('electron-screenshots')
     this.singleWindow = opts?.singleWindow || false
     this.listenIpc()
-    this.$view.webContents.loadURL(`file://${require.resolve('react-screenshots/electron/electron.html')}`)
+    this.$view.webContents.loadURL(
+      `file://${require.resolve('react-screenshots/electron/electron.html')}`
+    )
     if (opts?.lang) {
       this.setLang(opts.lang)
     }
@@ -126,8 +136,10 @@ export default class Screenshots extends Events {
 
     // 保证 UI 有足够的时间渲染
     await Promise.race([
-      new Promise<void>(resolve => setTimeout(() => resolve(), 500)),
-      new Promise<void>(resolve => ipcMain.once('SCREENSHOTS:reset', () => resolve()))
+      new Promise<void>((resolve) => setTimeout(() => resolve(), 500)),
+      new Promise<void>((resolve) =>
+        ipcMain.once('SCREENSHOTS:reset', () => resolve())
+      )
     ])
   }
 
@@ -225,8 +237,14 @@ export default class Screenshots extends Events {
 
     try {
       const { Screenshots: NodeScreenshots } = await import('node-screenshots')
-      const capturer = NodeScreenshots.fromPoint(display.x + display.width / 2, display.y + display.height / 2)
-      this.logger('SCREENSHOTS:capture NodeScreenshots.fromPoint arguments %o', display)
+      const capturer = NodeScreenshots.fromPoint(
+        display.x + display.width / 2,
+        display.y + display.height / 2
+      )
+      this.logger(
+        'SCREENSHOTS:capture NodeScreenshots.fromPoint arguments %o',
+        display
+      )
       this.logger(
         'SCREENSHOTS:capture NodeScreenshots.fromPoint return %o',
         capturer
@@ -250,7 +268,10 @@ export default class Screenshots extends Events {
       const image = await capturer.capture()
       return `data:image/png;base64,${image.toString('base64')}`
     } catch (err) {
-      this.logger('SCREENSHOTS:capture NodeScreenshots capture() error %o', err)
+      this.logger(
+        'SCREENSHOTS:capture NodeScreenshots capture() error %o',
+        err
+      )
 
       const sources = await desktopCapturer.getSources({
         types: ['screen'],
@@ -267,13 +288,20 @@ export default class Screenshots extends Events {
       if (sources.length === 1) {
         source = sources[0]
       } else {
-        source = sources.find(source => {
-          return source.display_id === display.id.toString() || source.id.startsWith(`screen:${display.id}:`)
+        source = sources.find((source) => {
+          return (
+            source.display_id === display.id.toString() ||
+            source.id.startsWith(`screen:${display.id}:`)
+          )
         })
       }
 
       if (!source) {
-        this.logger("SCREENSHOTS:capture Can't find screen source. sources: %o, display: %o", sources, display)
+        this.logger(
+          "SCREENSHOTS:capture Can't find screen source. sources: %o, display: %o",
+          sources,
+          display
+        )
         throw new Error("Can't find screen source")
       }
 
@@ -289,7 +317,11 @@ export default class Screenshots extends Events {
      * OK事件
      */
     ipcMain.on('SCREENSHOTS:ok', (e, buffer: Buffer, data: ScreenshotsData) => {
-      this.logger('SCREENSHOTS:ok buffer.length %d, data: %o', buffer.length, data)
+      this.logger(
+        'SCREENSHOTS:ok buffer.length %d, data: %o',
+        buffer.length,
+        data
+      )
 
       const event = new Event()
       this.emit('ok', event, buffer, data)
@@ -316,40 +348,51 @@ export default class Screenshots extends Events {
     /**
      * SAVE事件
      */
-    ipcMain.on('SCREENSHOTS:save', async (e, buffer: Buffer, data: ScreenshotsData) => {
-      this.logger('SCREENSHOTS:save buffer.length %d, data: %o', buffer.length, data)
+    ipcMain.on(
+      'SCREENSHOTS:save',
+      async (e, buffer: Buffer, data: ScreenshotsData) => {
+        this.logger(
+          'SCREENSHOTS:save buffer.length %d, data: %o',
+          buffer.length,
+          data
+        )
 
-      const event = new Event()
-      this.emit('save', event, buffer, data)
-      if (event.defaultPrevented || !this.$win) {
-        return
+        const event = new Event()
+        this.emit('save', event, buffer, data)
+        if (event.defaultPrevented || !this.$win) {
+          return
+        }
+
+        const time = new Date()
+        const year = time.getFullYear()
+        const month = padStart(time.getMonth() + 1, 2, '0')
+        const date = padStart(time.getDate(), 2, '0')
+        const hours = padStart(time.getHours(), 2, '0')
+        const minutes = padStart(time.getMinutes(), 2, '0')
+        const seconds = padStart(time.getSeconds(), 2, '0')
+        const milliseconds = padStart(time.getMilliseconds(), 3, '0')
+
+        this.$win.setAlwaysOnTop(false)
+
+        const { canceled, filePath } = await dialog.showSaveDialog(this.$win, {
+          defaultPath: `${year}${month}${date}${hours}${minutes}${seconds}${milliseconds}.png`,
+          filters: [
+            { name: 'Image (png)', extensions: ['png'] },
+            { name: 'All Files', extensions: ['*'] }
+          ]
+        })
+
+        if (!this.$win) {
+          return
+        }
+        this.$win.setAlwaysOnTop(true)
+        if (canceled || !filePath) {
+          return
+        }
+
+        await fs.writeFile(filePath, buffer)
+        this.endCapture()
       }
-
-      const time = new Date()
-      const year = time.getFullYear()
-      const month = padStart(time.getMonth() + 1, 2, '0')
-      const date = padStart(time.getDate(), 2, '0')
-      const hours = padStart(time.getHours(), 2, '0')
-      const minutes = padStart(time.getMinutes(), 2, '0')
-      const seconds = padStart(time.getSeconds(), 2, '0')
-      const milliseconds = padStart(time.getMilliseconds(), 3, '0')
-
-      this.$win.setAlwaysOnTop(false)
-
-      const { canceled, filePath } = await dialog.showSaveDialog(this.$win, {
-        defaultPath: `${year}${month}${date}${hours}${minutes}${seconds}${milliseconds}.png`
-      })
-
-      if (!this.$win) {
-        return
-      }
-      this.$win.setAlwaysOnTop(true)
-      if (canceled || !filePath) {
-        return
-      }
-
-      await fs.writeFile(filePath, buffer)
-      this.endCapture()
-    })
+    )
   }
 }
