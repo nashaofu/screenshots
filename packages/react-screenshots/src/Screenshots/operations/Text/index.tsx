@@ -6,7 +6,12 @@ import useHistory from '../../hooks/useHistory'
 import useOperation from '../../hooks/useOperation'
 import ScreenshotsButton from '../../ScreenshotsButton'
 import ScreenshotsSizeColor from '../../ScreenshotsSizeColor'
-import { HistoryItemEdit, HistoryItemSource, HistoryItemType, Point } from '../../types'
+import {
+  HistoryItemEdit,
+  HistoryItemSource,
+  HistoryItemType,
+  Point
+} from '../../types'
 import ScreenshotsTextarea from '../../ScreenshotsTextarea'
 import useBounds from '../../hooks/useBounds'
 import useDrawSelect from '../../hooks/useDrawSelect'
@@ -15,26 +20,26 @@ import useCanvasMouseup from '../../hooks/useCanvasMouseup'
 import useLang from '../../hooks/useLang'
 
 export interface TextData {
-  size: number
-  color: string
-  fontFamily: string
-  x: number
-  y: number
-  text: string
+  size: number;
+  color: string;
+  fontFamily: string;
+  x: number;
+  y: number;
+  text: string;
 }
 
 export interface TextEditData {
-  x1: number
-  x2: number
-  y1: number
-  y2: number
+  x1: number;
+  x2: number;
+  y1: number;
+  y2: number;
 }
 
 export interface TextareaBounds {
-  x: number
-  y: number
-  maxWidth: number
-  maxHeight: number
+  x: number;
+  y: number;
+  maxWidth: number;
+  maxHeight: number;
 }
 
 const sizes: Record<number, number> = {
@@ -43,7 +48,10 @@ const sizes: Record<number, number> = {
   9: 46
 }
 
-function draw (ctx: CanvasRenderingContext2D, action: HistoryItemSource<TextData, TextEditData>) {
+function draw (
+  ctx: CanvasRenderingContext2D,
+  action: HistoryItemSource<TextData, TextEditData>
+) {
   const { size, color, fontFamily, x, y, text } = action.data
   ctx.fillStyle = color
   ctx.textAlign = 'left'
@@ -63,7 +71,11 @@ function draw (ctx: CanvasRenderingContext2D, action: HistoryItemSource<TextData
   })
 }
 
-function isHit (ctx: CanvasRenderingContext2D, action: HistoryItemSource<TextData, TextEditData>, point: Point) {
+function isHit (
+  ctx: CanvasRenderingContext2D,
+  action: HistoryItemSource<TextData, TextEditData>,
+  point: Point
+) {
   ctx.textAlign = 'left'
   ctx.textBaseline = 'top'
   ctx.font = `${action.data.size}px ${action.data.fontFamily}`
@@ -71,7 +83,7 @@ function isHit (ctx: CanvasRenderingContext2D, action: HistoryItemSource<TextDat
   let width = 0
   let height = 0
 
-  action.data.text.split('\n').forEach(item => {
+  action.data.text.split('\n').forEach((item) => {
     const measured = ctx.measureText(item)
     if (width < measured.width) {
       width = measured.width
@@ -92,7 +104,9 @@ function isHit (ctx: CanvasRenderingContext2D, action: HistoryItemSource<TextDat
   const right = left + width
   const bottom = top + height
 
-  return point.x >= left && point.x <= right && point.y >= top && point.y <= bottom
+  return (
+    point.x >= left && point.x <= right && point.y >= top && point.y <= bottom
+  )
 }
 
 export default function Text (): ReactElement {
@@ -104,9 +118,15 @@ export default function Text (): ReactElement {
   const canvasContextRef = useCanvasContextRef()
   const [size, setSize] = useState(3)
   const [color, setColor] = useState('#ee5126')
-  const textRef = useRef<HistoryItemSource<TextData, TextEditData> | null>(null)
-  const textEditRef = useRef<HistoryItemEdit<TextEditData, TextData> | null>(null)
-  const [textareaBounds, setTextareaBounds] = useState<TextareaBounds | null>(null)
+  const textRef = useRef<HistoryItemSource<TextData, TextEditData> | null>(
+    null
+  )
+  const textEditRef = useRef<HistoryItemEdit<TextEditData, TextData> | null>(
+    null
+  )
+  const [textareaBounds, setTextareaBounds] = useState<TextareaBounds | null>(
+    null
+  )
   const [text, setText] = useState<string>('')
 
   const checked = operation === 'Text'
@@ -131,7 +151,7 @@ export default function Text (): ReactElement {
     setSize(size)
   }, [])
 
-  const onColorChange = useCallback(color => {
+  const onColorChange = useCallback((color: string) => {
     if (textRef.current) {
       textRef.current.data.color = color
     }
@@ -186,8 +206,11 @@ export default function Text (): ReactElement {
       if (!checked || !canvasContextRef.current || textRef.current || !bounds) {
         return
       }
-      const { left, top } = canvasContextRef.current.canvas.getBoundingClientRect()
-      const fontFamily = window.getComputedStyle(canvasContextRef.current.canvas).fontFamily
+      const { left, top } =
+        canvasContextRef.current.canvas.getBoundingClientRect()
+      const fontFamily = window.getComputedStyle(
+        canvasContextRef.current.canvas
+      ).fontFamily
       const x = e.clientX - left
       const y = e.clientY - top
 
@@ -258,7 +281,12 @@ export default function Text (): ReactElement {
         checked={checked}
         onClick={onSelectText}
         option={
-          <ScreenshotsSizeColor size={size} color={color} onSizeChange={onSizeChange} onColorChange={onColorChange} />
+          <ScreenshotsSizeColor
+            size={size}
+            color={color}
+            onSizeChange={onSizeChange}
+            onColorChange={onColorChange}
+          />
         }
       />
       {checked && textareaBounds && (

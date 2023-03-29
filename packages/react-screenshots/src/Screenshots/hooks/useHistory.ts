@@ -45,7 +45,7 @@ export default function useHistory (): HistoryValueDispatcher {
 
       setHistory?.({
         index: stack.length - 1,
-        stack: stack
+        stack
       })
     },
     [history, setHistory]
@@ -58,7 +58,7 @@ export default function useHistory (): HistoryValueDispatcher {
 
     setHistory?.({
       index: stack.length - 1,
-      stack: stack
+      stack
     })
   }, [history, setHistory])
 
@@ -96,7 +96,7 @@ export default function useHistory (): HistoryValueDispatcher {
 
     setHistory?.({
       index: index >= stack.length - 1 ? stack.length - 1 : index + 1,
-      stack: stack
+      stack
     })
   }, [history, setHistory])
 
