@@ -1,4 +1,4 @@
-import debug, { Debugger } from 'debug'
+import debug, { Debugger } from 'debug';
 import {
   BrowserView,
   BrowserWindow,
@@ -6,14 +6,14 @@ import {
   desktopCapturer,
   dialog,
   ipcMain,
-  nativeImage
-} from 'electron'
-import Events from 'events'
-import fs from 'fs-extra'
-import Event from './event'
-import getDisplay, { Display } from './getDisplay'
-import padStart from './padStart'
-import { Bounds, ScreenshotsData } from './preload'
+  nativeImage,
+} from 'electron';
+import Events from 'events';
+import fs from 'fs-extra';
+import Event from './event';
+import getDisplay, { Display } from './getDisplay';
+import padStart from './padStart';
+import { Bounds, ScreenshotsData } from './preload';
 
 export type LoggerFn = (...args: unknown[]) => void;
 export type Logger = Debugger | LoggerFn;
@@ -39,116 +39,118 @@ export interface ScreenshotsOpts {
   singleWindow?: boolean;
 }
 
-export { Bounds }
+export { Bounds };
 
 export default class Screenshots extends Events {
   // 截图窗口对象
-  public $win: BrowserWindow | null = null
+  public $win: BrowserWindow | null = null;
 
   public $view: BrowserView = new BrowserView({
     webPreferences: {
       preload: require.resolve('./preload.js'),
       nodeIntegration: false,
-      contextIsolation: true
-    }
-  })
+      contextIsolation: true,
+    },
+  });
 
-  private logger: Logger
+  private logger: Logger;
 
-  private singleWindow: boolean
+  private singleWindow: boolean;
 
   private isReady = new Promise<void>((resolve) => {
     ipcMain.once('SCREENSHOTS:ready', () => {
-      this.logger('SCREENSHOTS:ready')
+      this.logger('SCREENSHOTS:ready');
 
-      resolve()
-    })
-  })
+      resolve();
+    });
+  });
 
-  constructor (opts?: ScreenshotsOpts) {
-    super()
-    this.logger = opts?.logger || debug('electron-screenshots')
-    this.singleWindow = opts?.singleWindow || false
-    this.listenIpc()
+  constructor(opts?: ScreenshotsOpts) {
+    super();
+    this.logger = opts?.logger || debug('electron-screenshots');
+    this.singleWindow = opts?.singleWindow || false;
+    this.listenIpc();
     this.$view.webContents.loadURL(
-      `file://${require.resolve('react-screenshots/electron/electron.html')}`
-    )
+      `file://${require.resolve('react-screenshots/electron/electron.html')}`,
+    );
     if (opts?.lang) {
-      this.setLang(opts.lang)
+      this.setLang(opts.lang);
     }
   }
 
   /**
    * 开始截图
    */
-  public async startCapture (): Promise<void> {
-    this.logger('startCapture')
+  public async startCapture(): Promise<void> {
+    this.logger('startCapture');
 
-    const display = getDisplay()
+    const display = getDisplay();
 
-    const [imageUrl] = await Promise.all([this.capture(display), this.isReady])
+    const [imageUrl] = await Promise.all([this.capture(display), this.isReady]);
 
-    await this.createWindow(display)
+    await this.createWindow(display);
 
-    this.$view.webContents.send('SCREENSHOTS:capture', display, imageUrl)
+    this.$view.webContents.send('SCREENSHOTS:capture', display, imageUrl);
   }
 
   /**
    * 结束截图
    */
-  public async endCapture (): Promise<void> {
-    this.logger('endCapture')
-    await this.reset()
+  public async endCapture(): Promise<void> {
+    this.logger('endCapture');
+    await this.reset();
 
     if (!this.$win) {
-      return
+      return;
     }
 
     // 先清除 Kiosk 模式，然后取消全屏才有效
-    this.$win.setKiosk(false)
-    this.$win.setSimpleFullScreen(false)
-    this.$win.blur()
-    this.$win.blurWebView()
-    this.$win.unmaximize()
-    this.$win.removeBrowserView(this.$view)
+    this.$win.setKiosk(false);
+    this.$win.setSimpleFullScreen(false);
+    this.$win.blur();
+    this.$win.blurWebView();
+    this.$win.unmaximize();
+    this.$win.removeBrowserView(this.$view);
 
     if (this.singleWindow) {
-      this.$win.hide()
+      this.$win.hide();
     } else {
-      this.$win.destroy()
+      this.$win.destroy();
     }
   }
 
   /**
    * 设置语言
    */
-  public async setLang (lang: Partial<Lang>): Promise<void> {
-    this.logger('setLang', lang)
+  public async setLang(lang: Partial<Lang>): Promise<void> {
+    this.logger('setLang', lang);
 
-    await this.isReady
+    await this.isReady;
 
-    this.$view.webContents.send('SCREENSHOTS:setLang', lang)
+    this.$view.webContents.send('SCREENSHOTS:setLang', lang);
   }
 
-  private async reset () {
+  private async reset() {
     // 重置截图区域
-    this.$view.webContents.send('SCREENSHOTS:reset')
+    this.$view.webContents.send('SCREENSHOTS:reset');
 
     // 保证 UI 有足够的时间渲染
     await Promise.race([
-      new Promise<void>((resolve) => setTimeout(() => resolve(), 500)),
-      new Promise<void>((resolve) =>
-        ipcMain.once('SCREENSHOTS:reset', () => resolve())
-      )
-    ])
+      new Promise<void>((resolve) => {
+        setTimeout(() => resolve(), 500);
+      }),
+      new Promise<void>((resolve) => {
+        ipcMain.once('SCREENSHOTS:reset', () => resolve());
+      }),
+    ]);
   }
 
   /**
    * 初始化窗口
    */
-  private async createWindow (display: Display): Promise<void> {
+  private async createWindow(display: Display): Promise<void> {
     // 重置截图区域
-    await this.reset()
+    await this.reset();
 
     // 复用未销毁的窗口
     if (!this.$win || this.$win?.isDestroyed?.()) {
@@ -183,136 +185,134 @@ export default class Screenshots extends Events {
         skipTaskbar: true,
         hasShadow: false,
         paintWhenInitiallyHidden: false,
-        acceptFirstMouse: true
-      })
+        acceptFirstMouse: true,
+      });
 
       this.$win.on('show', () => {
-        this.$win?.focus()
+        this.$win?.focus();
         /**
          * 在窗口显示时设置，防止与 fullscreen、x、y、width、height 等冲突, 导致显示效果不符合预期
          * mac 下不设置 kiosk 模式，https://github.com/nashaofu/screenshots/issues/148
          */
-        this.$win?.setKiosk(process.platform !== 'darwin')
-      })
+        this.$win?.setKiosk(process.platform !== 'darwin');
+      });
 
       this.$win.on('closed', () => {
-        this.$win = null
-      })
+        this.$win = null;
+      });
     }
 
-    this.$win.setBrowserView(this.$view)
+    this.$win.setBrowserView(this.$view);
 
     // 适定平台
     if (process.platform === 'darwin') {
-      this.$win.setWindowButtonVisibility(false)
+      this.$win.setWindowButtonVisibility(false);
     }
 
     if (process.platform !== 'win32') {
       this.$win.setVisibleOnAllWorkspaces(true, {
         visibleOnFullScreen: true,
-        skipTransformProcessType: true
-      })
+        skipTransformProcessType: true,
+      });
     }
 
-    this.$win.blur()
-    this.$win.setKiosk(false)
+    this.$win.blur();
+    this.$win.setKiosk(false);
 
     if (process.platform === 'darwin') {
-      this.$win.setSimpleFullScreen(true)
+      this.$win.setSimpleFullScreen(true);
     }
 
-    this.$win.setBounds(display)
+    this.$win.setBounds(display);
     this.$view.setBounds({
       x: 0,
       y: 0,
       width: display.width,
-      height: display.height
-    })
-    this.$win.setAlwaysOnTop(true)
-    this.$win.show()
+      height: display.height,
+    });
+    this.$win.setAlwaysOnTop(true);
+    this.$win.show();
   }
 
-  private async capture (display: Display): Promise<string> {
-    this.logger('SCREENSHOTS:capture')
+  private async capture(display: Display): Promise<string> {
+    this.logger('SCREENSHOTS:capture');
 
     try {
-      const { Screenshots: NodeScreenshots } = await import('node-screenshots')
+      const { Screenshots: NodeScreenshots } = await import('node-screenshots');
       const capturer = NodeScreenshots.fromPoint(
         display.x + display.width / 2,
-        display.y + display.height / 2
-      )
+        display.y + display.height / 2,
+      );
       this.logger(
         'SCREENSHOTS:capture NodeScreenshots.fromPoint arguments %o',
-        display
-      )
+        display,
+      );
       this.logger(
         'SCREENSHOTS:capture NodeScreenshots.fromPoint return %o',
         capturer
           ? {
-              id: capturer.id,
-              x: capturer.x,
-              y: capturer.y,
-              width: capturer.width,
-              height: capturer.height,
-              rotation: capturer.rotation,
-              scaleFactor: capturer.scaleFactor,
-              isPrimary: capturer.isPrimary
-            }
-          : null
-      )
+            id: capturer.id,
+            x: capturer.x,
+            y: capturer.y,
+            width: capturer.width,
+            height: capturer.height,
+            rotation: capturer.rotation,
+            scaleFactor: capturer.scaleFactor,
+            isPrimary: capturer.isPrimary,
+          }
+          : null,
+      );
 
       if (!capturer) {
-        throw new Error(`NodeScreenshots.fromDisplay(${display.id}) get null`)
+        throw new Error(`NodeScreenshots.fromDisplay(${display.id}) get null`);
       }
 
-      const image = await capturer.capture()
-      return `data:image/png;base64,${image.toString('base64')}`
+      const image = await capturer.capture();
+      return `data:image/png;base64,${image.toString('base64')}`;
     } catch (err) {
       this.logger(
         'SCREENSHOTS:capture NodeScreenshots capture() error %o',
-        err
-      )
+        err,
+      );
 
       const sources = await desktopCapturer.getSources({
         types: ['screen'],
         thumbnailSize: {
           width: display.width * display.scaleFactor,
-          height: display.height * display.scaleFactor
-        }
-      })
+          height: display.height * display.scaleFactor,
+        },
+      });
 
-      let source
+      let source;
       // Linux系统上，screen.getDisplayNearestPoint 返回的 Display 对象的 id
       // 和这里 source 对象上的 display_id(Linux上，这个值是空字符串) 或 id 的中间部分，都不一致
       // 但是，如果只有一个显示器的话，其实不用判断，直接返回就行
       if (sources.length === 1) {
-        source = sources[0]
+        [source] = sources;
       } else {
-        source = sources.find((source) => {
-          return (
-            source.display_id === display.id.toString() ||
-            source.id.startsWith(`screen:${display.id}:`)
-          )
-        })
+        source = sources.find(
+          (item) => item.display_id === display.id.toString()
+            || item.id.startsWith(`screen:${display.id}:`),
+        );
       }
 
       if (!source) {
         this.logger(
           "SCREENSHOTS:capture Can't find screen source. sources: %o, display: %o",
           sources,
-          display
-        )
-        throw new Error("Can't find screen source")
+          display,
+        );
+        throw new Error("Can't find screen source");
       }
 
-      return source.thumbnail.toDataURL()
+      return source.thumbnail.toDataURL();
     }
   }
 
   /**
    * 绑定ipc时间处理
    */
-  private listenIpc (): void {
+  private listenIpc(): void {
     /**
      * OK事件
      */
@@ -320,30 +320,30 @@ export default class Screenshots extends Events {
       this.logger(
         'SCREENSHOTS:ok buffer.length %d, data: %o',
         buffer.length,
-        data
-      )
+        data,
+      );
 
-      const event = new Event()
-      this.emit('ok', event, buffer, data)
+      const event = new Event();
+      this.emit('ok', event, buffer, data);
       if (event.defaultPrevented) {
-        return
+        return;
       }
-      clipboard.writeImage(nativeImage.createFromBuffer(buffer))
-      this.endCapture()
-    })
+      clipboard.writeImage(nativeImage.createFromBuffer(buffer));
+      this.endCapture();
+    });
     /**
      * CANCEL事件
      */
     ipcMain.on('SCREENSHOTS:cancel', () => {
-      this.logger('SCREENSHOTS:cancel')
+      this.logger('SCREENSHOTS:cancel');
 
-      const event = new Event()
-      this.emit('cancel', event)
+      const event = new Event();
+      this.emit('cancel', event);
       if (event.defaultPrevented) {
-        return
+        return;
       }
-      this.endCapture()
-    })
+      this.endCapture();
+    });
 
     /**
      * SAVE事件
@@ -354,45 +354,45 @@ export default class Screenshots extends Events {
         this.logger(
           'SCREENSHOTS:save buffer.length %d, data: %o',
           buffer.length,
-          data
-        )
+          data,
+        );
 
-        const event = new Event()
-        this.emit('save', event, buffer, data)
+        const event = new Event();
+        this.emit('save', event, buffer, data);
         if (event.defaultPrevented || !this.$win) {
-          return
+          return;
         }
 
-        const time = new Date()
-        const year = time.getFullYear()
-        const month = padStart(time.getMonth() + 1, 2, '0')
-        const date = padStart(time.getDate(), 2, '0')
-        const hours = padStart(time.getHours(), 2, '0')
-        const minutes = padStart(time.getMinutes(), 2, '0')
-        const seconds = padStart(time.getSeconds(), 2, '0')
-        const milliseconds = padStart(time.getMilliseconds(), 3, '0')
+        const time = new Date();
+        const year = time.getFullYear();
+        const month = padStart(time.getMonth() + 1, 2, '0');
+        const date = padStart(time.getDate(), 2, '0');
+        const hours = padStart(time.getHours(), 2, '0');
+        const minutes = padStart(time.getMinutes(), 2, '0');
+        const seconds = padStart(time.getSeconds(), 2, '0');
+        const milliseconds = padStart(time.getMilliseconds(), 3, '0');
 
-        this.$win.setAlwaysOnTop(false)
+        this.$win.setAlwaysOnTop(false);
 
         const { canceled, filePath } = await dialog.showSaveDialog(this.$win, {
           defaultPath: `${year}${month}${date}${hours}${minutes}${seconds}${milliseconds}.png`,
           filters: [
             { name: 'Image (png)', extensions: ['png'] },
-            { name: 'All Files', extensions: ['*'] }
-          ]
-        })
+            { name: 'All Files', extensions: ['*'] },
+          ],
+        });
 
         if (!this.$win) {
-          return
+          return;
         }
-        this.$win.setAlwaysOnTop(true)
+        this.$win.setAlwaysOnTop(true);
         if (canceled || !filePath) {
-          return
+          return;
         }
 
-        await fs.writeFile(filePath, buffer)
-        this.endCapture()
-      }
-    )
+        await fs.writeFile(filePath, buffer);
+        this.endCapture();
+      },
+    );
   }
 }
