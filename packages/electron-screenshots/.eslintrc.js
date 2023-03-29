@@ -1,13 +1,13 @@
 module.exports = {
   root: true,
-  parser: '@typescript-eslint/parser',
+  parser: "@typescript-eslint/parser",
+  parserOptions: {
+    project: "./tsconfig.json",
+  },
   env: {
     es6: true,
     node: true,
-    commonjs: true
+    commonjs: true,
   },
-  extends: ['standard', 'plugin:@typescript-eslint/recommended'],
-  rules: {
-    '@typescript-eslint/member-delimiter-style': 0
-  }
-}
+  extends: ["airbnb-base", "airbnb-typescript/base"],
+};
