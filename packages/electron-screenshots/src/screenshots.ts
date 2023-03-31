@@ -274,7 +274,7 @@ export class Screenshots extends Events {
     if (index < 0) {
       index = 0
     }
-    const imgPath = await screenshot({ filename: this.screenshotPath, screen: index})
+    const imgPath = await screenshot({ filename: this.screenshotPath, screen: index })
 
     return `file://${imgPath}`
   }
