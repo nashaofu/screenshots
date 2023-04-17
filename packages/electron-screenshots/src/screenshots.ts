@@ -165,12 +165,12 @@ export default class Screenshots extends Events {
         show: false,
         autoHideMenuBar: true,
         transparent: true,
-        // mac resizable 设置为 true 会导致页面崩溃
+        // mac resizable 设置为 true 会导致应用崩溃
         resizable: process.platform !== 'darwin',
         movable: false,
-        // focusable 鼻血设置为 true, 否则窗口不能及时响应esc按键，输入框也不能输入
+        // focusable 必须设置为 true, 否则窗口不能及时响应esc按键，输入框也不能输入
         focusable: true,
-        // mac fullscreenable 设置为 true 会导致页面崩溃
+        // mac fullscreenable 设置为 true 会导致应用崩溃
         fullscreenable: process.platform !== 'darwin',
         /**
          * linux 下必须设置为false，否则不能全屏显示在最上层
