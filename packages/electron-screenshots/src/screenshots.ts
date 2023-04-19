@@ -106,7 +106,6 @@ export default class Screenshots extends Events {
 
     // 先清除 Kiosk 模式，然后取消全屏才有效
     this.$win.setKiosk(false);
-    this.$win.setSimpleFullScreen(false);
     this.$win.blur();
     this.$win.blurWebView();
     this.$win.unmaximize();
@@ -154,6 +153,12 @@ export default class Screenshots extends Events {
 
     // 复用未销毁的窗口
     if (!this.$win || this.$win?.isDestroyed?.()) {
+      const windowTypes: Record<string, string> = {
+        darwin: 'panel',
+        linux: 'dock',
+        win32: 'toolbar',
+      };
+
       this.$win = new BrowserWindow({
         title: 'screenshots',
         x: display.x,
@@ -161,42 +166,40 @@ export default class Screenshots extends Events {
         width: display.width,
         height: display.height,
         useContentSize: true,
+        type: windowTypes[process.platform],
         frame: false,
         show: false,
         autoHideMenuBar: true,
         transparent: true,
-        // mac resizable 设置为 true 会导致应用崩溃
-        resizable: process.platform !== 'darwin',
+        resizable: false,
         movable: false,
+        minimizable: false,
+        maximizable: false,
         // focusable 必须设置为 true, 否则窗口不能及时响应esc按键，输入框也不能输入
         focusable: true,
-        // mac fullscreenable 设置为 true 会导致应用崩溃
-        fullscreenable: process.platform !== 'darwin',
+        skipTaskbar: true,
+        alwaysOnTop: true,
         /**
          * linux 下必须设置为false，否则不能全屏显示在最上层
-         * mac 下设置为false，否则可能会导致程序坞不恢复问题
-         * https://github.com/nashaofu/screenshots/issues/148
+         * mac 下设置为false，否则可能会导致程序坞不恢复问题，且与 kiosk 模式冲突
          */
-        // fullscreen: process.platform === 'darwin',
-        // 设为true 防止mac新开一个桌面，影响效果
-        simpleFullscreen: process.platform === 'darwin',
+        fullscreen: false,
+        // mac fullscreenable 设置为 true 会导致应用崩溃
+        fullscreenable: false,
+        kiosk: true,
         backgroundColor: '#00000000',
         titleBarStyle: 'hidden',
-        alwaysOnTop: true,
-        enableLargerThanScreen: true,
-        skipTaskbar: true,
         hasShadow: false,
         paintWhenInitiallyHidden: false,
+        // mac 特有的属性
+        roundedCorners: false,
+        enableLargerThanScreen: false,
         acceptFirstMouse: true,
       });
 
       this.$win.on('show', () => {
         this.$win?.focus();
-        /**
-         * 在窗口显示时设置，防止与 fullscreen、x、y、width、height 等冲突, 导致显示效果不符合预期
-         * mac 下不设置 kiosk 模式，https://github.com/nashaofu/screenshots/issues/148
-         */
-        this.$win?.setKiosk(process.platform !== 'darwin');
+        this.$win?.setKiosk(true);
       });
 
       this.$win.on('closed', () => {
@@ -220,11 +223,6 @@ export default class Screenshots extends Events {
 
     this.$win.blur();
     this.$win.setKiosk(false);
-
-    if (process.platform === 'darwin') {
-      this.$win.setSimpleFullScreen(true);
-    }
-
     this.$win.setBounds(display);
     this.$view.setBounds({
       x: 0,
