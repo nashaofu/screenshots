@@ -15,6 +15,20 @@ app.whenReady().then(() => {
     screenshots.startCapture();
   });
 
+  screenshots.on('windowCreated', ($win) => {
+    $win.on('focus', () => {
+      globalShortcut.register('esc', () => {
+        if ($win?.isFocused()) {
+          screenshots.endCapture();
+        }
+      });
+    });
+
+    $win.on('blur', () => {
+      globalShortcut.unregister('esc');
+    });
+  });
+
   // 防止不能关闭截图界面
   globalShortcut.register('ctrl+shift+q', () => {
     app.quit();

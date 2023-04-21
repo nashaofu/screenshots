@@ -153,7 +153,7 @@ export default class Screenshots extends Events {
 
     // 复用未销毁的窗口
     if (!this.$win || this.$win?.isDestroyed?.()) {
-      const windowTypes: Record<string, string> = {
+      const windowTypes: Record<string, string | undefined> = {
         darwin: 'panel',
         linux: 'dock',
         win32: 'toolbar',
@@ -197,12 +197,14 @@ export default class Screenshots extends Events {
         acceptFirstMouse: true,
       });
 
+      this.emit('windowCreated', this.$win);
       this.$win.on('show', () => {
         this.$win?.focus();
         this.$win?.setKiosk(true);
       });
 
       this.$win.on('closed', () => {
+        this.emit('windowClosed', this.$win);
         this.$win = null;
       });
     }

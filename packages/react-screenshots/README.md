@@ -11,29 +11,29 @@
 1. web 中使用
 
 ```ts
-import React, { ReactElement, useCallback } from 'react'
-import Screenshots, { Bounds } from 'react-screenshots'
-import url from './image.jpg'
+import React, { ReactElement, useCallback } from "react";
+import Screenshots, { Bounds } from "react-screenshots";
+import url from "./image.jpg";
 
 interface Bounds {
-  x: number
-  y: number
-  width: number
-  height: number
+  x: number;
+  y: number;
+  width: number;
+  height: number;
 }
 
 export default function App(): ReactElement {
   const onSave = useCallback((blob: Blob, bounds: Bounds) => {
-    console.log('save', blob, bounds)
-    console.log(URL.createObjectURL(blob))
-  }, [])
+    console.log("save", blob, bounds);
+    console.log(URL.createObjectURL(blob));
+  }, []);
   const onCancel = useCallback(() => {
-    console.log('cancel')
-  }, [])
+    console.log("cancel");
+  }, []);
   const onOk = useCallback((blob: Blob, bounds: Bounds) => {
-    console.log('ok', blob, bounds)
-    console.log(URL.createObjectURL(blob))
-  }, [])
+    console.log("ok", blob, bounds);
+    console.log(URL.createObjectURL(blob));
+  }, []);
 
   return (
     <Screenshots
@@ -41,19 +41,19 @@ export default function App(): ReactElement {
       width={window.innerWidth}
       height={window.innerHeight}
       lang={{
-        operation_undo_title: 'Undo',
-        operation_mosaic_title: 'Mosaic',
-        operation_text_title: 'Text',
-        operation_brush_title: 'Brush',
-        operation_arrow_title: 'Arrow',
-        operation_ellipse_title: 'Ellipse',
-        operation_rectangle_title: 'Rectangle'
+        operation_undo_title: "Undo",
+        operation_mosaic_title: "Mosaic",
+        operation_text_title: "Text",
+        operation_brush_title: "Brush",
+        operation_arrow_title: "Arrow",
+        operation_ellipse_title: "Ellipse",
+        operation_rectangle_title: "Rectangle",
       }}
       onSave={onSave}
       onCancel={onCancel}
       onOk={onOk}
     />
-  )
+  );
 }
 ```
 
@@ -85,25 +85,25 @@ window.screenshots: GlobalScreenshots
 
 ```ts
 interface Bounds {
-  x: number
-  y: number
-  width: number
-  height: number
+  x: number;
+  y: number;
+  width: number;
+  height: number;
 }
 
 interface Lang {
-  magnifier_position_label: string
-  operation_ok_title: string
-  operation_cancel_title: string
-  operation_save_title: string
-  operation_redo_title: string
-  operation_undo_title: string
-  operation_mosaic_title: string
-  operation_text_title: string
-  operation_brush_title: string
-  operation_arrow_title: string
-  operation_ellipse_title: string
-  operation_rectangle_title: string
+  magnifier_position_label: string;
+  operation_ok_title: string;
+  operation_cancel_title: string;
+  operation_save_title: string;
+  operation_redo_title: string;
+  operation_undo_title: string;
+  operation_mosaic_title: string;
+  operation_text_title: string;
+  operation_brush_title: string;
+  operation_arrow_title: string;
+  operation_ellipse_title: string;
+  operation_rectangle_title: string;
 }
 ```
 
@@ -120,7 +120,7 @@ interface Lang {
 ### example
 
 ```js
-import React from 'react'
+import React from "react";
 
 function App() {
   return (
@@ -132,7 +132,7 @@ function App() {
       onCancel={() => {}}
       onOk={() => {}}
     />
-  )
+  );
 }
 ```
 
