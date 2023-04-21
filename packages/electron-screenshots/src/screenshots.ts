@@ -192,7 +192,7 @@ export class Screenshots extends Events {
          * mac 下设置为false，否则可能会导致程序坞不恢复问题
          * https://github.com/nashaofu/screenshots/issues/148
          */
-        // fullscreen: process.platform === 'darwin',
+        fullscreen: process.platform !== 'darwin',
         // 设为true 防止mac新开一个桌面，影响效果
         simpleFullscreen: process.platform === 'darwin',
         backgroundColor: '#00000000',
@@ -249,7 +249,7 @@ export class Screenshots extends Events {
     this.logger('createWindow3')
 
     this.$win.blur()
-    this.$win.setKiosk(false)
+    // this.$win.setKiosk(false)
 
     if (process.platform === 'darwin') {
       this.$win.setSimpleFullScreen(true)
@@ -264,6 +264,7 @@ export class Screenshots extends Events {
     })
 
     this.$win.show()
+    this.$win.setAlwaysOnTop(true)
   }
 
   private async capture (display: Display): Promise<string> {
