@@ -264,7 +264,9 @@ export class Screenshots extends Events {
     })
 
     this.$win.show()
-    this.$win.setAlwaysOnTop(true)
+    if (process.platform === 'darwin') {
+      this.$win.setAlwaysOnTop(true)
+    }
   }
 
   private async capture (display: Display): Promise<string> {
