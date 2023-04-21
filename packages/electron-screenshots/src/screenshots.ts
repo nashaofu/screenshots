@@ -222,7 +222,6 @@ export default class Screenshots extends Events {
     }
 
     this.$win.blur();
-    this.$win.setKiosk(false);
     this.$win.setBounds(display);
     this.$view.setBounds({
       x: 0,
