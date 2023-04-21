@@ -74,7 +74,7 @@ export class Screenshots extends Events {
     super()
     this.logger = opts?.logger || debug('electron-screenshots')
     this.singleWindow = opts?.singleWindow || false
-    this.screenshotPath = path.join(app.getPath('userData'), '/AkeyTemp/')
+    this.screenshotPath = path.join(app.getPath('userData'), '/AkeyTemp')
     this.listenIpc()
     this.$view.webContents.loadURL(
       `file://${require.resolve('akey-react-screenshots/electron/electron.html')}`
@@ -273,7 +273,7 @@ export class Screenshots extends Events {
   private async capture (display: Display): Promise<string> {
     this.logger('SCREENSHOTS:capture')
 
-    const imgPath = await screenshot({ filename: `${this.screenshotPath}/shot-${Date.now()}.png`, screen: display.id })
+    const imgPath = await screenshot({ filename: path.join(this.screenshotPath, `/shot-${Date.now()}.png`) })
 
     return `file://${imgPath}`
   }
