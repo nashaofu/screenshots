@@ -155,7 +155,9 @@ export default class Screenshots extends Events {
     if (!this.$win || this.$win?.isDestroyed?.()) {
       const windowTypes: Record<string, string | undefined> = {
         darwin: 'panel',
-        linux: 'dock',
+        // linux 必须设置为 undefined，否则会在部分系统上不能触发focus 事件
+        // https://github.com/nashaofu/screenshots/issues/203#issuecomment-1518923486
+        linux: undefined,
         win32: 'toolbar',
       };
 
