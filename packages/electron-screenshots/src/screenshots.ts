@@ -89,19 +89,15 @@ export class Screenshots extends Events {
    */
   public async startCapture (): Promise<void> {
     this.logger('startCapture')
-    this.logger('startCapture1')
     const display = getDisplay()
 
     const [imageUrl] = await Promise.all([this.capture(display), this.isReady])
-    this.logger('startCapture2')
 
-    // await this.createWindow(display)
     try {
       await this.createWindow(display)
     } catch (error) {
       this.logger(error)
     }
-    this.logger('startCapture3')
 
     this.$view.webContents.send('SCREENSHOTS:capture', display, imageUrl)
   }
@@ -220,7 +216,6 @@ export class Screenshots extends Events {
       })
     }
 
-    this.logger('createWindow2')
     this.$win.setBrowserView(this.$view)
 
     this.$win.webContents.once('crashed', (e) => {
@@ -247,14 +242,12 @@ export class Screenshots extends Events {
       })
     }
 
-    this.logger('createWindow3')
-
     this.$win.blur()
     // this.$win.setKiosk(false)
 
-    if (process.platform === 'darwin') {
-      this.$win.setSimpleFullScreen(true)
-    }
+    // if (process.platform === 'darwin') {
+    //   this.$win.setSimpleFullScreen(true)
+    // }
 
     this.$win.setBounds(display)
     this.$view.setBounds({
@@ -265,15 +258,20 @@ export class Screenshots extends Events {
     })
 
     this.$win.show()
-    if (process.platform === 'darwin') {
-      this.$win.setAlwaysOnTop(true)
-    }
   }
 
   private async capture (display: Display): Promise<string> {
     this.logger('SCREENSHOTS:capture')
 
-    const imgPath = await screenshot({ filename: path.join(this.screenshotPath, `/shot-${Date.now()}.png`) })
+    let index = display.id - 1
+    if (index < 0) {
+      index = 0
+    }
+
+    const imgPath = await screenshot({
+      filename: path.join(this.screenshotPath, `/shot-${Date.now()}.png`),
+      screen: index
+    })
 
     return `file://${imgPath}`
   }
