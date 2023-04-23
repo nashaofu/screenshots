@@ -285,7 +285,7 @@ export class Screenshots extends Events {
      * OK事件
      */
     ipcMain.on('SCREENSHOTS:ok', (e, buffer: Buffer, data: ScreenshotsData) => {
-      this.logger('SCREENSHOTS:ok', buffer, data)
+      // this.logger('SCREENSHOTS:ok', buffer, data)
 
       const event = new Event()
       this.emit('ok', event, buffer, data)
