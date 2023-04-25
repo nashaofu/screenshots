@@ -116,7 +116,9 @@ export class Screenshots extends Events {
     // 先清除 Kiosk 模式，然后取消全屏才有效
     this.$win.setKiosk(false)
     this.$win.setSimpleFullScreen(false)
-    app.dock.show()
+    if (process.platform === 'darwin') {
+      app.dock.show()
+    }
     this.$win.blur()
     this.$win.blurWebView()
     this.$win.unmaximize()
