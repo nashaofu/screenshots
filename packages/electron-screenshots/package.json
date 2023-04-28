@@ -1,6 +1,6 @@
 {
   "name": "akey-electron-screenshots",
-  "version": "1.0.12-beta.0",
+  "version": "1.0.12-beta.1",
   "description": "electron 截图插件",
   "types": "lib/screenshots.d.ts",
   "main": "lib/screenshots.js",
