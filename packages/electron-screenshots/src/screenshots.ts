@@ -115,7 +115,10 @@ export class Screenshots extends Events {
 
     // 先清除 Kiosk 模式，然后取消全屏才有效
     this.$win.setKiosk(false)
-    this.$win.setSimpleFullScreen(false)
+    this.$win.blur()
+    this.$win.blurWebView()
+    this.$win.unmaximize()
+    this.$win.removeBrowserView(this.$view)
     if (process.platform === 'darwin') {
       app.dock.show()
     }
@@ -186,36 +189,34 @@ export class Screenshots extends Events {
         // resizable: process.platform !== 'darwin',
         resizable: false,
         movable: false,
-        // focusable: true, 否则窗口不能及时响应esc按键，输入框也不能输入
+        // focusable 必须设置为 true, 否则窗口不能及时响应esc按键，输入框也不能输入
         focusable: true,
+        skipTaskbar: true,
+        alwaysOnTop: true,
         /**
          * linux 下必须设置为false，否则不能全屏显示在最上层
-         * mac 下设置为false，否则可能会导致程序坞不恢复问题
-         * https://github.com/nashaofu/screenshots/issues/148
+         * mac 下设置为false，否则可能会导致程序坞不恢复问题，且与 kiosk 模式冲突
          */
-        fullscreen: process.platform !== 'darwin',
-        // 设为true 防止mac新开一个桌面，影响效果
-        simpleFullscreen: process.platform === 'darwin',
+        fullscreen: false,
+        // mac fullscreenable 设置为 true 会导致应用崩溃
+        fullscreenable: false,
+        kiosk: true,
         backgroundColor: '#00000000',
         titleBarStyle: 'hidden',
-        alwaysOnTop: true,
         enableLargerThanScreen: true,
-        skipTaskbar: true,
         hasShadow: false,
         paintWhenInitiallyHidden: false,
         acceptFirstMouse: true
       })
 
+      this.emit('windowCreated', this.$win)
       this.$win.on('show', () => {
         this.$win?.focus()
-        /**
-         * 在窗口显示时设置，防止与 fullscreen、x、y、width、height 等冲突, 导致显示效果不符合预期
-         * mac 下不设置 kiosk 模式，https://github.com/nashaofu/screenshots/issues/148
-         */
-        this.$win?.setKiosk(process.platform !== 'darwin')
+        this.$win?.setKiosk(true)
       })
 
       this.$win.on('closed', () => {
+        this.emit('windowClosed', this.$win)
         this.$win = null
       })
     }
@@ -249,9 +250,9 @@ export class Screenshots extends Events {
     this.$win.blur()
     // this.$win.setKiosk(false)
 
-    if (process.platform === 'darwin') {
-      this.$win.setSimpleFullScreen(true)
-    }
+    // if (process.platform === 'darwin') {
+    //   this.$win.setSimpleFullScreen(true)
+    // }
 
     this.$win.setBounds(display)
     this.$view.setBounds({
