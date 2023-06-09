@@ -1,6 +1,6 @@
 # screenshots
 
-electron 截图插件和 react 截图插件，[在线示例](https://nashaofu.github.io/screenshots/)
+electron 截图插件和 react 截图插件，[在线示例](https://github.com/minzhang2/screenshots)
 
 ![react-screenshots](./screenshot.jpg)
 
