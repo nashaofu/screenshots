@@ -299,6 +299,7 @@ export class Screenshots extends Events {
       clipboard.writeImage(nativeImage.createFromBuffer(buffer))
       this.endCapture()
     })
+    
     /**
      * CANCEL事件
      */
