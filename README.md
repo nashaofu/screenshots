@@ -26,3 +26,8 @@ react 截图界面插件与`electron-screenshots`渲染 进程界面，[react-sc
 ### Install
 
 [![NPM](https://nodei.co/npm/react-screenshots.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/react-screenshots/)
+
+调试
+
+lerna exec -- yarn link
+yarn link akey-electron-screenshots

@@ -59,6 +59,8 @@ export default memo(function ScreenshotsBackground (): ReactElement | null {
 
   useEffect(() => {
     const onMouseMove = (e: MouseEvent) => {
+      console.log('onMouseMove2', e)
+
       if (elRef.current) {
         const rect = elRef.current.getBoundingClientRect()
         if (e.clientX < rect.left || e.clientY < rect.top || e.clientX > rect.right || e.clientY > rect.bottom) {
@@ -81,6 +83,10 @@ export default memo(function ScreenshotsBackground (): ReactElement | null {
       isMoveRef.current = true
     }
 
+    const onMouseOut = () => {
+      setPosition(null)
+    }
+
     const onMouseUp = (e: MouseEvent) => {
       if (!pointRef.current) {
         return
@@ -97,10 +103,12 @@ export default memo(function ScreenshotsBackground (): ReactElement | null {
     }
     window.addEventListener('mousemove', onMouseMove)
     window.addEventListener('mouseup', onMouseUp)
+    window.addEventListener('mouseout', onMouseOut)
 
     return () => {
       window.removeEventListener('mousemove', onMouseMove)
       window.removeEventListener('mouseup', onMouseUp)
+      window.removeEventListener('mouseout', onMouseOut)
     }
   }, [updateBounds])
 
@@ -115,6 +123,8 @@ export default memo(function ScreenshotsBackground (): ReactElement | null {
   if (!url || !image) {
     return null
   }
+
+  console.log('onMouseMove1', position, bounds)
 
   return (
     <div ref={elRef} className='screenshots-background' onMouseDown={onMouseDown}>

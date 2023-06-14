@@ -4,57 +4,59 @@ import {
   BrowserView,
   BrowserWindow,
   clipboard,
-  desktopCapturer,
-  dialog,
   ipcMain,
   nativeImage
 } from 'electron'
-import path from 'path'
 import Events from 'events'
-import screenshot from 'screenshot-desktop'
 import fs from 'fs-extra'
+import path from 'path'
+import screenshot from 'screenshot-desktop'
 import Event from './event'
-import getDisplay, { Display } from './getDisplay'
+import { Display, getAllDisplays } from './getDisplay'
 import padStart from './padStart'
 import { Bounds, ScreenshotsData } from './preload'
 
-export type LoggerFn = (...args: unknown[]) => void;
-export type Logger = Debugger | LoggerFn;
+export type LoggerFn = (...args: unknown[]) => void
+export type Logger = Debugger | LoggerFn
 
 export interface Lang {
-  magnifier_position_label?: string;
-  operation_ok_title?: string;
-  operation_cancel_title?: string;
-  operation_save_title?: string;
-  operation_redo_title?: string;
-  operation_undo_title?: string;
-  operation_mosaic_title?: string;
-  operation_text_title?: string;
-  operation_brush_title?: string;
-  operation_arrow_title?: string;
-  operation_ellipse_title?: string;
-  operation_rectangle_title?: string;
+  magnifier_position_label?: string
+  operation_ok_title?: string
+  operation_cancel_title?: string
+  operation_save_title?: string
+  operation_redo_title?: string
+  operation_undo_title?: string
+  operation_mosaic_title?: string
+  operation_text_title?: string
+  operation_brush_title?: string
+  operation_arrow_title?: string
+  operation_ellipse_title?: string
+  operation_rectangle_title?: string
 }
 
 export interface ScreenshotsOpts {
-  lang?: Lang;
-  logger?: Logger;
-  singleWindow?: boolean;
+  lang?: Lang
+  logger?: Logger
+  singleWindow?: boolean
 }
 
 export { Bounds }
 
 export class Screenshots extends Events {
   // 截图窗口对象
-  public $win: BrowserWindow | null = null
+  public $wins: BrowserWindow[] = []
 
-  public $view: BrowserView = new BrowserView({
-    webPreferences: {
-      preload: require.resolve('./preload.js'),
-      nodeIntegration: false,
-      contextIsolation: true
-    }
-  })
+  public displays: any[] = []
+
+  public $views: any[] = []
+
+  // public $view: BrowserView = new BrowserView({
+  //   webPreferences: {
+  //     preload: require.resolve('./preload.js'),
+  //     nodeIntegration: false,
+  //     contextIsolation: true,
+  //   },
+  // })
 
   private logger: Logger
 
@@ -75,66 +77,101 @@ export class Screenshots extends Events {
     this.logger = opts?.logger || debug('electron-screenshots')
     this.singleWindow = opts?.singleWindow || false
     this.screenshotPath = path.join(app.getPath('userData'), '/AkeyTemp')
+    fs.ensureDirSync(this.screenshotPath)
     this.listenIpc()
-    this.$view.webContents.loadURL(
-      `file://${require.resolve('akey-react-screenshots/electron/electron.html')}`
-    )
+    this.init()
+    // this.$view.webContents.loadURL(
+    //   `file://${require.resolve(
+    //     'akey-react-screenshots/electron/electron.html',
+    //   )}`,
+    // )
     if (opts?.lang) {
       this.setLang(opts.lang)
     }
+  }
+
+  public async init () {
+    this.displays = await screenshot.listDisplays()
+    this.$views = this.displays.map((display: any) => {
+      const win = new BrowserView({
+        webPreferences: {
+          preload: require.resolve('./preload.js'),
+          nodeIntegration: false,
+          contextIsolation: true
+        }
+      })
+      win.webContents.loadURL(
+        `file://${require.resolve(
+          'akey-react-screenshots/electron/electron.html'
+        )}?id=${display.id}`
+      )
+      return win
+    })
+    this.logger('screenshots', this.displays)
   }
 
   /**
    * 开始截图
    */
   public async startCapture (): Promise<void> {
-    this.logger('startCapture')
-    const display = getDisplay()
+    this.logger('screenshots:start')
 
-    const [imageUrl] = await Promise.all([this.capture(display), this.isReady])
+    const displays = await getAllDisplays()
 
-    try {
-      await this.createWindow(display)
-    } catch (error) {
-      this.logger(error)
+    this.logger('screenshots:start1', displays)
+
+    for (let i = 0; i < displays.length; i++) {
+      const display = displays[i]
+      const imageUrl = await this.capture(display)
+
+      try {
+        await this.createWindow(display)
+      } catch (error) {
+        this.logger(error)
+      }
+      this.logger('screenshots:start2', i, display, imageUrl)
+
+      this.$views[i].webContents.send('SCREENSHOTS:capture', display, imageUrl)
     }
-
-    this.$view.webContents.send('SCREENSHOTS:capture', display, imageUrl)
   }
 
   /**
    * 结束截图
    */
   public async endCapture (): Promise<void> {
-    this.logger('endCapture')
+    this.logger('endCapture', this.$wins)
     await this.reset()
 
-    if (!this.$win) {
+    if (!this.$wins.length) {
       return
     }
 
-    // 先清除 Kiosk 模式，然后取消全屏才有效
-    this.$win.setKiosk(false)
-    this.$win.blur()
-    this.$win.blurWebView()
-    this.$win.unmaximize()
-    this.$win.removeBrowserView(this.$view)
+    this.$wins.forEach((win, index) => {
+      this.logger('endCapture:for', win, index)
+      // 先清除 Kiosk 模式，然后取消全屏才有效
+      win.setKiosk(false)
+      // win.setSimpleFullScreen(false)
+      win.blur()
+      win.blurWebView()
+      win.unmaximize()
+      win.removeBrowserView(this.$views[index])
+
+      if (this.singleWindow) {
+        win.hide()
+      } else {
+        win.destroy()
+      }
+    })
+
     if (process.platform === 'darwin') {
       app.dock.show()
     }
-    this.$win.blur()
-    this.$win.blurWebView()
-    this.$win.unmaximize()
-    this.$win.removeBrowserView(this.$view)
+    this.$wins = []
 
-    if (this.singleWindow) {
-      this.$win.hide()
-    } else {
-      this.$win.destroy()
-    }
+    this.logger('endCapture2', this.$wins)
 
-    // fs.unlinkSync(this.screenshotPath)
     fs.emptyDir(this.screenshotPath)
+    // fs.emptyDir(this._accessor.paths.cachePath)
   }
 
   /**
@@ -145,13 +182,16 @@ export class Screenshots extends Events {
 
     await this.isReady
 
-    this.$view.webContents.send('SCREENSHOTS:setLang', lang)
+    // this.$views.webContents.send('SCREENSHOTS:setLang', lang)
+    this.$views.forEach((win: any) =>
+      win.webContents.send('SCREENSHOTS:setLang', lang)
+    )
   }
 
   private async reset () {
     this.logger('reset')
     // 重置截图区域
-    this.$view.webContents.send('SCREENSHOTS:reset')
+    this.$views.forEach((win: any) => win.webContents.send('SCREENSHOTS:reset'))
 
     this.logger('reset1')
     // 保证 UI 有足够的时间渲染
@@ -167,67 +207,71 @@ export class Screenshots extends Events {
    * 初始化窗口
    */
   private async createWindow (display: Display): Promise<void> {
-    this.logger('createWindow')
+    this.logger('createWindow', this.$wins)
     // 重置截图区域
-    await this.reset()
+    // await this.reset()
 
     this.logger('createWindow1')
     // 复用未销毁的窗口
-    if (!this.$win || this.$win?.isDestroyed?.()) {
-      this.$win = new BrowserWindow({
-        title: 'screenshots',
-        x: display.x,
-        y: display.y,
-        width: display.width,
-        height: display.height,
-        useContentSize: true,
-        frame: false,
-        show: false,
-        autoHideMenuBar: true,
-        transparent: true,
-        // mac resizable 设置为 false 会导致页面崩溃
-        // resizable: process.platform !== 'darwin',
-        resizable: false,
-        movable: false,
-        // focusable 必须设置为 true, 否则窗口不能及时响应esc按键，输入框也不能输入
-        focusable: true,
-        skipTaskbar: true,
-        alwaysOnTop: true,
-        /**
-         * linux 下必须设置为false，否则不能全屏显示在最上层
-         * mac 下设置为false，否则可能会导致程序坞不恢复问题，且与 kiosk 模式冲突
-         */
-        fullscreen: false,
-        // mac fullscreenable 设置为 true 会导致应用崩溃
-        fullscreenable: false,
-        kiosk: true,
-        backgroundColor: '#00000000',
-        titleBarStyle: 'hidden',
-        enableLargerThanScreen: true,
-        hasShadow: false,
-        paintWhenInitiallyHidden: false,
-        acceptFirstMouse: true
-      })
+    // if (!this.$win || this.$win?.isDestroyed?.()) {
+    const win = new BrowserWindow({
+      title: 'screenshots',
+      x: display.x,
+      y: display.y,
+      width: display.width,
+      height: display.height,
+      useContentSize: true,
+      frame: false,
+      show: false,
+      autoHideMenuBar: true,
+      transparent: true,
+      // mac resizable 设置为 false 会导致页面崩溃
+      // resizable: process.platform !== 'darwin',
+      resizable: false,
+      movable: false,
+      // focusable 必须设置为 true, 否则窗口不能及时响应esc按键，输入框也不能输入
+      focusable: true,
+      skipTaskbar: true,
+      alwaysOnTop: true,
+      /**
+       * linux 下必须设置为false，否则不能全屏显示在最上层
+       * mac 下设置为false，否则可能会导致程序坞不恢复问题，且与 kiosk 模式冲突
+       */
+      fullscreen: false,
+      // mac fullscreenable 设置为 true 会导致应用崩溃
+      fullscreenable: false,
+      kiosk: true,
+      backgroundColor: '#00000000',
+      titleBarStyle: 'hidden',
+      enableLargerThanScreen: true,
+      hasShadow: false,
+      paintWhenInitiallyHidden: false,
+      acceptFirstMouse: true
+    })
 
-      this.emit('windowCreated', this.$win)
-      this.$win.on('show', () => {
-        this.$win?.focus()
-        this.$win?.setKiosk(true)
-      })
+    win.on('show', () => {
+      win?.focus()
+      /**
+       * 在窗口显示时设置，防止与 fullscreen、x、y、width、height 等冲突, 导致显示效果不符合预期
+       * mac 下不设置 kiosk 模式，https://github.com/nashaofu/screenshots/issues/148
+       */
+      win?.setKiosk(process.platform !== 'darwin')
+    })
 
-      this.$win.on('closed', () => {
-        this.emit('windowClosed', this.$win)
-        this.$win = null
-      })
-    }
+    win.on('closed', () => {
+      win.destroy()
+      // win = null
+    })
+    // }
 
-    this.$win.setBrowserView(this.$view)
+    this.logger('createWindow2', display.index, win)
+    win.setBrowserView(this.$views[display.index as number])
 
-    this.$win.webContents.once('crashed', (e) => {
+    win.webContents.once('crashed', (e) => {
       this.logger(e)
     })
 
-    this.$win.webContents.once('render-process-gone', async (event, { reason }) => {
+    win.webContents.once('render-process-gone', async (event, { reason }) => {
       const msg = `The renderer process has crashed unexpected or is killed (${reason}).`
       this.logger(msg)
 
@@ -237,45 +281,45 @@ export class Screenshots extends Events {
 
     // 适定平台
     if (process.platform === 'darwin') {
-      this.$win.setWindowButtonVisibility(false)
+      win.setWindowButtonVisibility(false)
     }
 
     if (process.platform !== 'win32') {
-      this.$win.setVisibleOnAllWorkspaces(true, {
+      win.setVisibleOnAllWorkspaces(true, {
         visibleOnFullScreen: true,
         skipTransformProcessType: true
       })
     }
 
-    this.$win.blur()
-    // this.$win.setKiosk(false)
+    this.logger('createWindow3')
+
+    win.blur()
+    // win.setKiosk(false)
 
     // if (process.platform === 'darwin') {
-    //   this.$win.setSimpleFullScreen(true)
+    //   win.setSimpleFullScreen(true)
     // }
 
-    this.$win.setBounds(display)
-    this.$view.setBounds({
+    win.setBounds(display)
+    this.$views[display.index as number].setBounds({
       x: 0,
       y: 0,
       width: display.width,
       height: display.height
     })
 
-    this.$win.show()
+    win.show()
+
+    this.$wins.push(win)
   }
 
   private async capture (display: Display): Promise<string> {
-    this.logger('SCREENSHOTS:capture')
-
-    let index = display.id - 1
-    if (index < 0) {
-      index = 0
-    }
+    const filename = path.join(this.screenshotPath, `/shot-${Date.now()}.png`)
+    this.logger('SCREENSHOTS:capture', display, filename)
 
     const imgPath = await screenshot({
-      filename: path.join(this.screenshotPath, `/shot-${Date.now()}.png`),
-      screen: index
+      screen: display.id,
+      filename
     })
 
     return `file://${imgPath}`
@@ -289,7 +333,7 @@ export class Screenshots extends Events {
      * OK事件
      */
     ipcMain.on('SCREENSHOTS:ok', (e, buffer: Buffer, data: ScreenshotsData) => {
-      // this.logger('SCREENSHOTS:ok', buffer, data)
+      this.logger('SCREENSHOTS:ok', data)
 
       const event = new Event()
       this.emit('ok', event, buffer, data)
@@ -299,7 +343,6 @@ export class Screenshots extends Events {
       clipboard.writeImage(nativeImage.createFromBuffer(buffer))
       this.endCapture()
     })
-
     /**
      * CANCEL事件
      */
@@ -324,7 +367,7 @@ export class Screenshots extends Events {
 
         const event = new Event()
         this.emit('save', event, buffer, data)
-        if (event.defaultPrevented || !this.$win) {
+        if (event.defaultPrevented || !this.$wins.length) {
           return
         }
 
@@ -337,21 +380,21 @@ export class Screenshots extends Events {
         const seconds = padStart(time.getSeconds(), 2, '0')
         const milliseconds = padStart(time.getMilliseconds(), 3, '0')
 
-        this.$win.setAlwaysOnTop(false)
+        // this.$win.setAlwaysOnTop(false)
 
-        const { canceled, filePath } = await dialog.showSaveDialog(this.$win, {
-          defaultPath: `${year}${month}${date}${hours}${minutes}${seconds}${milliseconds}.png`
-        })
+        // const { canceled, filePath } = await dialog.showSaveDialog(this.$win, {
+        //   defaultPath: `${year}${month}${date}${hours}${minutes}${seconds}${milliseconds}.png`
+        // })
 
-        if (!this.$win) {
-          return
-        }
-        this.$win.setAlwaysOnTop(true)
-        if (canceled || !filePath) {
-          return
-        }
+        // if (!this.$win) {
+        //   return
+        // }
+        // this.$win.setAlwaysOnTop(true)
+        // if (canceled || !filePath) {
+        //   return
+        // }
 
-        await fs.writeFile(filePath, buffer)
+        // await fs.writeFile(filePath, buffer)
         this.endCapture()
       }
     )
