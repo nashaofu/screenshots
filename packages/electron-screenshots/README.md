@@ -180,13 +180,14 @@ class Event {
 }
 ```
 
-| 名称          | 说明                                                        | 回调参数                                                        |
-| ------------- | ----------------------------------------------------------- | --------------------------------------------------------------- |
-| ok            | 截图确认事件                                                | `(event: Event, buffer: Buffer, data: ScreenshotsData) => void` |
-| cancel        | 截图取消事件                                                | `(event: Event) => void`                                        |
-| save          | 截图保存事件                                                | `(event: Event, buffer: Buffer, data: ScreenshotsData) => void` |
-| windowCreated | 截图窗口被创建后触发                                        | `($win: BrowserWindow) => void`                                 |
-| windowClosed  | 截图窗口被关闭后触发，对`BrowserWindow` `closed` 事件的转发 | `($win: BrowserWindow) => void`                                 |
+| 名称          | 说明                                                        | 回调参数                                                                          |
+| ------------- | ----------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| ok            | 截图确认事件                                                | `(event: Event, buffer: Buffer, data: ScreenshotsData) => void`                   |
+| cancel        | 截图取消事件                                                | `(event: Event) => void`                                                          |
+| save          | 截图保存事件                                                | `(event: Event, buffer: Buffer, data: ScreenshotsData) => void`                   |
+| afterSave     | 截图保存（取消保存）后的事件                                | `(event: Event, buffer: Buffer, data: ScreenshotsData, isSaved: boolean) => void` |
+| windowCreated | 截图窗口被创建后触发                                        | `($win: BrowserWindow) => void`                                                   |
+| windowClosed  | 截图窗口被关闭后触发，对`BrowserWindow` `closed` 事件的转发 | `($win: BrowserWindow) => void`                                                   |
 
 ### 说明
 
