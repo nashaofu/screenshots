@@ -41,6 +41,11 @@ app.whenReady().then(() => {
   screenshots.on("save", (e, buffer, bounds) => {
     console.log("capture", buffer, bounds);
   });
+  // 保存后的回调事件
+  screenshots.on("afterSave", (e, buffer, bounds, isSaved) => {
+    console.log("capture", buffer, bounds);
+    console.log("isSaved", isSaved) // 是否保存成功
+  });
   debug({ showDevTools: true, devToolsMode: "undocked" });
 });
 
