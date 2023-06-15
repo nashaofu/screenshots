@@ -13,6 +13,7 @@ interface GlobalScreenshots {
   reset: () => void
   save: (arrayBuffer: ArrayBuffer, data: ScreenshotsData) => void
   cancel: () => void
+  disabled: () => void
   ok: (arrayBuffer: ArrayBuffer, data: ScreenshotsData) => void
   on: (channel: string, fn: ScreenshotsListener) => void
   off: (channel: string, fn: ScreenshotsListener) => void

@@ -15,11 +15,13 @@ export interface ScreenshotsProps {
   width: number
   height: number
   lang?: Partial<Lang>
+  disabled?: boolean
   className?: string
   [key: string]: unknown
 }
 
-export default function Screenshots ({ url, width, height, lang, className, ...props }: ScreenshotsProps): ReactElement {
+export default function Screenshots ({ url, width, height, lang, disabled, className, ...props }: ScreenshotsProps): ReactElement {
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const image = useGetLoadedImage(url)!
   const canvasContextRef = useRef<CanvasRenderingContext2D>(null)
   const emiterRef = useRef<Emiter>({})
@@ -40,6 +42,7 @@ export default function Screenshots ({ url, width, height, lang, className, ...p
       ...zhCN,
       ...lang
     },
+    disabled,
     emiterRef,
     canvasContextRef,
     history,
@@ -133,6 +136,7 @@ export default function Screenshots ({ url, width, height, lang, className, ...p
     [call]
   )
 
+  // eslint-disable-next-line
   const handleKeyDown = (e: any) => {
     if (e.keyCode !== 13) {
       console.log(e)

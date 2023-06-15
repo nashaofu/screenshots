@@ -18,6 +18,7 @@ export default function App (): JSX.Element {
   const [height, setHeight] = useState(window.innerHeight)
   const [display, setDisplay] = useState<Display | undefined>(undefined)
   const [lang, setLang] = useState<Lang | undefined>(undefined)
+  const [disabled, setDisabled] = useState<boolean>(false)
 
   const onSave = useCallback(
     async (blob: Blob | null, bounds: Bounds) => {
@@ -56,19 +57,26 @@ export default function App (): JSX.Element {
     const onReset = () => {
       setUrl(undefined)
       setDisplay(undefined)
+      setDisabled(false)
       // 确保截图区域被重置
       requestAnimationFrame(() => window.screenshots.reset())
+    }
+
+    const onSetDisabled = () => {
+      setDisabled(true)
     }
 
     window.screenshots.on('setLang', onSetLang)
     window.screenshots.on('capture', onCapture)
     window.screenshots.on('reset', onReset)
+    window.screenshots.on('setDisabled', onSetDisabled)
     // 告诉主进程页面准备完成
     window.screenshots.ready()
     return () => {
       window.screenshots.off('capture', onCapture)
       window.screenshots.off('setLang', onSetLang)
       window.screenshots.off('reset', onReset)
+      window.screenshots.off('setDisabled', onSetDisabled)
     }
   }, [])
 
@@ -91,6 +99,7 @@ export default function App (): JSX.Element {
         width={width}
         height={height}
         lang={lang}
+        disabled={disabled}
         onSave={onSave}
         onCancel={onCancel}
         onOk={onOk}

@@ -132,6 +132,7 @@ export class Screenshots extends Events {
       this.logger('screenshots:start2', i, display, imageUrl)
 
       this.$views[i].webContents.send('SCREENSHOTS:capture', display, imageUrl)
+      // this.$views[i].webContents.openDevTools()
     }
   }
 
@@ -185,6 +186,14 @@ export class Screenshots extends Events {
     // this.$views.webContents.send('SCREENSHOTS:setLang', lang)
     this.$views.forEach((win: any) =>
       win.webContents.send('SCREENSHOTS:setLang', lang)
+    )
+  }
+
+  public async setDisabled (): Promise<void> {
+    this.logger('setDisabled')
+
+    this.$views.forEach((win: any) =>
+      win.webContents.send('SCREENSHOTS:setDisabled')
     )
   }
 
@@ -251,11 +260,7 @@ export class Screenshots extends Events {
 
     win.on('show', () => {
       win?.focus()
-      /**
-       * 在窗口显示时设置，防止与 fullscreen、x、y、width、height 等冲突, 导致显示效果不符合预期
-       * mac 下不设置 kiosk 模式，https://github.com/nashaofu/screenshots/issues/148
-       */
-      win?.setKiosk(process.platform !== 'darwin')
+      win?.setKiosk(true)
     })
 
     win.on('closed', () => {
@@ -355,6 +360,20 @@ export class Screenshots extends Events {
         return
       }
       this.endCapture()
+    })
+
+    /**
+     * DISABLED事件
+     */
+    ipcMain.on('SCREENSHOTS:disabled', () => {
+      this.logger('SCREENSHOTS:disabled')
+
+      // const event = new Event()
+      // this.emit('disabled', event)
+      // if (event.defaultPrevented) {
+      //   return
+      // }
+      this.setDisabled()
     })
 
     /**

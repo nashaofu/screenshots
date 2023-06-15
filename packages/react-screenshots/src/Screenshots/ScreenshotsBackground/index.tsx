@@ -7,7 +7,7 @@ import getBoundsByPoints from './getBoundsByPoints'
 import './index.less'
 
 export default memo(function ScreenshotsBackground (): ReactElement | null {
-  const { url, image, width, height } = useStore()
+  const { url, image, disabled, width, height } = useStore()
   const [bounds, boundsDispatcher] = useBounds()
 
   const elRef = useRef<HTMLDivElement>(null)
@@ -16,6 +16,7 @@ export default memo(function ScreenshotsBackground (): ReactElement | null {
   // 如果没有移动过位置，则mouseup时不更新
   const isMoveRef = useRef<boolean>(false)
   const [position, setPosition] = useState<Position | null>(null)
+  const hasNoticeRef = useRef(false)
 
   const updateBounds = useCallback(
     (p1: Point, p2: Point) => {
@@ -60,7 +61,9 @@ export default memo(function ScreenshotsBackground (): ReactElement | null {
   useEffect(() => {
     const onMouseMove = (e: MouseEvent) => {
       console.log('onMouseMove2', e)
-
+      if (disabled && !bounds) {
+        return
+      }
       if (elRef.current) {
         const rect = elRef.current.getBoundingClientRect()
         if (e.clientX < rect.left || e.clientY < rect.top || e.clientX > rect.right || e.clientY > rect.bottom) {
@@ -80,7 +83,6 @@ export default memo(function ScreenshotsBackground (): ReactElement | null {
         x: e.clientX,
         y: e.clientY
       })
-      isMoveRef.current = true
     }
 
     const onMouseOut = () => {
@@ -88,6 +90,7 @@ export default memo(function ScreenshotsBackground (): ReactElement | null {
     }
 
     const onMouseUp = (e: MouseEvent) => {
+      console.log('onMouseUp')
       if (!pointRef.current) {
         return
       }
@@ -109,13 +112,26 @@ export default memo(function ScreenshotsBackground (): ReactElement | null {
       window.removeEventListener('mousemove', onMouseMove)
       window.removeEventListener('mouseup', onMouseUp)
       window.removeEventListener('mouseout', onMouseOut)
+      hasNoticeRef.current = false
     }
-  }, [updateBounds])
+  }, [disabled, bounds, updateBounds])
+
+  useEffect(() => {
+    return () => {
+      isMoveRef.current = true
+    }
+  }, [])
 
   useLayoutEffect(() => {
     if (!image || bounds) {
       // 重置位置
       setPosition(null)
+      if (!hasNoticeRef.current && bounds) {
+        // eslint-disable-next-line
+        (window as any).screenshots?.disabled?.()
+        hasNoticeRef.current = true
+        console.log('onMouseOut', image, bounds)
+      }
     }
   }, [image, bounds])
 
@@ -124,7 +140,7 @@ export default memo(function ScreenshotsBackground (): ReactElement | null {
     return null
   }
 
-  console.log('onMouseMove1', position, bounds)
+  console.log('onMouseMove', url, image, position, bounds)
 
   return (
     <div ref={elRef} className='screenshots-background' onMouseDown={onMouseDown}>

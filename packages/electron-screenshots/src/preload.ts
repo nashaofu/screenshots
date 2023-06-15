@@ -39,6 +39,11 @@ contextBridge.exposeInMainWorld('screenshots', {
 
     ipcRenderer.send('SCREENSHOTS:cancel')
   },
+  disabled: () => {
+    console.log('contextBridge disabled')
+
+    ipcRenderer.send('SCREENSHOTS:disabled')
+  },
   ok: (arrayBuffer: ArrayBuffer, data: ScreenshotsData) => {
     console.log('contextBridge ok', arrayBuffer, data)
 
