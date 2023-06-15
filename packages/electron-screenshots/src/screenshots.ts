@@ -386,14 +386,18 @@ export default class Screenshots extends Events {
         });
 
         if (!this.$win) {
+          this.emit('afterSave', new Event(), buffer, data, false); // isSaved = false
           return;
         }
+
         this.$win.setAlwaysOnTop(true);
         if (canceled || !filePath) {
+          this.emit('afterSave', new Event(), buffer, data, false); // isSaved = false
           return;
         }
 
         await fs.writeFile(filePath, buffer);
+        this.emit('afterSave', new Event(), buffer, data, true); // isSaved = true
         this.endCapture();
       },
     );
