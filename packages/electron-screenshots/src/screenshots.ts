@@ -4,6 +4,7 @@ import {
   BrowserView,
   BrowserWindow,
   clipboard,
+  dialog,
   ipcMain,
   nativeImage
 } from 'electron'
@@ -147,10 +148,11 @@ export class Screenshots extends Events {
       return
     }
 
+
     this.$wins.forEach((win, index) => {
-      this.logger('endCapture:for', win, index)
+      this.logger('endCapture:for', win)
       // 先清除 Kiosk 模式，然后取消全屏才有效
-      win.setKiosk(false)
+      win?.setKiosk?.(false)
       // win.setSimpleFullScreen(false)
       win.blur()
       win.blurWebView()
@@ -160,16 +162,16 @@ export class Screenshots extends Events {
       if (this.singleWindow) {
         win.hide()
       } else {
-        win.destroy()
+        win?.destroy?.()
       }
     })
+    this.$wins = []
+
+    this.logger('endCapture2', this.$wins)
 
     if (process.platform === 'darwin') {
       app.dock.show()
     }
-    this.$wins = []
-
-    this.logger('endCapture2', this.$wins)
 
     fs.emptyDir(this.screenshotPath)
     // fs.emptyDir(this._accessor.paths.cachePath)
@@ -260,11 +262,15 @@ export class Screenshots extends Events {
 
     win.on('show', () => {
       win?.focus()
-      win?.setKiosk(true)
+      win?.setKiosk?.(true)
     })
 
     win.on('closed', () => {
-      win.destroy()
+      // this.emit('windowClosed', win)
+      // const index = this.$wins.indexOf(win)
+      // if (index > -1) {
+      //   this.$wins?.splice?.(index, 1)
+      // }
       // win = null
     })
     // }
@@ -414,7 +420,7 @@ export class Screenshots extends Events {
         // }
 
         // await fs.writeFile(filePath, buffer)
-        this.endCapture()
+        // this.endCapture()
       }
     )
   }
