@@ -148,7 +148,6 @@ export class Screenshots extends Events {
       return
     }
 
-
     this.$wins.forEach((win, index) => {
       this.logger('endCapture:for', win)
       // 先清除 Kiosk 模式，然后取消全屏才有效
