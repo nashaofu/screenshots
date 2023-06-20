@@ -5,6 +5,7 @@ import {
   BrowserWindow,
   clipboard,
   dialog,
+  screen,
   ipcMain,
   nativeImage
 } from 'electron'
@@ -243,6 +244,9 @@ export class Screenshots extends Events {
       focusable: true,
       skipTaskbar: true,
       alwaysOnTop: true,
+      minimizable: false,
+      // 窗口不可以最大化
+      maximizable: false,
       /**
        * linux 下必须设置为false，否则不能全屏显示在最上层
        * mac 下设置为false，否则可能会导致程序坞不恢复问题，且与 kiosk 模式冲突
@@ -250,7 +254,7 @@ export class Screenshots extends Events {
       fullscreen: false,
       // mac fullscreenable 设置为 true 会导致应用崩溃
       fullscreenable: false,
-      kiosk: true,
+      // kiosk: true,
       backgroundColor: '#00000000',
       titleBarStyle: 'hidden',
       enableLargerThanScreen: true,
@@ -261,7 +265,7 @@ export class Screenshots extends Events {
 
     win.on('show', () => {
       win?.focus()
-      win?.setKiosk?.(true)
+      // win?.setKiosk?.(true)
     })
 
     win.on('closed', () => {
@@ -300,6 +304,7 @@ export class Screenshots extends Events {
         skipTransformProcessType: true
       })
     }
+    win.setAlwaysOnTop(true, 'screen-saver')
 
     this.logger('createWindow3')
 
@@ -317,7 +322,6 @@ export class Screenshots extends Events {
       width: display.width,
       height: display.height
     })
-
     win.show()
 
     this.$wins.push(win)
@@ -422,5 +426,20 @@ export class Screenshots extends Events {
         // this.endCapture()
       }
     )
+
+    screen.on('display-metrics-changed', () => {
+      this.logger('display-metrics-changed')
+      // this.endCapture()
+    })
+
+    screen.on('display-added', () => {
+      this.logger('display-added')
+      this.endCapture()
+    })
+
+    screen.on('display-removed', () => {
+      this.logger('display-removed')
+      this.endCapture()
+    })
   }
 }
