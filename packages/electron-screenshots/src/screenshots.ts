@@ -152,8 +152,7 @@ export class Screenshots extends Events {
     this.$wins.forEach((win, index) => {
       this.logger('endCapture:for', win)
       // 先清除 Kiosk 模式，然后取消全屏才有效
-      win?.setKiosk?.(false)
-      // win.setSimpleFullScreen(false)
+      // win?.setKiosk?.(false)
       win.blur()
       win.blurWebView()
       win.unmaximize()
@@ -174,7 +173,6 @@ export class Screenshots extends Events {
     }
 
     fs.emptyDir(this.screenshotPath)
-    // fs.emptyDir(this._accessor.paths.cachePath)
   }
 
   /**
@@ -265,11 +263,10 @@ export class Screenshots extends Events {
 
     win.on('show', () => {
       win?.focus()
-      // win?.setKiosk?.(true)
     })
 
     win.on('closed', () => {
-      // this.emit('windowClosed', win)
+      this.emit('windowClosed', win)
       // const index = this.$wins.indexOf(win)
       // if (index > -1) {
       //   this.$wins?.splice?.(index, 1)
@@ -310,10 +307,6 @@ export class Screenshots extends Events {
 
     win.blur()
     // win.setKiosk(false)
-
-    // if (process.platform === 'darwin') {
-    //   win.setSimpleFullScreen(true)
-    // }
 
     win.setBounds(display)
     this.$views[display.index as number].setBounds({
@@ -377,11 +370,6 @@ export class Screenshots extends Events {
     ipcMain.on('SCREENSHOTS:disabled', () => {
       this.logger('SCREENSHOTS:disabled')
 
-      // const event = new Event()
-      // this.emit('disabled', event)
-      // if (event.defaultPrevented) {
-      //   return
-      // }
       this.setDisabled()
     })
 
@@ -391,7 +379,7 @@ export class Screenshots extends Events {
     ipcMain.on(
       'SCREENSHOTS:save',
       async (e, buffer: Buffer, data: ScreenshotsData) => {
-        this.logger('SCREENSHOTS:save', buffer, data)
+        this.logger('SCREENSHOTS:save', data)
 
         const event = new Event()
         this.emit('save', event, buffer, data)
@@ -407,23 +395,26 @@ export class Screenshots extends Events {
         const minutes = padStart(time.getMinutes(), 2, '0')
         const seconds = padStart(time.getSeconds(), 2, '0')
         const milliseconds = padStart(time.getMilliseconds(), 3, '0')
+        const index = data?.display?.index || 0
 
-        // this.$win.setAlwaysOnTop(false)
+        const win = this.$wins[index]
 
-        // const { canceled, filePath } = await dialog.showSaveDialog(this.$win, {
-        //   defaultPath: `${year}${month}${date}${hours}${minutes}${seconds}${milliseconds}.png`
-        // })
+        // win.setAlwaysOnTop(false)
 
-        // if (!this.$win) {
-        //   return
-        // }
-        // this.$win.setAlwaysOnTop(true)
-        // if (canceled || !filePath) {
-        //   return
-        // }
+        const { canceled, filePath } = await dialog.showSaveDialog(win, {
+          defaultPath: `${year}${month}${date}${hours}${minutes}${seconds}${milliseconds}.png`
+        })
 
-        // await fs.writeFile(filePath, buffer)
-        // this.endCapture()
+        if (!win) {
+          return
+        }
+        // win.setAlwaysOnTop(true)
+        if (canceled || !filePath) {
+          return
+        }
+
+        await fs.writeFile(filePath, buffer)
+        this.endCapture()
       }
     )
 
