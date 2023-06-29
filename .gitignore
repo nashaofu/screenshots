@@ -61,3 +61,8 @@ typings/
 .next
 
 /lib
+
+
+.DS_Store
+
+dist/

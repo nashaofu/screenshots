@@ -1,0 +1,20 @@
+{
+  "name": "@umijs/electron-template",
+  "version": "1.0.1",
+  "scripts": {
+    "dev": "umi dev",
+    "build": "umi build",
+    "postinstall": "umi setup",
+    "setup": "umi setup",
+    "start": "npm run dev"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "electron": "23.1.1"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  },
+  "main": "./entry.js"
+}

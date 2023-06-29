@@ -35,7 +35,7 @@
     "registry": "https://registry.npmjs.org/"
   },
   "dependencies": {
-    "akey-react-screenshots": "^1.0.14-alpha.0",
+    "akey-react-screenshots": "/Users/ansiyuan/Documents/ansiyuan/packages/screenshots/packages/react-screenshots",
     "debug": "^4.3.3",
     "fs-extra": "^10.1.0",
     "screenshot-desktop": "^1.12.7"

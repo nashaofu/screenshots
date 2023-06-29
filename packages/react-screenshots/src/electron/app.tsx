@@ -3,13 +3,13 @@ import Screenshots from '../Screenshots'
 import { Bounds } from '../Screenshots/types'
 import { Lang } from '../Screenshots/zh_CN'
 import './app.less'
-
+import BlackImg from '../web/black.png'
 export interface Display {
-  id: number
-  x: number
-  y: number
-  width: number
-  height: number
+  id: number;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
 }
 
 export default function App (): JSX.Element {
@@ -49,9 +49,20 @@ export default function App (): JSX.Element {
       setLang(lang)
     }
 
-    const onCapture = (display: Display, dataURL: string) => {
+    const onCapture = (
+      display: Display,
+      dataURL: string,
+      options?: {
+        enableBlackMask: boolean
+      }
+    ) => {
       setDisplay(display)
-      setUrl(dataURL)
+      console.log('options', options)
+      if (options?.enableBlackMask) {
+        setUrl(BlackImg)
+      } else {
+        setUrl(dataURL)
+      }
     }
 
     const onReset = () => {

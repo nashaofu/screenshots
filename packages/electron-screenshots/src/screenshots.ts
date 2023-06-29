@@ -14,7 +14,7 @@ import fs from 'fs-extra'
 import path from 'path'
 import screenshot from 'screenshot-desktop'
 import Event from './event'
-import { Display, getAllDisplays } from './getDisplay'
+import getDisplay, { Display, getAllDisplays } from './getDisplay'
 import padStart from './padStart'
 import { Bounds, ScreenshotsData } from './preload'
 
@@ -115,7 +115,7 @@ export class Screenshots extends Events {
   /**
    * 开始截图
    */
-  public async startCapture (): Promise<void> {
+  public async startCapture (options?: { isMacFullscreenHide : boolean}): Promise<void> {
     this.logger('screenshots:start')
 
     const displays = await getAllDisplays()
@@ -133,8 +133,18 @@ export class Screenshots extends Events {
       }
       this.logger('screenshots:start2', i, display, imageUrl)
 
-      this.$views[i].webContents.send('SCREENSHOTS:capture', display, imageUrl)
-      // this.$views[i].webContents.openDevTools()
+      const activeDisplay = getDisplay()
+
+      console.log('activeDisplay', activeDisplay)
+      console.log('display', display)
+
+      const isAppDisplayScreen = activeDisplay.id === display.screenId // 是否是当前应用所在屏幕
+      const enableBlackMask = options?.isMacFullscreenHide && isAppDisplayScreen // mac系统, 全屏截图且用户选择隐藏当前窗口
+
+      this.$views[i].webContents.send('SCREENSHOTS:capture', display, imageUrl, {
+        enableBlackMask
+      })
+      this.$views[i].webContents.openDevTools()
     }
   }
 

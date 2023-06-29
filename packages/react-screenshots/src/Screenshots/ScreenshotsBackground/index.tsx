@@ -1,4 +1,12 @@
-import React, { memo, ReactElement, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import React, {
+  memo,
+  ReactElement,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState
+} from 'react'
 import useBounds from '../hooks/useBounds'
 import useStore from '../hooks/useStore'
 import ScreenshotsMagnifier from '../ScreenshotsMagnifier'
@@ -9,6 +17,7 @@ import './index.less'
 export default memo(function ScreenshotsBackground (): ReactElement | null {
   const { url, image, disabled, width, height } = useStore()
   const [bounds, boundsDispatcher] = useBounds()
+  const [active, setActive] = useState(false)
 
   const elRef = useRef<HTMLDivElement>(null)
   const pointRef = useRef<Point | null>(null)
@@ -61,12 +70,18 @@ export default memo(function ScreenshotsBackground (): ReactElement | null {
   useEffect(() => {
     const onMouseMove = (e: MouseEvent) => {
       console.log('onMouseMove2', e)
+      setActive(true)
       if (disabled && !bounds) {
         return
       }
       if (elRef.current) {
         const rect = elRef.current.getBoundingClientRect()
-        if (e.clientX < rect.left || e.clientY < rect.top || e.clientX > rect.right || e.clientY > rect.bottom) {
+        if (
+          e.clientX < rect.left ||
+          e.clientY < rect.top ||
+          e.clientX > rect.right ||
+          e.clientY > rect.bottom
+        ) {
           setPosition(null)
         } else {
           setPosition({
@@ -86,6 +101,7 @@ export default memo(function ScreenshotsBackground (): ReactElement | null {
     }
 
     const onMouseOut = () => {
+      setActive(false)
       setPosition(null)
     }
 
@@ -128,7 +144,7 @@ export default memo(function ScreenshotsBackground (): ReactElement | null {
       setPosition(null)
       if (!hasNoticeRef.current && bounds) {
         // eslint-disable-next-line
-        (window as any).screenshots?.disabled?.()
+        (window as any).screenshots?.disabled?.();
         hasNoticeRef.current = true
         console.log('onMouseOut', image, bounds)
       }
@@ -143,10 +159,20 @@ export default memo(function ScreenshotsBackground (): ReactElement | null {
   console.log('onMouseMove', url, image, position, bounds)
 
   return (
-    <div ref={elRef} className='screenshots-background' onMouseDown={onMouseDown}>
+    <div
+      ref={elRef}
+      className='screenshots-background'
+      onMouseDown={onMouseDown}
+    >
       <img className='screenshots-background-image' src={url} />
-      <div className='screenshots-background-mask' />
-      {position && !bounds && <ScreenshotsMagnifier x={position?.x} y={position?.y} />}
+      <div
+        className='screenshots-background-mask' style={{
+          backgroundColor: active ? 'rgba(0, 0, 0, 0.1)' : 'rgba(0, 0, 0, 0.4)'
+        }}
+      />
+      {position && !bounds && (
+        <ScreenshotsMagnifier x={position?.x} y={position?.y} />
+      )}
     </div>
   )
 })
