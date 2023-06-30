@@ -11,6 +11,7 @@
   "dependencies": {
     "akey-electron-screenshots": "/Users/ansiyuan/Documents/ansiyuan/packages/screenshots/packages/electron-screenshots",
     "akey-react-screenshots": "../packages/react-screenshots",
+    "electron-log": "^4.4.8",
     "umi": "^4.0.42"
   },
   "devDependencies": {
