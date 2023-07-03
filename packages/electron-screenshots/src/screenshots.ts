@@ -144,7 +144,7 @@ export class Screenshots extends Events {
       this.$views[i].webContents.send('SCREENSHOTS:capture', display, imageUrl, {
         enableBlackMask
       })
-      this.$views[i].webContents.openDevTools()
+      // this.$views[i].webContents.openDevTools()
     }
   }
 

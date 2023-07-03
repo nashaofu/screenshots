@@ -9,8 +9,9 @@
     "start": "npm run dev"
   },
   "dependencies": {
-    "akey-electron-screenshots": "/Users/ansiyuan/Documents/ansiyuan/packages/screenshots/packages/electron-screenshots",
-    "akey-react-screenshots": "../packages/react-screenshots",
+    "akey-electron-screenshots": "1.0.14-alpha.3",
+    "akey-react-screenshots": "1.0.14-alpha.2",
+    "check-disk-space": "^3.4.0",
     "electron-log": "^4.4.8",
     "umi": "^4.0.42"
   },

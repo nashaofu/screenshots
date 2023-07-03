@@ -3,6 +3,8 @@ import yayJpg from "../assets/yay.jpg";
 
 export default function HomePage() {
   const [logPath, setLogPath] = useState("");
+  const [diskDetail, setDiskDetail] = useState('');
+
   return (
     <div>
       <h2>Yay! Welcome to umi with electron!</h2>
@@ -48,12 +50,12 @@ export default function HomePage() {
       <button
         onClick={async () => {
           const path = await window.$api.showLog();
-          setLogPath(path)
+          setLogPath(path);
         }}
       >
         Path
       </button>
-      
+
       <button
         onClick={async () => {
           await window.$api.clearLog();
@@ -62,8 +64,16 @@ export default function HomePage() {
         Clear
       </button>
 
-      <p>logPath:</p>
-      <p>{logPath}</p>
+      <button
+        onClick={async () => {
+          const data = await window.$api.diskDetail();
+          setDiskDetail(data)
+        }}
+      >
+        Disk Detail
+      </button>
+      <p>logPath: {logPath}</p>
+      <p>disk: {JSON.stringify(diskDetail)}</p>
     </div>
   );
 }

@@ -6,6 +6,7 @@ import log from "electron-log";
 // @ts-ignore
 
 import { clearLog } from './log'
+import { getDiskDetail } from './disk'
 
 function createWindow() {
   // Create the browser window.
@@ -63,6 +64,14 @@ app.whenReady().then(() => {
     const appName = 'akey-im-desk';
     const path = `${appData}/${appName}/logs`
     await clearLog(path)
+  });
+  
+  
+  ipcMain.handle("disk-detail", async () => {
+    const appData = app.getPath('appData');
+    const detail = await getDiskDetail(appData)
+    console.log('getDiskDetail', detail);
+    return detail
   });
 });
 

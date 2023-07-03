@@ -125,5 +125,25 @@ _electron.contextBridge.exposeInMainWorld("$api", {
       return _clearLog.apply(this, arguments);
     }
     return clearLog;
+  }(),
+  diskDetail: function () {
+    var _diskDetail = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee7() {
+      return _regeneratorRuntime().wrap(function _callee7$(_context7) {
+        while (1) switch (_context7.prev = _context7.next) {
+          case 0:
+            _context7.next = 2;
+            return _electron.ipcRenderer.invoke("disk-detail");
+          case 2:
+            return _context7.abrupt("return", _context7.sent);
+          case 3:
+          case "end":
+            return _context7.stop();
+        }
+      }, _callee7);
+    }));
+    function diskDetail() {
+      return _diskDetail.apply(this, arguments);
+    }
+    return diskDetail;
   }()
 });

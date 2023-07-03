@@ -19,4 +19,7 @@ contextBridge.exposeInMainWorld("$api", {
   clearLog: async () => {
     return await ipcRenderer.invoke("log-clear");
   },
+  diskDetail: async () => {
+    return await ipcRenderer.invoke("disk-detail");
+  },
 });
