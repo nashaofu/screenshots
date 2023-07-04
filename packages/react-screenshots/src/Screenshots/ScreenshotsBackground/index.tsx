@@ -17,7 +17,6 @@ import './index.less'
 export default memo(function ScreenshotsBackground (): ReactElement | null {
   const { url, image, disabled, width, height } = useStore()
   const [bounds, boundsDispatcher] = useBounds()
-  const [active, setActive] = useState(false)
 
   const elRef = useRef<HTMLDivElement>(null)
   const pointRef = useRef<Point | null>(null)
@@ -70,7 +69,6 @@ export default memo(function ScreenshotsBackground (): ReactElement | null {
   useEffect(() => {
     const onMouseMove = (e: MouseEvent) => {
       console.log('onMouseMove2', e)
-      setActive(true)
       if (disabled && !bounds) {
         return
       }
@@ -101,7 +99,6 @@ export default memo(function ScreenshotsBackground (): ReactElement | null {
     }
 
     const onMouseOut = () => {
-      setActive(false)
       setPosition(null)
     }
 
@@ -166,9 +163,7 @@ export default memo(function ScreenshotsBackground (): ReactElement | null {
     >
       <img className='screenshots-background-image' src={url} />
       <div
-        className='screenshots-background-mask' style={{
-          backgroundColor: active ? 'rgba(0, 0, 0, 0.1)' : 'rgba(0, 0, 0, 0.4)'
-        }}
+        className='screenshots-background-mask'
       />
       {position && !bounds && (
         <ScreenshotsMagnifier x={position?.x} y={position?.y} />
