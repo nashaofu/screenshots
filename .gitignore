@@ -68,4 +68,5 @@ typings/
 dist/
 
 examples/.electron/**
+examples/.electron-production/**
 examples/.umi/**
