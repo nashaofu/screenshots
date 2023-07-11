@@ -41,7 +41,7 @@ export interface Lang {
 export interface ScreenshotsOpts {
   lang?: Lang
   logger?: Logger
-  // @deprecated 没用到 
+  // @deprecated 没用到
   singleWindow?: boolean
 }
 
