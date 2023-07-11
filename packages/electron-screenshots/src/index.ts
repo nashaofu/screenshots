@@ -1,5 +1,5 @@
 import { app, BrowserWindow, globalShortcut } from 'electron'
-import { Screenshots } from './screenshots1'
+import { Screenshots } from './screenshots'
 
 app.whenReady().then(() => {
   const screenshots = new Screenshots({
@@ -8,7 +8,7 @@ app.whenReady().then(() => {
     },
     singleWindow: true
   })
-  screenshots.$view.webContents.openDevTools()
+  // screenshots.$view.webContents.openDevTools()
 
   globalShortcut.register('ctrl+shift+a', () => {
     screenshots.startCapture()

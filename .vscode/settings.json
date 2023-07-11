@@ -1,0 +1,8 @@
+{
+  "prettier.semi": false,
+  "prettier.jsxSingleQuote": true,
+  "prettier.singleQuote": true,
+  "css.completion.completePropertyWithSemicolon": false,
+  "less.completion.completePropertyWithSemicolon": false,
+  "scss.completion.completePropertyWithSemicolon": false
+}

@@ -99,6 +99,7 @@ export default memo(function ScreenshotsBackground (): ReactElement | null {
     }
 
     const onMouseOut = () => {
+      console.log('mouse state out111')
       setPosition(null)
     }
 

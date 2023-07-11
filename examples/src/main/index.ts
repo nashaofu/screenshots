@@ -29,6 +29,10 @@ function createWindow() {
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
   const mainWindow = createWindow();
+  const screenshotsIns = new Screenshots({
+    singleWindow: true
+  });
+
 
   app.on("activate", function () {
     // On macOS it's common to re-create a window in the app when the
@@ -38,7 +42,6 @@ app.whenReady().then(() => {
 
   ipcMain.handle("screenshot", () => {
     console.log("hit screenshot");
-    const screenshotsIns = new Screenshots();
     const isMacFullscreenHide = mainWindow.isFullScreen();
     screenshotsIns.startCapture({ isMacFullscreenHide: isMacFullscreenHide });
     return `hi, i'm from screenshot`;

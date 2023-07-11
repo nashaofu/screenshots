@@ -1,3 +1,5 @@
+// @typescript-eslint/no-explicit-any
+
 import debug, { Debugger } from 'debug'
 import {
   app,
@@ -39,6 +41,7 @@ export interface Lang {
 export interface ScreenshotsOpts {
   lang?: Lang
   logger?: Logger
+  // @deprecated 没用到 
   singleWindow?: boolean
 }
 
@@ -48,17 +51,9 @@ export class Screenshots extends Events {
   // 截图窗口对象
   public $wins: BrowserWindow[] = []
 
-  public displays: any[] = []
+  public displays: Display[] = []
 
-  public $views: any[] = []
-
-  // public $view: BrowserView = new BrowserView({
-  //   webPreferences: {
-  //     preload: require.resolve('./preload.js'),
-  //     nodeIntegration: false,
-  //     contextIsolation: true,
-  //   },
-  // })
+  public $views: BrowserView[] = []
 
   private logger: Logger
 
@@ -81,78 +76,98 @@ export class Screenshots extends Events {
     this.screenshotPath = path.join(app.getPath('userData'), '/AkeyTemp')
     fs.ensureDirSync(this.screenshotPath)
     this.listenIpc()
-    this.init()
-    // this.$view.webContents.loadURL(
-    //   `file://${require.resolve(
-    //     'akey-react-screenshots/electron/electron.html',
-    //   )}`,
-    // )
+    this.refreshViews()
     if (opts?.lang) {
       this.setLang(opts.lang)
     }
   }
 
-  public async init () {
-    this.displays = await screenshot.listDisplays()
-    this.$views = this.displays.map((display: any) => {
-      const win = new BrowserView({
+  // 根据屏幕数量预加载BrowserView
+  // 初始化displays和$views
+  private async refreshViews () {
+    this.displays = await getAllDisplays()
+    this.$views = this.displays.map((display) => {
+      const browserView = new BrowserView({
         webPreferences: {
           preload: require.resolve('./preload.js'),
           nodeIntegration: false,
           contextIsolation: true
         }
       })
-      win.webContents.loadURL(
+      browserView.webContents.loadURL(
         `file://${require.resolve(
           'akey-react-screenshots/electron/electron.html'
         )}?id=${display.id}`
       )
-      return win
+      return browserView
     })
-    this.logger('screenshots', this.displays)
+    this.logger('screenshots refreshViews', this.displays)
+  }
+
+  private async resetWindows () {
+    if (!this.$wins.length) {
+      return
+    }
+
+    this.$wins.forEach((win) => {
+      this.logger('resetWindows', win)
+      // 先清除 Kiosk 模式，然后取消全屏才有效
+      // win?.setKiosk?.(false)
+      win?.destroy?.()
+    })
+    this.$wins = []
+  }
+
+  // 根据当前显示器数量分别初始化对应窗口
+  async createWindowForDisplays (options: { isMacFullscreenHide? : boolean} = {}) {
+    const { isMacFullscreenHide } = options
+    let activeDisplayId = -1 // 如果不是mac且全屏隐藏窗口截图，那么这个值就用不到
+    if (isMacFullscreenHide) {
+      const activeDisplay = getDisplay()
+      activeDisplayId = activeDisplay.id
+    }
+
+    return Promise.all(this.displays.map(async (display, i) => {
+      const imageUrl = await this.capture(display)
+
+      try {
+        await this.createWindow(display, i)
+      } catch (error: any) {
+        console.log('createWindow error', i, error.message)
+        this.logger(error)
+      }
+      this.logger('screenshots:start2', i, display, imageUrl)
+
+      const enableBlackMask = isMacFullscreenHide && activeDisplayId === display.id // mac系统, 全屏截图且用户选择隐藏当前窗口
+
+      this.$views[i].webContents.send('SCREENSHOTS:capture', display, imageUrl, {
+        enableBlackMask
+      })
+    }))
   }
 
   /**
    * 开始截图
    */
   public async startCapture (options?: { isMacFullscreenHide : boolean}): Promise<void> {
-    this.logger('screenshots:start')
+    console.time('startCapture')
 
-    const displays = await getAllDisplays()
+    this.logger('screenshots:startCapture')
 
-    this.logger('screenshots:start1', displays)
-
-    for (let i = 0; i < displays.length; i++) {
-      const display = displays[i]
-      const imageUrl = await this.capture(display)
-
-      try {
-        await this.createWindow(display)
-      } catch (error) {
-        this.logger(error)
-      }
-      this.logger('screenshots:start2', i, display, imageUrl)
-
-      const activeDisplay = getDisplay()
-
-      console.log('activeDisplay', activeDisplay)
-      console.log('display', display)
-
-      const isAppDisplayScreen = activeDisplay.id === display.screenId // 是否是当前应用所在屏幕
-      const enableBlackMask = options?.isMacFullscreenHide && isAppDisplayScreen // mac系统, 全屏截图且用户选择隐藏当前窗口
-
-      this.$views[i].webContents.send('SCREENSHOTS:capture', display, imageUrl, {
-        enableBlackMask
-      })
-      // this.$views[i].webContents.openDevTools()
+    if (this.displays.length === 0) {
+      return
     }
+
+    await this.createWindowForDisplays(options)
+
+    console.timeEnd('startCapture')
   }
 
   /**
    * 结束截图
    */
   public async endCapture (): Promise<void> {
-    this.logger('endCapture', this.$wins)
+    this.logger('endCapture')
     await this.reset()
 
     if (!this.$wins.length) {
@@ -168,15 +183,17 @@ export class Screenshots extends Events {
       win.unmaximize()
       win.removeBrowserView(this.$views[index])
 
-      if (this.singleWindow) {
-        win.hide()
-      } else {
-        win?.destroy?.()
-      }
+      // if (this.singleWindow) {
+      //   win.hide()
+      // } else {
+      //   win?.destroy?.()
+      // }
+      win?.destroy?.()
     })
+
     this.$wins = []
 
-    this.logger('endCapture2', this.$wins)
+    this.emit('endCapture')
 
     if (process.platform === 'darwin') {
       app.dock.show()
@@ -194,7 +211,7 @@ export class Screenshots extends Events {
     await this.isReady
 
     // this.$views.webContents.send('SCREENSHOTS:setLang', lang)
-    this.$views.forEach((win: any) =>
+    this.$views.forEach((win) =>
       win.webContents.send('SCREENSHOTS:setLang', lang)
     )
   }
@@ -202,7 +219,7 @@ export class Screenshots extends Events {
   public async setDisabled (): Promise<void> {
     this.logger('setDisabled')
 
-    this.$views.forEach((win: any) =>
+    this.$views.forEach((win) =>
       win.webContents.send('SCREENSHOTS:setDisabled')
     )
   }
@@ -210,7 +227,7 @@ export class Screenshots extends Events {
   private async reset () {
     this.logger('reset')
     // 重置截图区域
-    this.$views.forEach((win: any) => win.webContents.send('SCREENSHOTS:reset'))
+    this.$views.forEach((win) => win.webContents.send('SCREENSHOTS:reset'))
 
     this.logger('reset1')
     // 保证 UI 有足够的时间渲染
@@ -225,14 +242,15 @@ export class Screenshots extends Events {
   /**
    * 初始化窗口
    */
-  private async createWindow (display: Display): Promise<void> {
-    this.logger('createWindow', this.$wins)
+  private async createWindow (display: Display, index: number): Promise<BrowserWindow> {
+    this.logger('createWindow', display)
     // 重置截图区域
     // await this.reset()
 
-    this.logger('createWindow1')
-    // 复用未销毁的窗口
-    // if (!this.$win || this.$win?.isDestroyed?.()) {
+    // let win = this.$wins[index]
+
+    // windows系统某些情况下复用未销毁的窗口
+    // if (!win || win?.isDestroyed?.()) {
     const win = new BrowserWindow({
       title: 'screenshots',
       x: display.x,
@@ -256,9 +274,9 @@ export class Screenshots extends Events {
       // 窗口不可以最大化
       maximizable: false,
       /**
-       * linux 下必须设置为false，否则不能全屏显示在最上层
-       * mac 下设置为false，否则可能会导致程序坞不恢复问题，且与 kiosk 模式冲突
-       */
+         * linux 下必须设置为false，否则不能全屏显示在最上层
+         * mac 下设置为false，否则可能会导致程序坞不恢复问题，且与 kiosk 模式冲突
+         */
       fullscreen: false,
       // mac fullscreenable 设置为 true 会导致应用崩溃
       fullscreenable: false,
@@ -270,6 +288,11 @@ export class Screenshots extends Events {
       paintWhenInitiallyHidden: false,
       acceptFirstMouse: true
     })
+    console.log('createWindow new')
+    // } else {
+    //   this.logger('createWindow use cache', win)
+    //   console.log('createWindow use cache')
+    // }
 
     win.on('show', () => {
       win?.focus()
@@ -285,8 +308,7 @@ export class Screenshots extends Events {
     })
     // }
 
-    this.logger('createWindow2', display.index, win)
-    win.setBrowserView(this.$views[display.index as number])
+    win.setBrowserView(this.$views[index])
 
     win.webContents.once('crashed', (e) => {
       this.logger(e)
@@ -311,23 +333,25 @@ export class Screenshots extends Events {
         skipTransformProcessType: true
       })
     }
-    win.setAlwaysOnTop(true, 'screen-saver')
 
-    this.logger('createWindow3')
+    win.setAlwaysOnTop(true, 'screen-saver')
 
     win.blur()
     // win.setKiosk(false)
 
     win.setBounds(display)
-    this.$views[display.index as number].setBounds({
+    this.$views[index].setBounds({
       x: 0,
       y: 0,
       width: display.width,
       height: display.height
     })
+
     win.show()
 
-    this.$wins.push(win)
+    this.$wins[index] = win
+
+    return win
   }
 
   private async capture (display: Display): Promise<string> {
@@ -335,7 +359,7 @@ export class Screenshots extends Events {
     this.logger('SCREENSHOTS:capture', display, filename)
 
     const imgPath = await screenshot({
-      screen: display.id,
+      screen: display.screenshotDesktopId,
       filename
     })
 
@@ -433,14 +457,33 @@ export class Screenshots extends Events {
       // this.endCapture()
     })
 
-    screen.on('display-added', () => {
-      this.logger('display-added')
-      this.endCapture()
+    screen.on('display-added', async () => {
+      // 屏幕变化期间不允许截图
+      this.emit('screenchangestart')
+      try {
+        this.logger('display-added')
+        this.endCapture()
+        await this.refreshViews()
+        await this.resetWindows()
+      } catch (e: any) {
+        this.logger(`display-added-error ${e.message}`)
+      }
+
+      this.emit('screenchangeend')
     })
 
-    screen.on('display-removed', () => {
-      this.logger('display-removed')
-      this.endCapture()
+    screen.on('display-removed', async () => {
+      // 屏幕变化期间不允许截图
+      this.emit('screenchangestart')
+      try {
+        this.logger('display-removed')
+        this.endCapture()
+        await this.refreshViews()
+        await this.resetWindows()
+      } catch (e: any) {
+        this.logger(`display-removed-error ${e.message}`)
+      }
+      this.emit('screenchangeend')
     })
   }
 }

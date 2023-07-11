@@ -266,10 +266,10 @@ ajv@^6.10.0, ajv@^6.12.4:
     json-schema-traverse "^0.4.1"
     uri-js "^4.2.2"
 
-akey-react-screenshots@1.0.14-alpha.2:
-  version "1.0.14-alpha.2"
-  resolved "https://registry.npmjs.org/akey-react-screenshots/-/akey-react-screenshots-1.0.14-alpha.2.tgz#63740b846651c0d1866828ba5a06883d7f98ad48"
-  integrity sha512-Q9R0tJSFyAZDsBtJSzzQB6DYY530ymo1IjhxCn+o3W6u0JeO46CP4/Lggd/9cOQNFxMcetnWl7LRbU2iql00og==
+akey-react-screenshots@1.0.14-alpha.5:
+  version "1.0.14-alpha.5"
+  resolved "https://registry.npmjs.org/akey-react-screenshots/-/akey-react-screenshots-1.0.14-alpha.5.tgz#eb215eee0a0096b217b42e9985394f8f64121b56"
+  integrity sha512-rRXe9o7bsV/dioA/TRdJ0jDBbhhOapEC/MqxS8gkULOqqKLpavdC1N9RgJHWyOvFlj5qFHNEtQ8p0kHJSvTxvw==
 
 ansi-regex@^5.0.1:
   version "5.0.1"

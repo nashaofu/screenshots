@@ -67,4 +67,5 @@ typings/
 
 dist/
 
-.electron/**
+examples/.electron/**
+examples/.umi/**
