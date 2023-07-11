@@ -70,3 +70,5 @@ dist/
 examples/.electron/**
 examples/.electron-production/**
 examples/.umi/**
+examples/src/.umi/**
+examples/src/.electron-production/**
