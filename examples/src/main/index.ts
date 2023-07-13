@@ -1,5 +1,4 @@
-import { app, BrowserWindow, screen, ipcMain } from "electron";
-import os from 'os'
+import { app, BrowserWindow, globalShortcut, nativeImage, ipcMain } from "electron";
 import path from "path";
 import { Screenshots } from "akey-electron-screenshots";
 import log from "electron-log";
@@ -33,7 +32,6 @@ app.whenReady().then(() => {
     singleWindow: true
   });
 
-
   app.on("activate", function () {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
@@ -43,7 +41,7 @@ app.whenReady().then(() => {
   ipcMain.handle("screenshot", () => {
     console.log("hit screenshot");
     const isMacFullscreenHide = mainWindow.isFullScreen();
-    screenshotsIns.startCapture({ isMacFullscreenHide: isMacFullscreenHide });
+    screenshotsIns.startCapture({ isMacFullscreenHide: isMacFullscreenHide })
     return `hi, i'm from screenshot`;
   });
 
@@ -76,6 +74,20 @@ app.whenReady().then(() => {
     console.log('getDiskDetail', detail);
     return detail
   });
+
+
+    // 点击确定按钮回调事件
+    screenshotsIns.on('ok', (e, buffer, bounds) => {
+      const image = nativeImage.createFromBuffer(buffer)
+      mainWindow.webContents.send('screenshot:ok', { url: image.toDataURL() })
+
+      console.log('screenshots buffer', buffer)
+      console.log('screenshots image', image.toDataURL())
+    })
+
+    globalShortcut.register('Escape', () => {
+      screenshotsIns.endCapture()
+    })
 });
 
 // Quit when all windows are closed, except on macOS. There, it's common

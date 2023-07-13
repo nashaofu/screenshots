@@ -22,4 +22,10 @@ contextBridge.exposeInMainWorld("$api", {
   diskDetail: async () => {
     return await ipcRenderer.invoke("disk-detail");
   },
+  handleScreenShot: (callback: any) => {
+    ipcRenderer.on('screenshot:ok', callback)
+  },
+  rmHandleScreenShot: (callback: any) => {
+    ipcRenderer.removeListener('screenshot:ok', callback)
+  }
 });

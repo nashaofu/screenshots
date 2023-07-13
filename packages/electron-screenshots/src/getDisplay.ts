@@ -49,6 +49,7 @@ export const getAllDisplays = async () => {
   return displays.map(({ bounds, id }, index) => {
     return {
       id,
+      index, // 很重要，页面截图回调的时候会带着这个参数，用来跟窗口对应
       screenshotDesktopId: screenshotDesktopDisplays[index].id,
       x: Math.floor(bounds.x),
       y: Math.floor(bounds.y),

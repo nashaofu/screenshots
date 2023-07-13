@@ -14,13 +14,13 @@ export interface ScreenshotsProps {
   url?: string
   width: number
   height: number
+  boundsDisplayIndex: number;
   lang?: Partial<Lang>
-  disabled?: boolean
   className?: string
   [key: string]: unknown
 }
 
-export default function Screenshots ({ url, width, height, lang, disabled, className, ...props }: ScreenshotsProps): ReactElement {
+export default function Screenshots ({ url, width, height, lang, className, boundsDisplayIndex, ...props }: ScreenshotsProps): ReactElement {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const image = useGetLoadedImage(url)!
   const canvasContextRef = useRef<CanvasRenderingContext2D>(null)
@@ -32,6 +32,8 @@ export default function Screenshots ({ url, width, height, lang, disabled, class
   const [bounds, setBounds] = useState<Bounds | null>(null)
   const [cursor, setCursor] = useState<string | undefined>('move')
   const [operation, setOperation] = useState<string | undefined>(undefined)
+  const searchParams = new URLSearchParams(window.location.search)
+  const displayIndex = Number(searchParams.get('displayIndex'))
 
   const store = {
     url,
@@ -42,13 +44,14 @@ export default function Screenshots ({ url, width, height, lang, disabled, class
       ...zhCN,
       ...lang
     },
-    disabled,
     emiterRef,
     canvasContextRef,
     history,
     bounds,
     cursor,
-    operation
+    operation,
+    boundsDisplayIndex,
+    displayIndex
   }
 
   const call = useCallback(
@@ -88,6 +91,11 @@ export default function Screenshots ({ url, width, height, lang, disabled, class
 
   const onDoubleClick = useCallback(
     async (e: MouseEvent) => {
+      const enableDoubleClick = boundsDisplayIndex === -1 || boundsDisplayIndex === displayIndex
+      if (!enableDoubleClick) {
+        return
+      }
+
       if (e.button !== 0 || !image) {
         return
       }
@@ -121,7 +129,7 @@ export default function Screenshots ({ url, width, height, lang, disabled, class
         })
       }
     },
-    [image, history, bounds, width, height, call]
+    [image, history, bounds, width, height, call, boundsDisplayIndex, displayIndex]
   )
 
   const onContextMenu = useCallback(

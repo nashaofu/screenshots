@@ -1,30 +1,31 @@
-import React, { memo, ReactElement, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import React, {
+  memo,
+  ReactElement,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState
+} from 'react'
 import useBounds from '../hooks/useBounds'
 import useStore from '../hooks/useStore'
-import useDisplayActive from '../hooks/useDisplayActive'
 import ScreenshotsMagnifier from '../ScreenshotsMagnifier'
 import { Point, Position } from '../types'
 import getBoundsByPoints from './getBoundsByPoints'
 import './index.less'
 
-/**
- * 多屏截图，仅支持在一个屏幕进行圈选，圈选后在当前屏幕双击保存截图
- */
-
 export default memo(function ScreenshotsBackground (): ReactElement | null {
   const { url, image, width, height, displayIndex } = useStore()
+  const disabled = false
   const [bounds, boundsDispatcher] = useBounds()
 
-  // 整个截图屏幕div元素
   const elRef = useRef<HTMLDivElement>(null)
-  // 记录鼠标左键第一次点击的位置
   const pointRef = useRef<Point | null>(null)
   // 用来判断鼠标是否移动过
   // 如果没有移动过位置，则mouseup时不更新
   const isMoveRef = useRef<boolean>(false)
-  // 鼠标移动的位置记录,放大镜坐标
   const [position, setPosition] = useState<Position | null>(null)
-  const isActiveDisplay = useDisplayActive()
+  const hasNoticeRef = useRef(false)
 
   const updateBounds = useCallback(
     (p1: Point, p2: Point) => {
@@ -53,10 +54,6 @@ export default memo(function ScreenshotsBackground (): ReactElement | null {
 
   const onMouseDown = useCallback(
     (e: React.MouseEvent) => {
-      if (!isActiveDisplay) {
-        return
-      }
-
       // e.button 鼠标左键
       if (pointRef.current || bounds || e.button !== 0) {
         return
@@ -67,14 +64,27 @@ export default memo(function ScreenshotsBackground (): ReactElement | null {
       }
       isMoveRef.current = false
     },
-    [bounds, isActiveDisplay]
+    [bounds]
   )
 
   useEffect(() => {
     const onMouseMove = (e: MouseEvent) => {
+      const rect = elRef?.current?.getBoundingClientRect()
+
+      console.log('getBoundingClientRect rect', rect, disabled, bounds)
+
+      if (disabled && !bounds) {
+        return
+      }
       if (elRef.current) {
         const rect = elRef.current.getBoundingClientRect()
-        if (e.clientX < rect.left || e.clientY < rect.top || e.clientX > rect.right || e.clientY > rect.bottom) {
+        console.log('clientX, clientY', e.clientX, e.clientY)
+        if (
+          e.clientX < rect.left ||
+          e.clientY < rect.top ||
+          e.clientX > rect.right ||
+          e.clientY > rect.bottom
+        ) {
           setPosition(null)
         } else {
           setPosition({
@@ -91,51 +101,60 @@ export default memo(function ScreenshotsBackground (): ReactElement | null {
         x: e.clientX,
         y: e.clientY
       })
-      isMoveRef.current = true
     }
 
-    /**
-     * 第一个屏幕按鼠标左键，然后移动鼠标到第二个屏幕，
-     * 这个时候放下鼠标左键仍然会触发第一个屏幕onMouseUp事件，
-     * 且不会触发第一个屏幕onMouseUp事件
-     */
+    const onMouseOut = () => {
+      console.log('onMouseOut setPosition')
+      setPosition(null)
+    }
+
     const onMouseUp = (e: MouseEvent) => {
+      console.log('onMouseUp onMouseUp')
       if (!pointRef.current) {
         return
       }
 
-      // 如果 isMoveRef.current是false，说明是双击事件
       if (isMoveRef.current) {
         updateBounds(pointRef.current, {
           x: e.clientX,
           y: e.clientY
-        });
-        (window as any).screenshots.boundsSelectChange(Number(displayIndex))
+        })
       }
       pointRef.current = null
       isMoveRef.current = false
     }
-
-    const onMouseOut = () => {
-      setPosition(null)
-    }
-
     window.addEventListener('mousemove', onMouseMove)
     window.addEventListener('mouseup', onMouseUp)
     window.addEventListener('mouseout', onMouseOut)
+
     return () => {
       window.removeEventListener('mousemove', onMouseMove)
       window.removeEventListener('mouseup', onMouseUp)
       window.removeEventListener('mouseout', onMouseOut)
+      hasNoticeRef.current = false
     }
-  }, [updateBounds])
+  }, [disabled, bounds, updateBounds])
+
+  useEffect(() => {
+    return () => {
+      isMoveRef.current = true
+    }
+  }, [])
 
   useLayoutEffect(() => {
+    console.log('useLayoutEffect image bounds', image, bounds)
     if (!image || bounds) {
       // 重置位置
       setPosition(null)
+      if (!hasNoticeRef.current && bounds) {
+        // eslint-disable-next-line
+        (window as any).screenshots.disabled();
+        (window as any).screenshots.boundsSelectChange(Number(displayIndex))
+        hasNoticeRef.current = true
+        console.log('onMouseOut', image, bounds)
+      }
     }
-  }, [image, bounds])
+  }, [image, bounds, displayIndex])
 
   // 没有加载完不显示图片
   if (!url || !image) {
@@ -143,10 +162,18 @@ export default memo(function ScreenshotsBackground (): ReactElement | null {
   }
 
   return (
-    <div ref={elRef} className='screenshots-background' onMouseDown={onMouseDown}>
+    <div
+      ref={elRef}
+      className='screenshots-background'
+      onMouseDown={onMouseDown}
+    >
       <img className='screenshots-background-image' src={url} />
-      <div className='screenshots-background-mask' />
-      {position && !bounds && isActiveDisplay && <ScreenshotsMagnifier x={position?.x} y={position?.y} />}
+      <div
+        className='screenshots-background-mask'
+      />
+      {position && !bounds && (
+        <ScreenshotsMagnifier x={position?.x} y={position?.y} />
+      )}
     </div>
   )
 })

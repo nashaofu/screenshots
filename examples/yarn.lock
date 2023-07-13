@@ -2430,28 +2430,23 @@ ajv@^6.10.0, ajv@^6.12.0, ajv@^6.12.5:
     uri-js "^4.2.2"
 
 akey-electron-screenshots@/Users/ansiyuan/Documents/ansiyuan/packages/screenshots/packages/electron-screenshots:
-  version "1.0.14-alpha.9"
+  version "1.0.1-5.1"
   dependencies:
-    akey-react-screenshots "1.0.14-alpha.5"
+    akey-react-screenshots "file:../packages/react-screenshots"
     debug "^4.3.3"
     fs-extra "^10.1.0"
     screenshot-desktop "^1.12.7"
 
 "akey-electron-screenshots@file:../packages/electron-screenshots":
-  version "1.0.14-alpha.9"
+  version "1.0.1-5.1"
   dependencies:
-    akey-react-screenshots "1.0.14-alpha.5"
+    akey-react-screenshots "file:../packages/react-screenshots"
     debug "^4.3.3"
     fs-extra "^10.1.0"
     screenshot-desktop "^1.12.7"
 
-akey-react-screenshots@1.0.14-alpha.5:
-  version "1.0.14-alpha.5"
-  resolved "https://registry.npmjs.org/akey-react-screenshots/-/akey-react-screenshots-1.0.14-alpha.5.tgz#eb215eee0a0096b217b42e9985394f8f64121b56"
-  integrity sha512-rRXe9o7bsV/dioA/TRdJ0jDBbhhOapEC/MqxS8gkULOqqKLpavdC1N9RgJHWyOvFlj5qFHNEtQ8p0kHJSvTxvw==
-
 "akey-react-screenshots@file:../packages/react-screenshots":
-  version "1.0.14-alpha.5"
+  version "1.0.15"
 
 ansi-html-community@^0.0.8:
   version "0.0.8"

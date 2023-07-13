@@ -266,10 +266,11 @@ ajv@^6.10.0, ajv@^6.12.4:
     json-schema-traverse "^0.4.1"
     uri-js "^4.2.2"
 
-akey-react-screenshots@1.0.15:
-  version "1.0.15"
-  resolved "https://registry.npmjs.org/akey-react-screenshots/-/akey-react-screenshots-1.0.15.tgz#67f50f8557a43182695471980fc59c290bb37491"
-  integrity sha512-0GbAL1OZNqAjly1hDfiqwbO46pKvb99ULFryW12CIKemCwk7yFEu1AqDItAklQfz6diBcKbxWUWxOAPt/9MI/Q==
+akey-react-screenshots@/Users/ansiyuan/Documents/ansiyuan/packages/screenshots/packages/react-screenshots:
+  version "1.0.16"
+
+"akey-react-screenshots@file:../react-screenshots":
+  version "1.0.16"
 
 ansi-regex@^5.0.1:
   version "5.0.1"

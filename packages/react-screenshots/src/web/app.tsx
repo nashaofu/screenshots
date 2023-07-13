@@ -37,6 +37,7 @@ export default function App (): ReactElement {
         onSave={onSave}
         onCancel={onCancel}
         onOk={onOk}
+        boundsDisplayIndex={-1}
       />
     </div>
   )

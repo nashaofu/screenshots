@@ -8,5 +8,6 @@ electron_screenshot=$home"/packages/electron-screenshots"
 
 
 cd $electron_screenshot
-yarn add akey-react-screenshots@1.0.15.2
-yarn build
+yarn add akey-react-screenshots@1.0.16
+
+npm publish --tag beta

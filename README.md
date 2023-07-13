@@ -11,6 +11,7 @@ electron 截图插件和 react 截图插件，[在线示例](https://github.com/
 - 多语言支持
 - 截图操作：马赛克、文本、画笔、箭头、椭圆、矩形
 
+
 ## electron-screenshots
 
 electron 截图插件，[electron-screenshots 文档](./packages/electron-screenshots/README.md)

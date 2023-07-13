@@ -55,6 +55,9 @@ export class Screenshots extends Events {
 
   public $views: BrowserView[] = []
 
+  /* 截图矩形标识器（ScreenshotsCanvas）所在屏幕序号index， 默认是-1，表示当前没有进行截图圈选 */
+  public boundsDisplayIndex = -1
+
   private logger: Logger
 
   private singleWindow: boolean
@@ -71,7 +74,11 @@ export class Screenshots extends Events {
 
   constructor (opts?: ScreenshotsOpts) {
     super()
-    this.logger = opts?.logger || debug('electron-screenshots')
+    this.logger = (...args: any[]) => {
+      const logger = opts?.logger || debug('electron-screenshots')
+      logger('info', ...args)
+      console.log(...args)
+    }
     this.singleWindow = opts?.singleWindow || false
     this.screenshotPath = path.join(app.getPath('userData'), '/AkeyTemp')
     fs.ensureDirSync(this.screenshotPath)
@@ -86,6 +93,7 @@ export class Screenshots extends Events {
   // 初始化displays和$views
   private async refreshViews () {
     this.displays = await getAllDisplays()
+    console.log('getAllDisplays', this.displays)
     this.$views = this.displays.map((display) => {
       const browserView = new BrowserView({
         webPreferences: {
@@ -97,8 +105,9 @@ export class Screenshots extends Events {
       browserView.webContents.loadURL(
         `file://${require.resolve(
           'akey-react-screenshots/electron/electron.html'
-        )}?id=${display.id}`
+        )}?displayIndex=${display.index}`
       )
+
       return browserView
     })
     this.logger('screenshots refreshViews', this.displays)
@@ -134,9 +143,8 @@ export class Screenshots extends Events {
         await this.createWindow(display, i)
       } catch (error: any) {
         console.log('createWindow error', i, error.message)
-        this.logger(error)
+        this.logger('createWindow error: ' + error.message)
       }
-      this.logger('screenshots:start2', i, display, imageUrl)
 
       const enableBlackMask = isMacFullscreenHide && activeDisplayId === display.id // mac系统, 全屏截图且用户选择隐藏当前窗口
 
@@ -158,6 +166,8 @@ export class Screenshots extends Events {
       return
     }
 
+    this.boundsDisplayIndex = -1
+
     await this.createWindowForDisplays(options)
 
     console.timeEnd('startCapture')
@@ -175,7 +185,7 @@ export class Screenshots extends Events {
     }
 
     this.$wins.forEach((win, index) => {
-      this.logger('endCapture:for', win)
+      this.logger('endCapture:for', win.id)
       // 先清除 Kiosk 模式，然后取消全屏才有效
       // win?.setKiosk?.(false)
       win.blur()
@@ -227,9 +237,8 @@ export class Screenshots extends Events {
   private async reset () {
     this.logger('reset')
     // 重置截图区域
-    this.$views.forEach((win) => win.webContents.send('SCREENSHOTS:reset'))
+    this.$views.forEach((view) => view.webContents.send('SCREENSHOTS:reset'))
 
-    this.logger('reset1')
     // 保证 UI 有足够的时间渲染
     await Promise.race([
       new Promise<void>((resolve) => setTimeout(() => resolve(), 500)),
@@ -245,12 +254,10 @@ export class Screenshots extends Events {
   private async createWindow (display: Display, index: number): Promise<BrowserWindow> {
     this.logger('createWindow', display)
     // 重置截图区域
-    // await this.reset()
+    // console.time('createWindow reset')
+    // await this.reset() // 对性能影响太大
+    // console.timeEnd('createWindow reset')
 
-    // let win = this.$wins[index]
-
-    // windows系统某些情况下复用未销毁的窗口
-    // if (!win || win?.isDestroyed?.()) {
     const win = new BrowserWindow({
       title: 'screenshots',
       x: display.x,
@@ -288,11 +295,6 @@ export class Screenshots extends Events {
       paintWhenInitiallyHidden: false,
       acceptFirstMouse: true
     })
-    console.log('createWindow new')
-    // } else {
-    //   this.logger('createWindow use cache', win)
-    //   console.log('createWindow use cache')
-    // }
 
     win.on('show', () => {
       win?.focus()
@@ -300,26 +302,19 @@ export class Screenshots extends Events {
 
     win.on('closed', () => {
       this.emit('windowClosed', win)
-      // const index = this.$wins.indexOf(win)
-      // if (index > -1) {
-      //   this.$wins?.splice?.(index, 1)
-      // }
-      // win = null
     })
-    // }
 
     win.setBrowserView(this.$views[index])
 
     win.webContents.once('crashed', (e) => {
-      this.logger(e)
+      this.logger('screenshot crashed', e)
+      this.endCapture()
     })
 
     win.webContents.once('render-process-gone', async (event, { reason }) => {
       const msg = `The renderer process has crashed unexpected or is killed (${reason}).`
       this.logger(msg)
-
-      // if (reason == 'crashed') {
-      // }
+      this.endCapture()
     })
 
     // 适定平台
@@ -346,6 +341,8 @@ export class Screenshots extends Events {
       width: display.width,
       height: display.height
     })
+
+    this.$views[index].webContents.openDevTools()
 
     win.show()
 
@@ -399,12 +396,25 @@ export class Screenshots extends Events {
     })
 
     /**
-     * DISABLED事件
+     * 记录当前进行截图圈选的屏幕序号
      */
-    ipcMain.on('SCREENSHOTS:disabled', () => {
-      this.logger('SCREENSHOTS:disabled')
+    ipcMain.on('SCREENSHOTS:boundsSelectChange', (_, index: number) => {
+      this.logger('SCREENSHOTS:boundsSelectChange', index)
 
-      this.setDisabled()
+      if (index !== this.boundsDisplayIndex) {
+        this.boundsDisplayIndex = index
+        for (const view of this.$views) {
+          view.webContents.send('SCREENSHOTS:boundsSelectUpdate', index)
+        }
+      }
+    })
+
+    /** 截图过程中遇到JS报错或者程序主动抛出Reject的时候 */
+    ipcMain.on('SCREENSHOTS:rejectError', (_, message: string) => {
+      this.logger('SCREENSHOTS:rejectError', message)
+      const event = new Event()
+      this.emit('cancel', event)
+      this.endCapture()
     })
 
     /**
@@ -430,10 +440,7 @@ export class Screenshots extends Events {
         const seconds = padStart(time.getSeconds(), 2, '0')
         const milliseconds = padStart(time.getMilliseconds(), 3, '0')
         const index = data?.display?.index || 0
-
         const win = this.$wins[index]
-
-        // win.setAlwaysOnTop(false)
 
         const { canceled, filePath } = await dialog.showSaveDialog(win, {
           defaultPath: `${year}${month}${date}${hours}${minutes}${seconds}${milliseconds}.png`
@@ -444,6 +451,7 @@ export class Screenshots extends Events {
         }
         // win.setAlwaysOnTop(true)
         if (canceled || !filePath) {
+          this.endCapture()
           return
         }
 

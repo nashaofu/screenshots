@@ -1,27 +1,35 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import yayJpg from "../assets/yay.jpg";
+import { ipcRenderer } from "electron";
 
 export default function HomePage() {
   const [logPath, setLogPath] = useState("");
-  const [diskDetail, setDiskDetail] = useState('');
+  const [diskDetail, setDiskDetail] = useState("");
+  const [imgUrl, setImgUrl] = useState("");
+
+  function handleScreenShot(e: any, data: any) {
+    console.log("handleScreenShot", data.url);
+    setImgUrl(data.url);
+  }
+
+  useEffect(() => {
+    window.$api.handleScreenShot(handleScreenShot);
+    return () => {
+      window.$api.rmHandleScreenShot(handleScreenShot);
+    };
+  }, []);
 
   return (
     <div>
-      <h2>Yay! Welcome to umi with electron!</h2>
-      <p>
-        <img src={yayJpg} width="388" />
-      </p>
-      <p>
-        To get started, edit <code>pages/index.tsx</code> and save to reload.
-      </p>
-      <button
-        onClick={async () => {
-          window.alert(await window.$api.getPlatform());
-          window.alert("edit src/main/ipc/platform.ts and try me again!");
-        }}
-      >
-        what is my platform?
-      </button>
+      <div style={{
+        width: '200px',
+        height: '200px',
+        border: "2px solid pink",
+        padding: '10px',
+        background: '#9b93931f'
+      }}>
+      {imgUrl ? <img src={imgUrl} alt="截图图片" style={{width: '100%'}} /> : null}
+      </div>
 
       <button
         onClick={async () => {
@@ -67,7 +75,7 @@ export default function HomePage() {
       <button
         onClick={async () => {
           const data = await window.$api.diskDetail();
-          setDiskDetail(data)
+          setDiskDetail(data);
         }}
       >
         Disk Detail

@@ -41,6 +41,15 @@ export default function composeImage ({ image, width, height, history, bounds }:
       bounds.height
     )
 
+    console.log('drawImage', image, bounds.x * rx,
+      bounds.y * ry,
+      bounds.width * rx,
+      bounds.height * ry,
+      0,
+      0,
+      bounds.width,
+      bounds.height)
+
     history.stack.slice(0, history.index + 1).forEach(item => {
       if (item.type === HistoryItemType.Source) {
         item.draw(ctx, item)
@@ -49,7 +58,9 @@ export default function composeImage ({ image, width, height, history, bounds }:
 
     $canvas.toBlob(blob => {
       if (!blob) {
-        return reject(new Error('canvas toBlob fail'))
+        const err = new Error('canvas toBlob fail');
+        (window as any).screenshots.rejectError(err.message)
+        return reject(err)
       }
       resolve(blob)
     }, 'image/png')
