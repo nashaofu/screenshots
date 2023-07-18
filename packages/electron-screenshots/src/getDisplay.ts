@@ -1,10 +1,14 @@
 import { Rectangle, screen } from 'electron'
-import screenshot from 'screenshot-desktop'
 
 export interface Display extends Rectangle {
   id: number
   screenshotDesktopId?: number // 截图包screenshot-desktop需要用到
   index?: number
+}
+
+export interface ScreenshotDesktopDisplay {
+  id: number;
+  name: string;
 }
 
 /**
@@ -43,9 +47,8 @@ export interface Display extends Rectangle {
 ]
  *
  */
-export const getAllDisplays = async () => {
+export const getAllDisplays = async (screenshotDesktopDisplays: ScreenshotDesktopDisplay[]) => {
   const displays = screen.getAllDisplays()
-  const screenshotDesktopDisplays = await screenshot.listDisplays()
   return displays.map(({ bounds, id }, index) => {
     return {
       id,

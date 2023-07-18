@@ -1,6 +1,6 @@
 {
   "name": "akey-electron-screenshots",
-  "version": "1.0.16",
+  "version": "1.0.16-beta.5",
   "description": "electron 截图插件",
   "types": "lib/screenshots.d.ts",
   "main": "lib/screenshots.js",
@@ -35,10 +35,10 @@
     "registry": "https://registry.npmjs.org/"
   },
   "dependencies": {
-    "akey-react-screenshots": "/Users/ansiyuan/Documents/ansiyuan/packages/screenshots/packages/react-screenshots",
+    "akey-react-screenshots": "1.0.16-beta.3",
+    "akey-screenshot-desktop": "1.14.3",
     "debug": "^4.3.3",
-    "fs-extra": "^10.1.0",
-    "screenshot-desktop": "^1.12.7"
+    "fs-extra": "^10.1.0"
   },
   "peerDependencies": {
     "electron": ">=14"

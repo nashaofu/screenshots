@@ -80,9 +80,6 @@ app.whenReady().then(() => {
     screenshotsIns.on('ok', (e, buffer, bounds) => {
       const image = nativeImage.createFromBuffer(buffer)
       mainWindow.webContents.send('screenshot:ok', { url: image.toDataURL() })
-
-      console.log('screenshots buffer', buffer)
-      console.log('screenshots image', image.toDataURL())
     })
 
     globalShortcut.register('Escape', () => {

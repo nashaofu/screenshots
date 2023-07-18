@@ -14,11 +14,11 @@ import {
 import Events from 'events'
 import fs from 'fs-extra'
 import path from 'path'
-import screenshot from 'screenshot-desktop'
 import Event from './event'
-import getDisplay, { Display, getAllDisplays } from './getDisplay'
+import getDisplay, { Display, getAllDisplays, ScreenshotDesktopDisplay } from './getDisplay'
 import padStart from './padStart'
 import { Bounds, ScreenshotsData } from './preload'
+import akeyScreenshotDesktop from 'akey-screenshot-desktop'
 
 export type LoggerFn = (...args: unknown[]) => void
 export type Logger = Debugger | LoggerFn
@@ -51,7 +51,11 @@ export class Screenshots extends Events {
   // 截图窗口对象
   public $wins: BrowserWindow[] = []
 
+  // electron screen 获取到的屏幕信息
   public displays: Display[] = []
+
+  // akey-screenshot-desktop 获取到的屏幕信息
+  public screenshotDesktopDisplays: ScreenshotDesktopDisplay[] = []
 
   public $views: BrowserView[] = []
 
@@ -64,7 +68,10 @@ export class Screenshots extends Events {
 
   private screenshotPath: string
 
-  private isReady = new Promise<void>((resolve) => {
+  private status: 'ready' | 'busy' | 'wait' = 'wait' // 当前截图组件状态，只有ready的时候允许截图
+
+  // web也要准备好后才能操作，包括双击和圈选
+  private isWebReady = new Promise<void>((resolve) => {
     ipcMain.once('SCREENSHOTS:ready', () => {
       this.logger('SCREENSHOTS:ready')
 
@@ -81,19 +88,41 @@ export class Screenshots extends Events {
     }
     this.singleWindow = opts?.singleWindow || false
     this.screenshotPath = path.join(app.getPath('userData'), '/AkeyTemp')
+    console.time('ensureDirSync')
     fs.ensureDirSync(this.screenshotPath)
+    console.timeEnd('ensureDirSync')
     this.listenIpc()
     this.refreshViews()
+      .then(() => this.setReady())
     if (opts?.lang) {
       this.setLang(opts.lang)
     }
   }
 
+  private setReady () {
+    this.status = 'ready'
+    this.logger('Screenshots:status', this.status)
+  }
+
+  private setBusy () {
+    this.status = 'busy'
+    this.logger('Screenshots:status', this.status)
+  }
+
+  private setWait () {
+    this.status = 'wait'
+    this.logger('Screenshots:status', this.status)
+  }
+
+  private isReady () {
+    return this.status === 'ready'
+  }
+
   // 根据屏幕数量预加载BrowserView
   // 初始化displays和$views
   private async refreshViews () {
-    this.displays = await getAllDisplays()
-    console.log('getAllDisplays', this.displays)
+    this.screenshotDesktopDisplays = await akeyScreenshotDesktop.listDisplays()
+    this.displays = await getAllDisplays(this.screenshotDesktopDisplays)
     this.$views = this.displays.map((display) => {
       const browserView = new BrowserView({
         webPreferences: {
@@ -137,7 +166,9 @@ export class Screenshots extends Events {
     }
 
     return Promise.all(this.displays.map(async (display, i) => {
+      console.time('desktopCapture')
       const imageUrl = await this.capture(display)
+      console.timeEnd('desktopCapture')
 
       try {
         await this.createWindow(display, i)
@@ -166,8 +197,17 @@ export class Screenshots extends Events {
       return
     }
 
+    this.logger(`startCapture:status is ${this.status}`)
+
+    if (!this.isReady()) {
+      return
+    }
+
+    this.setBusy()
+
     this.boundsDisplayIndex = -1
 
+    await this.isWebReady
     await this.createWindowForDisplays(options)
 
     console.timeEnd('startCapture')
@@ -181,6 +221,7 @@ export class Screenshots extends Events {
     await this.reset()
 
     if (!this.$wins.length) {
+      this.setReady()
       return
     }
 
@@ -210,6 +251,7 @@ export class Screenshots extends Events {
     }
 
     fs.emptyDir(this.screenshotPath)
+    this.setReady()
   }
 
   /**
@@ -218,7 +260,7 @@ export class Screenshots extends Events {
   public async setLang (lang: Partial<Lang>): Promise<void> {
     this.logger('setLang', lang)
 
-    await this.isReady
+    await this.isWebReady
 
     // this.$views.webContents.send('SCREENSHOTS:setLang', lang)
     this.$views.forEach((win) =>
@@ -236,16 +278,18 @@ export class Screenshots extends Events {
 
   private async reset () {
     this.logger('reset')
+    if (this.$views.length > 0) {
     // 重置截图区域
-    this.$views.forEach((view) => view.webContents.send('SCREENSHOTS:reset'))
+      this.$views.forEach((view) => view.webContents.send('SCREENSHOTS:reset'))
 
-    // 保证 UI 有足够的时间渲染
-    await Promise.race([
-      new Promise<void>((resolve) => setTimeout(() => resolve(), 500)),
-      new Promise<void>((resolve) =>
-        ipcMain.once('SCREENSHOTS:reset', () => resolve())
-      )
-    ])
+      // 保证 UI 有足够的时间渲染
+      await Promise.race([
+        new Promise<void>((resolve) => setTimeout(() => resolve(), 500)),
+        new Promise<void>((resolve) =>
+          ipcMain.once('SCREENSHOTS:reset', () => resolve())
+        )
+      ])
+    }
   }
 
   /**
@@ -342,7 +386,7 @@ export class Screenshots extends Events {
       height: display.height
     })
 
-    this.$views[index].webContents.openDevTools()
+    // this.$views[index].webContents.openDevTools()
 
     win.show()
 
@@ -353,10 +397,11 @@ export class Screenshots extends Events {
 
   private async capture (display: Display): Promise<string> {
     const filename = path.join(this.screenshotPath, `/shot-${Date.now()}.png`)
-    this.logger('SCREENSHOTS:capture', display, filename)
+    this.logger('SCREENSHOTS:cmd:capture', display, filename)
 
-    const imgPath = await screenshot({
+    const imgPath = await akeyScreenshotDesktop({
       screen: display.screenshotDesktopId,
+      displays: this.screenshotDesktopDisplays,
       filename
     })
 
@@ -375,10 +420,9 @@ export class Screenshots extends Events {
 
       const event = new Event()
       this.emit('ok', event, buffer, data)
-      if (event.defaultPrevented) {
-        return
+      if (!event.defaultPrevented) {
+        clipboard.writeImage(nativeImage.createFromBuffer(buffer))
       }
-      clipboard.writeImage(nativeImage.createFromBuffer(buffer))
       this.endCapture()
     })
     /**
@@ -427,7 +471,13 @@ export class Screenshots extends Events {
 
         const event = new Event()
         this.emit('save', event, buffer, data)
-        if (event.defaultPrevented || !this.$wins.length) {
+        if (event.defaultPrevented) {
+          this.endCapture()
+          return
+        }
+
+        if (!this.$wins.length) {
+          this.endCapture()
           return
         }
 
@@ -447,6 +497,7 @@ export class Screenshots extends Events {
         })
 
         if (!win) {
+          this.endCapture()
           return
         }
         // win.setAlwaysOnTop(true)
@@ -467,6 +518,8 @@ export class Screenshots extends Events {
 
     screen.on('display-added', async () => {
       // 屏幕变化期间不允许截图
+      this.setWait()
+
       this.emit('screenchangestart')
       try {
         this.logger('display-added')
@@ -476,12 +529,13 @@ export class Screenshots extends Events {
       } catch (e: any) {
         this.logger(`display-added-error ${e.message}`)
       }
-
       this.emit('screenchangeend')
+      this.setReady()
     })
 
     screen.on('display-removed', async () => {
       // 屏幕变化期间不允许截图
+      this.setWait()
       this.emit('screenchangestart')
       try {
         this.logger('display-removed')
@@ -492,6 +546,7 @@ export class Screenshots extends Events {
         this.logger(`display-removed-error ${e.message}`)
       }
       this.emit('screenchangeend')
+      this.setReady()
     })
   }
 }
