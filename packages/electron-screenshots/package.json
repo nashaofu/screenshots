@@ -2,14 +2,15 @@
   "name": "electron-screenshots",
   "version": "0.5.23",
   "description": "electron 截图插件",
-  "types": "lib/screenshots.d.ts",
-  "main": "lib/screenshots.js",
+  "types": "lib/index.d.ts",
+  "main": "lib/index.cjs.js",
+  "module": "lib/index.js",
   "files": [
     "lib/**"
   ],
   "scripts": {
     "prepublishOnly": "npm run build",
-    "start": "cross-env DEBUG=electron-screenshots electron lib/index.js",
+    "start": "cross-env DEBUG=electron-screenshots electron lib/demo.js",
     "dev": "tsc --sourceMap --watch",
     "build": "npm run lint && npm run clean && tsc",
     "lint": "eslint . --ext .js,.ts --fix",
