@@ -1469,59 +1469,59 @@ natural-compare@^1.4.0:
   resolved "https://registry.npmmirror.com/natural-compare/-/natural-compare-1.4.0.tgz#4abebfeed7541f2c27acfb29bdbbd15c8d5ba4f7"
   integrity sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==
 
-node-screenshots-darwin-arm64@0.1.8:
-  version "0.1.8"
-  resolved "https://registry.yarnpkg.com/node-screenshots-darwin-arm64/-/node-screenshots-darwin-arm64-0.1.8.tgz#89946a4223f787abfbd97ace7f4b3784bd8abf0b"
-  integrity sha512-qZQS/ULJsIGV22wm9UFaS8Bbh+CuebEvH7tudg2PowD6VpAvbAknECzU4pYOSdNRLW8wbo/AcU5ZFDGLtDPQ7w==
+node-screenshots-darwin-arm64@0.1.9:
+  version "0.1.9"
+  resolved "https://registry.yarnpkg.com/node-screenshots-darwin-arm64/-/node-screenshots-darwin-arm64-0.1.9.tgz#4413a62570eb662cb259fffcca504ab3cef2a0e5"
+  integrity sha512-zDhuui2hsgUA5FyL1wQQ9c2lPbvqmJzi45g7J+sxEmDDvRjmVv+92wTuiWuERiVAIkpjN2h+f2IR3HtOgHJHXw==
 
-node-screenshots-darwin-universal@0.1.8:
-  version "0.1.8"
-  resolved "https://registry.yarnpkg.com/node-screenshots-darwin-universal/-/node-screenshots-darwin-universal-0.1.8.tgz#54bf4ae6b621b8ed10132621542d183a8b2fbc93"
-  integrity sha512-T8xg5dw8Vjb6baP+RK2ysUBYL01M2v1Ecg/u8exZIKIVdcpj5qSqqntkGIsRQB5t+sZQPMzI692K/kW1ogAiIQ==
+node-screenshots-darwin-universal@0.1.9:
+  version "0.1.9"
+  resolved "https://registry.yarnpkg.com/node-screenshots-darwin-universal/-/node-screenshots-darwin-universal-0.1.9.tgz#2d0a5e9cf40dfca5ac9f734c816715db350e7ab5"
+  integrity sha512-4SbvokC/GvOTzYDQzcFa39c02mxWzvhIRT72J9ys82HcKgmeWWbVih2atLUvFONQrSnMt+pxrCUBqFiJVawcyQ==
 
-node-screenshots-darwin-x64@0.1.8:
-  version "0.1.8"
-  resolved "https://registry.yarnpkg.com/node-screenshots-darwin-x64/-/node-screenshots-darwin-x64-0.1.8.tgz#b6f35e81f97572d771f9b7e0752e58cb0f00af1b"
-  integrity sha512-Vbz+SYeU/Ykar+nm4I3V1H1Wiz4MzP5SXZIoPQMXOJGpXP7kNQ7dOkkyhPOB+HVAXJ+gG2tZp1LsTZH5lckRCg==
+node-screenshots-darwin-x64@0.1.9:
+  version "0.1.9"
+  resolved "https://registry.yarnpkg.com/node-screenshots-darwin-x64/-/node-screenshots-darwin-x64-0.1.9.tgz#9883cfd35f5753913f05183dd653708977964717"
+  integrity sha512-/+VYlLVbsoYYmV/by+oPZY7aUfwF02dyl0rWUxM+xaGn80o55zht05B4UaIN8vcuBByunsGv2gybECT6Gk74PA==
 
-node-screenshots-linux-x64-gnu@0.1.8:
-  version "0.1.8"
-  resolved "https://registry.yarnpkg.com/node-screenshots-linux-x64-gnu/-/node-screenshots-linux-x64-gnu-0.1.8.tgz#6f154febb17a76ab9fde0917971fd9924440b33f"
-  integrity sha512-E84st7uxSSCwr7Mn2LxE0TyRLAMdgrMg8UdMzNcmcKHcypHl8Fl8zLgPzNx6sGf2bWHl5m60Jn42bidESxTA/A==
+node-screenshots-linux-x64-gnu@0.1.9:
+  version "0.1.9"
+  resolved "https://registry.yarnpkg.com/node-screenshots-linux-x64-gnu/-/node-screenshots-linux-x64-gnu-0.1.9.tgz#21368912ce5234b428bcfb539f3140664130e0f1"
+  integrity sha512-n7uTdNJCMqJ3tEMRq0wAOsq8qiK8cbOV+fqDgaQnlFLY+5PTxH67r09r41CJdWwX5sGeDsKHguosh7ZcGte+TA==
 
-node-screenshots-linux-x64-musl@0.1.8:
-  version "0.1.8"
-  resolved "https://registry.yarnpkg.com/node-screenshots-linux-x64-musl/-/node-screenshots-linux-x64-musl-0.1.8.tgz#1017e2b8b1335f1f14942bafbf6171c4540c9aa2"
-  integrity sha512-oDDTRXnIbBNKx84SRR4ZQyxqUWOJi1OtPs1w8zE7LaHKgKMHcPXvHs340myHlDsdrfiwSmADW/soA6Eb7keYbQ==
+node-screenshots-linux-x64-musl@0.1.9:
+  version "0.1.9"
+  resolved "https://registry.yarnpkg.com/node-screenshots-linux-x64-musl/-/node-screenshots-linux-x64-musl-0.1.9.tgz#9eddb506a82f62ccbdf450d1b5ece2d414c1c718"
+  integrity sha512-zOIv5rIpL+ndWH0XWLrJOIELxh4P96WcE1omaql2oeWleS4EGwb0VqVJLhjadiMm1YROq8nvp8Vxz850nw5XPQ==
 
-node-screenshots-win32-arm64-msvc@0.1.8:
-  version "0.1.8"
-  resolved "https://registry.yarnpkg.com/node-screenshots-win32-arm64-msvc/-/node-screenshots-win32-arm64-msvc-0.1.8.tgz#02ac924fb0bb5252f90255244912577b2a53da3c"
-  integrity sha512-4YQqJJ3JPYNgI6BtEXiqNX10vlkD4UBfq+EpHI+BUj8jabQWfdbWIXcb5gLDbKeJOV/5R+mbw6TdPSpiHPS+Bw==
+node-screenshots-win32-arm64-msvc@0.1.9:
+  version "0.1.9"
+  resolved "https://registry.yarnpkg.com/node-screenshots-win32-arm64-msvc/-/node-screenshots-win32-arm64-msvc-0.1.9.tgz#c165c10230362cb5cdf3a106bc730965ef1b0382"
+  integrity sha512-wBw6SsRSKcLMyM3zTx38rzPJ1l5MjDvveWbacpkSkOXmlMMknhDr7wOsDM/VvbBV9RnEid6+AJ25gXc35HJrcA==
 
-node-screenshots-win32-ia32-msvc@0.1.8:
-  version "0.1.8"
-  resolved "https://registry.yarnpkg.com/node-screenshots-win32-ia32-msvc/-/node-screenshots-win32-ia32-msvc-0.1.8.tgz#012576ec2b1f3b7e9bc843fbac100ff202669b33"
-  integrity sha512-rheBdbl7SaDZCuqJoEIUKH6s23x21RjmqVWrhyeWV9M1SGBdyq/af3kC1QTp3Gycon71LjJsR0LPTj3M5AO4/w==
+node-screenshots-win32-ia32-msvc@0.1.9:
+  version "0.1.9"
+  resolved "https://registry.yarnpkg.com/node-screenshots-win32-ia32-msvc/-/node-screenshots-win32-ia32-msvc-0.1.9.tgz#5cfc18e4a667d350c52d019be0493908b5e844de"
+  integrity sha512-uZW5gbKV6Hrmk2tafoAyHnn48cJ0LWRsSh8HQjiOjyeYd2E29ubPczhlt7NhAxr7ZUCzDeOigEZYm+VV2HCTrg==
 
-node-screenshots-win32-x64-msvc@0.1.8:
-  version "0.1.8"
-  resolved "https://registry.yarnpkg.com/node-screenshots-win32-x64-msvc/-/node-screenshots-win32-x64-msvc-0.1.8.tgz#eb4212d79afd0107febb07417be72ae8e3633b6d"
-  integrity sha512-wan1x3dWkPeJ5cFsG4ihijr++o58awr+X2+HoyFK09kLMwj+cywsjGGid/DqWRh/OKiGFtLKtpyFNiCVdBJFPw==
+node-screenshots-win32-x64-msvc@0.1.9:
+  version "0.1.9"
+  resolved "https://registry.yarnpkg.com/node-screenshots-win32-x64-msvc/-/node-screenshots-win32-x64-msvc-0.1.9.tgz#faacca9a952eef00ec51b061c62896d507958811"
+  integrity sha512-9HR/YaYwAImHeuptFtnQuP4/JI9OxfcqQlLiK1XgYwH18eTnv49ukG09MbDAiHvXXWYxQK3Q5w2H7da7FCoCWA==
 
-node-screenshots@^0.1.8:
-  version "0.1.8"
-  resolved "https://registry.yarnpkg.com/node-screenshots/-/node-screenshots-0.1.8.tgz#039dd85ac311243c6c40e11df98f8a1a7c87f090"
-  integrity sha512-iW/OiMk/0y6F4YFbIlo0rK731vvEeadrwDmB+/JCg5ucTpSss07MfAGmLWToqKIFZRtUDt3FmU4VPMUD2qK9Kw==
+node-screenshots@^0.1.9:
+  version "0.1.9"
+  resolved "https://registry.yarnpkg.com/node-screenshots/-/node-screenshots-0.1.9.tgz#c6a17657def4dd12ffaa9fe9832ae0154d571196"
+  integrity sha512-9f6yV/e7LU0KWkOJAQNR6GTEtnbnSaZKf9ukkF1VDJk0qj3aIcedQqYtd92IdEK8chVg+YbMfSuchlhq8iHI0Q==
   optionalDependencies:
-    node-screenshots-darwin-arm64 "0.1.8"
-    node-screenshots-darwin-universal "0.1.8"
-    node-screenshots-darwin-x64 "0.1.8"
-    node-screenshots-linux-x64-gnu "0.1.8"
-    node-screenshots-linux-x64-musl "0.1.8"
-    node-screenshots-win32-arm64-msvc "0.1.8"
-    node-screenshots-win32-ia32-msvc "0.1.8"
-    node-screenshots-win32-x64-msvc "0.1.8"
+    node-screenshots-darwin-arm64 "0.1.9"
+    node-screenshots-darwin-universal "0.1.9"
+    node-screenshots-darwin-x64 "0.1.9"
+    node-screenshots-linux-x64-gnu "0.1.9"
+    node-screenshots-linux-x64-musl "0.1.9"
+    node-screenshots-win32-arm64-msvc "0.1.9"
+    node-screenshots-win32-ia32-msvc "0.1.9"
+    node-screenshots-win32-x64-msvc "0.1.9"
 
 normalize-url@^6.0.1:
   version "6.1.0"
@@ -1686,6 +1686,11 @@ quick-lru@^5.1.1:
   version "5.1.1"
   resolved "https://registry.npmmirror.com/quick-lru/-/quick-lru-5.1.1.tgz#366493e6b3e42a3a6885e2e99d18f80fb7a8c932"
   integrity sha512-WuyALRjWPDGtt/wzJiadO5AXY+8hZ80hVpe6MyivgraREW751X3SbhRvG3eLKOYN+8VEvqLcf3wdnt44Z4S4SA==
+
+react-screenshots@^0.5.22:
+  version "0.5.22"
+  resolved "https://registry.yarnpkg.com/react-screenshots/-/react-screenshots-0.5.22.tgz#2d974189d2d2df74388a4a19482fd1c956641837"
+  integrity sha512-aooIlb1k6161BTqhhyADlMrlF0n1UdudjuhyvXaCQfwURXZNuUerMxFuOfwNCgSbPAHlxdHCWtYQ6iQT+RaF+w==
 
 regexp.prototype.flags@^1.4.3:
   version "1.5.0"
