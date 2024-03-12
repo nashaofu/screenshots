@@ -57,7 +57,43 @@ export default memo(function ScreenshotsBackground (): ReactElement | null {
     [bounds]
   )
 
+  const onTouchStart = useCallback(
+    (e: React.TouchEvent) => {
+      if (pointRef.current || bounds || e.nativeEvent.touches.length !== 1) {
+        return
+      }
+      const touch = e.touches[0]
+      pointRef.current = {
+        x: touch.clientX,
+        y: touch.clientY
+      }
+      isMoveRef.current = false
+    },
+    [bounds]
+  )
+
   useEffect(() => {
+    const mouseMove = (event) => {
+      const touch = event.touches[0]
+      const mouseEvent = new MouseEvent('mousemove', {
+        clientX: touch.clientX,
+        clientY: touch.clientY
+      })
+      window.dispatchEvent(mouseEvent)
+    }
+
+    const mouseUp = (event) => {
+      const touch = event.changedTouches[0]
+      const mouseEvent = new MouseEvent('mouseup', {
+        clientX: touch.clientX,
+        clientY: touch.clientY
+      })
+      window.dispatchEvent(mouseEvent)
+    }
+
+    window.addEventListener('touchmove', mouseMove)
+    window.addEventListener('touchend', mouseUp)
+
     const onMouseMove = (e: MouseEvent) => {
       if (elRef.current) {
         const rect = elRef.current.getBoundingClientRect()
@@ -99,6 +135,8 @@ export default memo(function ScreenshotsBackground (): ReactElement | null {
     window.addEventListener('mouseup', onMouseUp)
 
     return () => {
+      window.removeEventListener('touchmove', mouseMove)
+      window.removeEventListener('touchend', mouseUp)
       window.removeEventListener('mousemove', onMouseMove)
       window.removeEventListener('mouseup', onMouseUp)
     }
@@ -117,7 +155,7 @@ export default memo(function ScreenshotsBackground (): ReactElement | null {
   }
 
   return (
-    <div ref={elRef} className='screenshots-background' onMouseDown={onMouseDown}>
+    <div ref={elRef} className='screenshots-background' onMouseDown={onMouseDown} onTouchStart={onTouchStart}>
       <img className='screenshots-background-image' src={url} />
       <div className='screenshots-background-mask' />
       {position && !bounds && <ScreenshotsMagnifier x={position?.x} y={position?.y} />}
