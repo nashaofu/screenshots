@@ -1,4 +1,4 @@
-import React, { memo, ReactElement, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import React, { forwardRef, memo, ReactElement, Ref, useCallback, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from 'react'
 import useBounds from '../hooks/useBounds'
 import useStore from '../hooks/useStore'
 import ScreenshotsMagnifier from '../ScreenshotsMagnifier'
@@ -6,7 +6,11 @@ import { Point, Position } from '../types'
 import getBoundsByPoints from './getBoundsByPoints'
 import './index.less'
 
-export default memo(function ScreenshotsBackground (): ReactElement | null {
+export interface ScreenshotsBackgroundRef {
+    manualSelect: (p1: Point, p2: Point) => void
+}
+
+export default memo(forwardRef(function ScreenshotsBackground (props, ref: Ref<ScreenshotsBackgroundRef>): ReactElement | null {
   const { url, image, width, height } = useStore()
   const [bounds, boundsDispatcher] = useBounds()
 
@@ -87,6 +91,7 @@ export default memo(function ScreenshotsBackground (): ReactElement | null {
       }
 
       if (isMoveRef.current) {
+        // console.warn('update bounds', pointRef.current, e.clientX, e.clientY)
         updateBounds(pointRef.current, {
           x: e.clientX,
           y: e.clientY
@@ -111,6 +116,29 @@ export default memo(function ScreenshotsBackground (): ReactElement | null {
     }
   }, [image, bounds])
 
+  const manualSelect = (p1: Point, p2: Point) => {
+
+    pointRef.current = p1
+    setPosition(p2)
+
+    boundsDispatcher.set(
+        getBoundsByPoints(
+            p1, p2, p2.x, p2.y,
+        )
+    )
+
+    isMoveRef.current = true
+
+    pointRef.current = null
+    isMoveRef.current = false
+  }
+
+  useImperativeHandle(ref, () => {
+    return {
+        manualSelect
+    }
+  })
+
   // 没有加载完不显示图片
   if (!url || !image) {
     return null
@@ -123,4 +151,4 @@ export default memo(function ScreenshotsBackground (): ReactElement | null {
       {position && !bounds && <ScreenshotsMagnifier x={position?.x} y={position?.y} />}
     </div>
   )
-})
+}))

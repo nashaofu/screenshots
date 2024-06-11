@@ -1,3 +1,5 @@
+# fork from https://github.com/nashaofu/screenshots
+
 # 📷 screenshots
 
 `screenshots`是一个基于`electron`和`react`的截图插件，可以快速地实现截图功能，并支持多种截图操作，例如马赛克、文本、画笔、箭头、椭圆和矩形。此外，还提供了多语言支持，可以轻松地适配不同的语言环境。

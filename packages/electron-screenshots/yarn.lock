@@ -1687,11 +1687,6 @@ quick-lru@^5.1.1:
   resolved "https://registry.npmmirror.com/quick-lru/-/quick-lru-5.1.1.tgz#366493e6b3e42a3a6885e2e99d18f80fb7a8c932"
   integrity sha512-WuyALRjWPDGtt/wzJiadO5AXY+8hZ80hVpe6MyivgraREW751X3SbhRvG3eLKOYN+8VEvqLcf3wdnt44Z4S4SA==
 
-react-screenshots@^0.5.22:
-  version "0.5.22"
-  resolved "https://registry.yarnpkg.com/react-screenshots/-/react-screenshots-0.5.22.tgz#2d974189d2d2df74388a4a19482fd1c956641837"
-  integrity sha512-aooIlb1k6161BTqhhyADlMrlF0n1UdudjuhyvXaCQfwURXZNuUerMxFuOfwNCgSbPAHlxdHCWtYQ6iQT+RaF+w==
-
 regexp.prototype.flags@^1.4.3:
   version "1.5.0"
   resolved "https://registry.npmmirror.com/regexp.prototype.flags/-/regexp.prototype.flags-1.5.0.tgz#fe7ce25e7e4cca8db37b6634c8a2c7009199b9cb"

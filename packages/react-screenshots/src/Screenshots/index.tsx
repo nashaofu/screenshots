@@ -1,8 +1,8 @@
-import React, { MouseEvent, ReactElement, useCallback, useLayoutEffect, useRef, useState } from 'react'
+import React, { MouseEvent, ReactElement, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import composeImage from './composeImage'
 import './icons/iconfont.less'
 import './screenshots.less'
-import ScreenshotsBackground from './ScreenshotsBackground'
+import ScreenshotsBackground, { ScreenshotsBackgroundRef } from './ScreenshotsBackground'
 import ScreenshotsCanvas from './ScreenshotsCanvas'
 import ScreenshotsContext from './ScreenshotsContext'
 import ScreenshotsOperations from './ScreenshotsOperations'
@@ -30,6 +30,9 @@ export default function Screenshots ({ url, width, height, lang, className, ...p
   const [bounds, setBounds] = useState<Bounds | null>(null)
   const [cursor, setCursor] = useState<string | undefined>('move')
   const [operation, setOperation] = useState<string | undefined>(undefined)
+
+  const rootRef = useRef<HTMLDivElement>(null)
+  const backgroundRef = useRef<ScreenshotsBackgroundRef>(null)
 
   const store = {
     url,
@@ -138,15 +141,22 @@ export default function Screenshots ({ url, width, height, lang, className, ...p
     reset()
   }, [url])
 
+  const handleSelect = () => {
+    const rootRect = rootRef.current?.getBoundingClientRect()
+    backgroundRef.current?.manualSelect({x: 0, y: 0}, {x: rootRect!?.width, y: rootRect!?.height })
+  }
+
   return (
     <ScreenshotsContext.Provider value={{ store, dispatcher }}>
+      <button style={{position: 'absolute', top: 0, left: 0, zIndex: 2}} onClick={handleSelect}>Click to select</button>
       <div
         className={classNames.join(' ')}
         style={{ width, height }}
         onDoubleClick={onDoubleClick}
         onContextMenu={onContextMenu}
+        ref={rootRef}
       >
-        <ScreenshotsBackground />
+        <ScreenshotsBackground ref={backgroundRef} />
         <ScreenshotsCanvas ref={canvasContextRef} />
         <ScreenshotsOperations />
       </div>
