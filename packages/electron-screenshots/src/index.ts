@@ -241,42 +241,37 @@ export default class Screenshots extends Events {
     this.logger('SCREENSHOTS:capture');
 
     try {
-      const { Screenshots: NodeScreenshots } = await import('node-screenshots');
-      const capturer = NodeScreenshots.fromPoint(
+      const { Monitor } = await import('node-screenshots');
+      const monitor = Monitor.fromPoint(
         display.x + display.width / 2,
         display.y + display.height / 2,
       );
       this.logger(
-        'SCREENSHOTS:capture NodeScreenshots.fromPoint arguments %o',
+        'SCREENSHOTS:capture Monitor.fromPoint arguments %o',
         display,
       );
-      this.logger(
-        'SCREENSHOTS:capture NodeScreenshots.fromPoint return %o',
-        capturer
-          ? {
-            id: capturer.id,
-            x: capturer.x,
-            y: capturer.y,
-            width: capturer.width,
-            height: capturer.height,
-            rotation: capturer.rotation,
-            scaleFactor: capturer.scaleFactor,
-            isPrimary: capturer.isPrimary,
-          }
-          : null,
-      );
+      this.logger('SCREENSHOTS:capture Monitor.fromPoint return %o', {
+        id: monitor?.id,
+        name: monitor?.name,
+        x: monitor?.x,
+        y: monitor?.y,
+        width: monitor?.width,
+        height: monitor?.height,
+        rotation: monitor?.rotation,
+        scaleFactor: monitor?.scaleFactor,
+        frequency: monitor?.frequency,
+        isPrimary: monitor?.isPrimary,
+      });
 
-      if (!capturer) {
-        throw new Error(`NodeScreenshots.fromDisplay(${display.id}) get null`);
+      if (!monitor) {
+        throw new Error(`Monitor.fromDisplay(${display.id}) get null`);
       }
 
-      const image = await capturer.capture();
-      return `data:image/png;base64,${image.toString('base64')}`;
+      const image = await monitor.captureImage();
+      const buffer = await image.toPng(true);
+      return `data:image/png;base64,${buffer.toString('base64')}`;
     } catch (err) {
-      this.logger(
-        'SCREENSHOTS:capture NodeScreenshots capture() error %o',
-        err,
-      );
+      this.logger('SCREENSHOTS:capture Monitor capture() error %o', err);
 
       const sources = await desktopCapturer.getSources({
         types: ['screen'],
