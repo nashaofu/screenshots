@@ -1,6 +1,6 @@
 {
   "name": "electron-screenshots",
-  "version": "0.5.26",
+  "version": "0.5.27",
   "description": "electron 截图插件",
   "types": "lib/index.d.ts",
   "main": "lib/index.cjs.js",
