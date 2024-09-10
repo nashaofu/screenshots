@@ -28,7 +28,7 @@ export default function draw (ctx: CanvasRenderingContext2D, action: HistoryItem
 
   if (action.isSelected) {
     ctx.lineWidth = 1
-    ctx.strokeStyle = '#000000'
+    // ctx.strokeStyle = '#000000'
     ctx.beginPath()
     points.forEach((item, index) => {
       if (index === 0) {
