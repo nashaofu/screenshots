@@ -44,7 +44,7 @@ app.whenReady().then(() => {
   // 保存后的回调事件
   screenshots.on("afterSave", (e, buffer, bounds, isSaved) => {
     console.log("capture", buffer, bounds);
-    console.log("isSaved", isSaved) // 是否保存成功
+    console.log("isSaved", isSaved); // 是否保存成功
   });
   debug({ showDevTools: true, devToolsMode: "undocked" });
 });
@@ -81,6 +81,22 @@ module.exports = {
     },
   },
 };
+```
+
+- vite 配置示例：
+
+```js
+// vite.config.js
+import { defineConfig } from "vite";
+import viteExternals from "vite-plugin-externals";
+
+export default defineConfig({
+  plugins: [
+    viteExternals({
+      "electron-screenshots": 'require("electron-screenshots")', // 模块名称: 全局变量
+    }),
+  ],
+});
 ```
 
 - esc 取消截图，可用以下代码实现按 esc 取消截图
