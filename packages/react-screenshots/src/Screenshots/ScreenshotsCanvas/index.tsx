@@ -84,16 +84,21 @@ export default memo(
       })
     }, [bounds, ctxRef, history])
 
-    const onMouseDown = useCallback(
-      (e: React.MouseEvent, resizeOrMove: string) => {
-        if (e.button !== 0 || !bounds) {
+    const handleEvent = useCallback(
+      (clientX: number, clientY: number, resizeOrMove: string) => {
+        if (!bounds) {
           return
         }
+        const mouseEvent = new MouseEvent('mousedown', {
+          clientX,
+          clientY,
+          button: 0
+        })
         if (!operation) {
           resizeOrMoveRef.current = resizeOrMove
           pointRef.current = {
-            x: e.clientX,
-            y: e.clientY
+            x: clientX,
+            y: clientY
           }
           boundsRef.current = {
             x: bounds.x,
@@ -106,13 +111,36 @@ export default memo(
             bounds,
             canvasRef.current,
             history,
-            e.nativeEvent
+            mouseEvent
           )
           if (draw) {
-            emiter.emit('drawselect', draw, e.nativeEvent)
+            emiter.emit('drawselect', draw, mouseEvent)
           } else {
-            emiter.emit('mousedown', e.nativeEvent)
+            emiter.emit('mousedown', mouseEvent)
           }
+        }
+      },
+      [bounds, operation, emiter, history]
+    )
+
+    const onMouseDown = useCallback(
+      (e: React.MouseEvent | React.TouchEvent, resizeOrMove: string) => {
+        if (
+          (e.nativeEvent instanceof MouseEvent &&
+            e.nativeEvent.button !== 0) ||
+          (e.nativeEvent instanceof TouchEvent &&
+            e.nativeEvent.touches.length !== 1) ||
+          !bounds
+        ) {
+          return
+        }
+        if (e.nativeEvent instanceof TouchEvent) {
+          const touch = e.nativeEvent.touches[0]
+          if (touch) {
+            handleEvent(touch.clientX, touch.clientY, resizeOrMove)
+          }
+        } else {
+          handleEvent(e.nativeEvent.clientX, e.nativeEvent.clientY, resizeOrMove)
         }
       },
       [bounds, operation, emiter, history]
@@ -162,6 +190,27 @@ export default memo(
     }, [image, bounds, draw])
 
     useEffect(() => {
+      const mouseMove = (event) => {
+        const touch = event.touches[0]
+        const mouseEvent = new MouseEvent('mousemove', {
+          clientX: touch.clientX,
+          clientY: touch.clientY
+        })
+        window.dispatchEvent(mouseEvent)
+      }
+
+      const mouseUp = (event) => {
+        const touch = event.changedTouches[0]
+        const mouseEvent = new MouseEvent('mouseup', {
+          clientX: touch.clientX,
+          clientY: touch.clientY
+        })
+        window.dispatchEvent(mouseEvent)
+      }
+
+      window.addEventListener('touchmove', mouseMove)
+      window.addEventListener('touchend', mouseUp)
+
       const onMouseMove = (e: MouseEvent) => {
         if (!operation) {
           if (
@@ -198,6 +247,8 @@ export default memo(
       window.addEventListener('mouseup', onMouseUp)
 
       return () => {
+        window.removeEventListener('touchmove', mouseMove)
+        window.removeEventListener('touchend', mouseUp)
         window.removeEventListener('mousemove', onMouseMove)
         window.removeEventListener('mouseup', onMouseUp)
       }
@@ -246,6 +297,7 @@ export default memo(
             cursor
           }}
           onMouseDown={(e) => onMouseDown(e, 'move')}
+          onTouchStart={(e) => onMouseDown(e, 'move')}
         >
           {isCanResize && (
             <div className='screenshots-canvas-size'>
@@ -268,6 +320,7 @@ export default memo(
                 key={resizePoint}
                 className={`screenshots-canvas-point-${resizePoint}`}
                 onMouseDown={(e) => onMouseDown(e, resizePoint)}
+                onTouchStart={(e) => onMouseDown(e, resizePoint)}
               />
             )
           })}
