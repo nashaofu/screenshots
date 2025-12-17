@@ -7,6 +7,7 @@ import {
   dialog,
   ipcMain,
   nativeImage,
+  screen,
 } from 'electron';
 import Events from 'events';
 import fs from 'fs-extra';
@@ -242,10 +243,14 @@ export default class Screenshots extends Events {
 
     try {
       const { Monitor } = await import('node-screenshots');
-      const monitor = Monitor.fromPoint(
-        display.x + display.width / 2,
-        display.y + display.height / 2,
-      );
+      let point = {
+        x: display.x + display.width / 2,
+        y: display.y + display.height / 2,
+      };
+      if (process.platform === 'win32') {
+        point = screen.screenToDipPoint(null, point);
+      }
+      const monitor = Monitor.fromPoint(point);
       this.logger(
         'SCREENSHOTS:capture Monitor.fromPoint arguments %o',
         display,
