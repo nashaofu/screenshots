@@ -1,37 +1,37 @@
-import { useCallback } from 'react'
-import useDispatcher from './useDispatcher'
-import useStore from './useStore'
+import { useCallback } from "react";
+import useDispatcher from "./useDispatcher";
+import useStore from "./useStore";
 
 export interface OperationDispatcher {
-  set: (operation: string) => void;
-  reset: () => void;
+	set: (operation: string) => void;
+	reset: () => void;
 }
 
 export type OperationValueDispatcher = [
-  string | undefined,
-  OperationDispatcher
+	string | undefined,
+	OperationDispatcher,
 ];
 
-export default function useOperation (): OperationValueDispatcher {
-  const { operation } = useStore()
-  const { setOperation } = useDispatcher()
+export default function useOperation(): OperationValueDispatcher {
+	const { operation } = useStore();
+	const { setOperation } = useDispatcher();
 
-  const set = useCallback(
-    (operation: string) => {
-      setOperation?.(operation)
-    },
-    [setOperation]
-  )
+	const set = useCallback(
+		(operation: string) => {
+			setOperation?.(operation);
+		},
+		[setOperation],
+	);
 
-  const reset = useCallback(() => {
-    setOperation?.(undefined)
-  }, [setOperation])
+	const reset = useCallback(() => {
+		setOperation?.(undefined);
+	}, [setOperation]);
 
-  return [
-    operation,
-    {
-      set,
-      reset
-    }
-  ]
+	return [
+		operation,
+		{
+			set,
+			reset,
+		},
+	];
 }

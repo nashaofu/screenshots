@@ -4,19 +4,17 @@
   "engines": {
     "node": ">=14"
   },
-  "packageManager": "yarn@1.22.17",
+  "packageManager": "pnpm@10.26.0",
   "scripts": {
-    "preinstall": "npx only-allow yarn",
-    "install": "npm run bootstrap",
-    "bootstrap": "lerna bootstrap",
-    "dev": "lerna run dev --parallel",
-    "start": "lerna run start --parallel",
-    "build": "lerna run build",
-    "clean": "lerna clean --yes",
-    "release": "lerna publish",
-    "alpha": "lerna publish --dist-tag alpha"
+    "preinstall": "npx only-allow pnpm",
+    "build": "pnpm -w -r run build",
+    "clean": "pnpm -w -r run clean",
+    "release": "pnpm -w -r publish",
+    "alpha": "pnpm -w -r publish --tag alpha",
+    "lint": "pnpm -w -r run lint",
+    "format": "pnpm -w -r run format"
   },
   "devDependencies": {
-    "lerna": "^6.6.1"
+    "@biomejs/biome": "^2.3.9"
   }
 }

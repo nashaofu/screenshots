@@ -1,3 +1,3 @@
-export { Bounds } from './types'
-export { Lang } from './zh_CN'
-export { default, ScreenshotsProps } from './'
+export { default, ScreenshotsProps } from "./";
+export { Bounds } from "./types";
+export { Lang } from "./zh_CN";

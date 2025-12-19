@@ -1,8 +1,10 @@
-import { useContext } from 'react'
-import ScreenshotsContext, { ScreenshotsContextStore } from '../ScreenshotsContext'
+import { useContext } from "react";
+import ScreenshotsContext, {
+	type ScreenshotsContextStore,
+} from "../ScreenshotsContext";
 
-export default function useStore (): ScreenshotsContextStore {
-  const { store } = useContext(ScreenshotsContext)
+export default function useStore(): ScreenshotsContextStore {
+	const { store } = useContext(ScreenshotsContext);
 
-  return store
+	return store;
 }
