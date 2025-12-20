@@ -248,9 +248,9 @@ export default class Screenshots extends Events {
         y: display.y + display.height / 2,
       };
       if (process.platform === 'win32') {
-        point = screen.screenToDipPoint(null, point);
+        point = screen.screenToDipPoint(point);
       }
-      const monitor = Monitor.fromPoint(point);
+      const monitor = Monitor.fromPoint(point.x, point.y);
       this.logger(
         'SCREENSHOTS:capture Monitor.fromPoint arguments %o',
         display,
