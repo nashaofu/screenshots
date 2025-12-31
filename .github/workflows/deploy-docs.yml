@@ -31,7 +31,7 @@ jobs:
           cache: pnpm
 
       - name: Build
-        run: pnpm run build
+        run: pnpm install && pnpm run build
 
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4.2.2
