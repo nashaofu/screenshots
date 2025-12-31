@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
-import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
-import { Display } from './getDisplay';
+import { contextBridge, ipcRenderer, type IpcRendererEvent } from 'electron';
+import { type Display } from './getDisplay.js';
 
 type IpcRendererListener = (
   event: IpcRendererEvent,

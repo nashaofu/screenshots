@@ -1,5 +1,5 @@
-import { BrushData, BrushEditData } from '.'
-import { HistoryItemSource } from '../../types'
+import type { BrushData, BrushEditData } from '.'
+import type { HistoryItemSource } from '../../types'
 
 export default function draw (ctx: CanvasRenderingContext2D, action: HistoryItemSource<BrushData, BrushEditData>): void {
   const { size, color, points } = action.data

@@ -1,8 +1,9 @@
-import React, { memo, ReactElement, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { memo, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import type { ReactElement, MouseEvent as ReactMouseEvent } from 'react'
 import useBounds from '../hooks/useBounds'
 import useStore from '../hooks/useStore'
 import ScreenshotsMagnifier from '../ScreenshotsMagnifier'
-import { Point, Position } from '../types'
+import type { Point, Position } from '../types'
 import getBoundsByPoints from './getBoundsByPoints'
 import './index.less'
 
@@ -43,7 +44,7 @@ export default memo(function ScreenshotsBackground (): ReactElement | null {
   )
 
   const onMouseDown = useCallback(
-    (e: React.MouseEvent) => {
+    (e: ReactMouseEvent) => {
       // e.button 鼠标左键
       if (pointRef.current || bounds || e.button !== 0) {
         return

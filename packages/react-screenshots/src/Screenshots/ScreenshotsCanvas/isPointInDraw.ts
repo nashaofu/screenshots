@@ -1,4 +1,5 @@
-import { Bounds, History, HistoryItemType } from '../types'
+import type { Bounds, History } from '../types'
+import { HistoryItemType } from '../types'
 
 export default function isPointInDraw (
   bounds: Bounds,

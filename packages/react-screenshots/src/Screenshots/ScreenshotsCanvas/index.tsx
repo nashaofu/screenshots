@@ -1,20 +1,13 @@
-import React, {
-  forwardRef,
-  memo,
-  ReactElement,
-  useCallback,
-  useEffect,
-  useImperativeHandle,
-  useLayoutEffect,
-  useRef
-} from 'react'
+import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useLayoutEffect, useRef } from 'react'
+import type { ReactElement, MouseEvent as ReactMouseEvent } from 'react'
 import useBounds from '../hooks/useBounds'
+import { HistoryItemType } from '../types'
+import type { Bounds, Point } from '../types'
 import useCursor from '../hooks/useCursor'
 import useEmiter from '../hooks/useEmiter'
 import useHistory from '../hooks/useHistory'
 import useOperation from '../hooks/useOperation'
 import useStore from '../hooks/useStore'
-import { Bounds, HistoryItemType, Point } from '../types'
 import getBoundsByPoints from './getBoundsByPoints'
 import getPoints from './getPoints'
 import './index.less'
@@ -47,7 +40,7 @@ const resizePoints = [
 
 export default memo(
   forwardRef<CanvasRenderingContext2D>(function ScreenshotsCanvas (
-    props,
+    _props,
     ref
   ): ReactElement | null {
     const { url, image, width, height } = useStore()
@@ -58,7 +51,7 @@ export default memo(
     const [bounds, boundsDispatcher] = useBounds()
     const [operation] = useOperation()
 
-    const resizeOrMoveRef = useRef<string>()
+    const resizeOrMoveRef = useRef<string | undefined>(undefined)
     const pointRef = useRef<Point | null>(null)
     const boundsRef = useRef<Bounds | null>(null)
     const canvasRef = useRef<HTMLCanvasElement | null>(null)
@@ -85,7 +78,7 @@ export default memo(
     }, [bounds, ctxRef, history])
 
     const onMouseDown = useCallback(
-      (e: React.MouseEvent, resizeOrMove: string) => {
+      (e: ReactMouseEvent, resizeOrMove: string) => {
         if (e.button !== 0 || !bounds) {
           return
         }

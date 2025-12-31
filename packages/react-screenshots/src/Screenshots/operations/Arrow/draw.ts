@@ -1,5 +1,6 @@
-import { ArrowData, ArrowEditData, ArrowEditType } from '.'
-import { HistoryItemSource } from '../../types'
+import type { ArrowData, ArrowEditData } from '.'
+import { ArrowEditType } from '.'
+import type { HistoryItemSource } from '../../types'
 import { drawDragCircle } from '../utils'
 
 export function getEditedArrowData (action: HistoryItemSource<ArrowData, ArrowEditData>) {

@@ -1,7 +1,8 @@
-import React, { cloneElement, memo, ReactElement, ReactNode, useContext, useEffect, useRef, useState } from 'react'
+import { cloneElement, memo, useContext, useEffect, useRef, useState } from 'react'
+import type { ReactElement, ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { ScreenshotsOperationsCtx } from '../ScreenshotsOperations'
-import { Point } from '../types'
+import type { Point } from '../types'
 import './index.less'
 
 export interface ScreenshotsOptionProps {
@@ -102,8 +103,8 @@ export default memo(function ScreenshotsOption ({ open, content, children }: Scr
 
   return (
     <>
-      {cloneElement(children, {
-        ref: childrenRef
+      {cloneElement(children as React.ReactElement<any>, {
+        ref: childrenRef as any
       })}
       {open &&
         content &&

@@ -1,4 +1,5 @@
-import React, { memo, ReactElement } from 'react'
+import { memo } from 'react'
+import type { ReactElement } from 'react'
 import './index.less'
 
 export interface ColorProps {

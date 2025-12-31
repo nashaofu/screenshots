@@ -1,7 +1,8 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
+import type { ReactElement } from 'react'
 import Screenshots from '../Screenshots'
-import { Bounds } from '../Screenshots/types'
-import { Lang } from '../Screenshots/zh_CN'
+import type { Bounds } from '../Screenshots/types'
+import type { Lang } from '../Screenshots/zh_CN'
 import './app.less'
 
 export interface Display {
@@ -12,7 +13,7 @@ export interface Display {
   height: number
 }
 
-export default function App (): JSX.Element {
+export default function App (): ReactElement {
   const [url, setUrl] = useState<string | undefined>(undefined)
   const [width, setWidth] = useState(window.innerWidth)
   const [height, setHeight] = useState(window.innerHeight)

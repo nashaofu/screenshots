@@ -1,8 +1,8 @@
-import { Rectangle, screen } from 'electron';
+import { type Rectangle, screen } from "electron";
 
 export interface Display extends Rectangle {
-  id: number
-  scaleFactor: number
+  id: number;
+  scaleFactor: number;
 }
 
 export default (): Display => {

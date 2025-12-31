@@ -1,5 +1,5 @@
 import { useCallback } from 'react'
-import { Bounds } from '../types'
+import type { Bounds } from '../types'
 import useDispatcher from './useDispatcher'
 import useStore from './useStore'
 

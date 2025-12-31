@@ -1,5 +1,6 @@
-import { RectangleData, RectangleEditData, RectangleEditType } from '.'
-import { HistoryItemSource } from '../../types'
+import type { RectangleData, RectangleEditData } from '.'
+import { RectangleEditType } from '.'
+import type { HistoryItemSource } from '../../types'
 import { drawDragCircle } from '../utils'
 
 export function getEditedRectangleData (action: HistoryItemSource<RectangleData, RectangleEditData>) {

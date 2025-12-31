@@ -1,4 +1,4 @@
-import { Point, Bounds } from '../types'
+import type { Point, Bounds } from '../types'
 
 export default function getBoundsByPoints (
   { x: x1, y: y1 }: Point,

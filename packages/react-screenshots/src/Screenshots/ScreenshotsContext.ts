@@ -1,6 +1,8 @@
-import React, { Dispatch, SetStateAction } from 'react'
-import { EmiterRef, History, Bounds, CanvasContextRef } from './types'
-import zhCN, { Lang } from './zh_CN'
+import React from 'react'
+import type { Dispatch, SetStateAction } from 'react'
+import type { EmiterRef, History, Bounds, CanvasContextRef } from './types'
+import zhCN from './zh_CN'
+import type { Lang } from './zh_CN'
 
 export interface ScreenshotsContextStore {
   url?: string

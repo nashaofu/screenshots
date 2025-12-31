@@ -1,4 +1,5 @@
-import React, { ReactElement, useCallback } from 'react'
+import { useCallback } from 'react'
+import type { ReactElement } from 'react'
 import ScreenshotsButton from '../../ScreenshotsButton'
 import useHistory from '../../hooks/useHistory'
 import useLang from '../../hooks/useLang'

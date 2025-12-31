@@ -1,4 +1,4 @@
-import { Point, Bounds } from '../types'
+import type { Point, Bounds } from '../types'
 
 export default function getBoundsByPoints (e: MouseEvent, resizeOrMove: string, point: Point, bounds: Bounds): Point[] {
   const x = e.clientX - point.x

@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import { app, BrowserWindow, globalShortcut } from 'electron';
-import Screenshots from '.';
+import Screenshots from './index.js';
 
 app.whenReady().then(() => {
   const screenshots = new Screenshots({

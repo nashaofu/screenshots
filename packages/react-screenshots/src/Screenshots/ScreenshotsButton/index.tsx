@@ -1,10 +1,5 @@
-import React, {
-  memo,
-  ReactElement,
-  PointerEvent,
-  ReactNode,
-  useCallback
-} from 'react'
+import { memo, useCallback } from 'react'
+import type { ReactElement, PointerEvent, ReactNode } from 'react'
 import ScreenshotsOption from '../ScreenshotsOption'
 import './index.less'
 

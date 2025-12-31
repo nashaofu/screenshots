@@ -1,4 +1,4 @@
-import { MutableRefObject } from 'react'
+import type { MutableRefObject } from 'react'
 
 export type CanvasContextRef = MutableRefObject<CanvasRenderingContext2D | null>
 

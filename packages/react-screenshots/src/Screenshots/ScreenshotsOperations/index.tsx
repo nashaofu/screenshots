@@ -1,8 +1,9 @@
-import React, { memo, MouseEvent, ReactElement, useCallback, useEffect, useRef, useState } from 'react'
+import React, { memo, useCallback, useEffect, useRef, useState } from 'react'
+import type { MouseEvent, ReactElement } from 'react'
 import useBounds from '../hooks/useBounds'
 import useStore from '../hooks/useStore'
 import OperationButtons from '../operations'
-import { Bounds, Position } from '../types'
+import type { Bounds, Position } from '../types'
 import './index.less'
 
 export const ScreenshotsOperationsCtx = React.createContext<Bounds | null>(null)

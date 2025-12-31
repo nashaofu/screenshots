@@ -1,4 +1,5 @@
-import React, { MouseEvent, ReactElement, useCallback, useLayoutEffect, useRef, useState } from 'react'
+import { useCallback, useLayoutEffect, useRef, useState } from 'react'
+import type { MouseEvent, ReactElement } from 'react'
 import composeImage from './composeImage'
 import './icons/iconfont.less'
 import './screenshots.less'
@@ -6,9 +7,10 @@ import ScreenshotsBackground from './ScreenshotsBackground'
 import ScreenshotsCanvas from './ScreenshotsCanvas'
 import ScreenshotsContext from './ScreenshotsContext'
 import ScreenshotsOperations from './ScreenshotsOperations'
-import { Bounds, Emiter, History } from './types'
+import type { Bounds, Emiter, History } from './types'
 import useGetLoadedImage from './useGetLoadedImage'
-import zhCN, { Lang } from './zh_CN'
+import zhCN from './zh_CN'
+import type { Lang } from './zh_CN'
 
 export interface ScreenshotsProps {
   url?: string

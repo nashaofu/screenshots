@@ -1,4 +1,5 @@
-import React, { ReactElement, useRef, FocusEvent, useLayoutEffect, useState, memo } from 'react'
+import { useRef, useLayoutEffect, useState, memo } from 'react'
+import type { ReactElement, FocusEvent } from 'react'
 import { createPortal } from 'react-dom'
 import calculateNodeSize from './calculateNodeSize'
 import './index.less'

@@ -1,4 +1,4 @@
-import debug, { Debugger } from 'debug';
+import debug, { type Debugger } from "debug";
 import {
   BrowserView,
   BrowserWindow,
@@ -8,13 +8,13 @@ import {
   ipcMain,
   nativeImage,
   screen,
-} from 'electron';
-import Events from 'events';
-import fs from 'fs-extra';
-import Event from './event';
-import getDisplay, { Display } from './getDisplay';
-import padStart from './padStart';
-import { Bounds, ScreenshotsData } from './preload';
+} from "electron";
+import Events from "events";
+import fs from "fs-extra";
+import Event from "./event.js";
+import getDisplay, { type Display } from "./getDisplay.js";
+import padStart from "./padStart.js";
+import { type Bounds, type ScreenshotsData } from "./preload.js";
 
 export type LoggerFn = (...args: unknown[]) => void;
 export type Logger = Debugger | LoggerFn;
@@ -40,7 +40,7 @@ export interface ScreenshotsOpts {
   singleWindow?: boolean;
 }
 
-export { Bounds };
+export { type Bounds };
 
 export default class Screenshots extends Events {
   // 截图窗口对象
@@ -48,7 +48,7 @@ export default class Screenshots extends Events {
 
   public $view: BrowserView = new BrowserView({
     webPreferences: {
-      preload: require.resolve('./preload.js'),
+      preload: require.resolve("./preload.js"),
       nodeIntegration: false,
       contextIsolation: true,
     },
@@ -59,8 +59,8 @@ export default class Screenshots extends Events {
   private singleWindow: boolean;
 
   private isReady = new Promise<void>((resolve) => {
-    ipcMain.once('SCREENSHOTS:ready', () => {
-      this.logger('SCREENSHOTS:ready');
+    ipcMain.once("SCREENSHOTS:ready", () => {
+      this.logger("SCREENSHOTS:ready");
 
       resolve();
     });
@@ -68,11 +68,11 @@ export default class Screenshots extends Events {
 
   constructor(opts?: ScreenshotsOpts) {
     super();
-    this.logger = opts?.logger || debug('electron-screenshots');
+    this.logger = opts?.logger || debug("electron-screenshots");
     this.singleWindow = opts?.singleWindow || false;
     this.listenIpc();
     this.$view.webContents.loadURL(
-      `file://${require.resolve('react-screenshots/electron/electron.html')}`,
+      `file://${require.resolve("react-screenshots/electron/electron.html")}`
     );
     if (opts?.lang) {
       this.setLang(opts.lang);
@@ -83,7 +83,7 @@ export default class Screenshots extends Events {
    * 开始截图
    */
   public async startCapture(): Promise<void> {
-    this.logger('startCapture');
+    this.logger("startCapture");
 
     const display = getDisplay();
 
@@ -91,14 +91,14 @@ export default class Screenshots extends Events {
 
     await this.createWindow(display);
 
-    this.$view.webContents.send('SCREENSHOTS:capture', display, imageUrl);
+    this.$view.webContents.send("SCREENSHOTS:capture", display, imageUrl);
   }
 
   /**
    * 结束截图
    */
   public async endCapture(): Promise<void> {
-    this.logger('endCapture');
+    this.logger("endCapture");
     await this.reset();
 
     if (!this.$win) {
@@ -123,16 +123,16 @@ export default class Screenshots extends Events {
    * 设置语言
    */
   public async setLang(lang: Partial<Lang>): Promise<void> {
-    this.logger('setLang', lang);
+    this.logger("setLang", lang);
 
     await this.isReady;
 
-    this.$view.webContents.send('SCREENSHOTS:setLang', lang);
+    this.$view.webContents.send("SCREENSHOTS:setLang", lang);
   }
 
   private async reset() {
     // 重置截图区域
-    this.$view.webContents.send('SCREENSHOTS:reset');
+    this.$view.webContents.send("SCREENSHOTS:reset");
 
     // 保证 UI 有足够的时间渲染
     await Promise.race([
@@ -140,7 +140,7 @@ export default class Screenshots extends Events {
         setTimeout(() => resolve(), 500);
       }),
       new Promise<void>((resolve) => {
-        ipcMain.once('SCREENSHOTS:reset', () => resolve());
+        ipcMain.once("SCREENSHOTS:reset", () => resolve());
       }),
     ]);
   }
@@ -155,21 +155,21 @@ export default class Screenshots extends Events {
     // 复用未销毁的窗口
     if (!this.$win || this.$win?.isDestroyed?.()) {
       const windowTypes: Record<string, string | undefined> = {
-        darwin: 'panel',
+        darwin: "panel",
         // linux 必须设置为 undefined，否则会在部分系统上不能触发focus 事件
         // https://github.com/nashaofu/screenshots/issues/203#issuecomment-1518923486
         linux: undefined,
-        win32: 'toolbar',
+        win32: "toolbar",
       };
 
       this.$win = new BrowserWindow({
-        title: 'screenshots',
+        title: "screenshots",
         x: display.x,
         y: display.y,
         width: display.width,
         height: display.height,
         useContentSize: true,
-        type: windowTypes[process.platform],
+        type: windowTypes[process.platform] as string,
         frame: false,
         show: false,
         autoHideMenuBar: true,
@@ -190,8 +190,8 @@ export default class Screenshots extends Events {
         // mac fullscreenable 设置为 true 会导致应用崩溃
         fullscreenable: false,
         kiosk: true,
-        backgroundColor: '#00000000',
-        titleBarStyle: 'hidden',
+        backgroundColor: "#00000000",
+        titleBarStyle: "hidden",
         hasShadow: false,
         paintWhenInitiallyHidden: false,
         // mac 特有的属性
@@ -200,14 +200,14 @@ export default class Screenshots extends Events {
         acceptFirstMouse: true,
       });
 
-      this.emit('windowCreated', this.$win);
-      this.$win.on('show', () => {
+      this.emit("windowCreated", this.$win);
+      this.$win.on("show", () => {
         this.$win?.focus();
         this.$win?.setKiosk(true);
       });
 
-      this.$win.on('closed', () => {
-        this.emit('windowClosed', this.$win);
+      this.$win.on("closed", () => {
+        this.emit("windowClosed", this.$win);
         this.$win = null;
       });
     }
@@ -215,11 +215,11 @@ export default class Screenshots extends Events {
     this.$win.setBrowserView(this.$view);
 
     // 适定平台
-    if (process.platform === 'darwin') {
+    if (process.platform === "darwin") {
       this.$win.setWindowButtonVisibility(false);
     }
 
-    if (process.platform !== 'win32') {
+    if (process.platform !== "win32") {
       this.$win.setVisibleOnAllWorkspaces(true, {
         visibleOnFullScreen: true,
         skipTransformProcessType: true,
@@ -239,23 +239,23 @@ export default class Screenshots extends Events {
   }
 
   private async capture(display: Display): Promise<string> {
-    this.logger('SCREENSHOTS:capture');
+    this.logger("SCREENSHOTS:capture");
 
     try {
-      const { Monitor } = await import('node-screenshots');
+      const { Monitor } = await import("node-screenshots");
       let point = {
         x: display.x + display.width / 2,
         y: display.y + display.height / 2,
       };
-      if (process.platform === 'win32') {
+      if (process.platform === "win32") {
         point = screen.screenToDipPoint(point);
       }
       const monitor = Monitor.fromPoint(point.x, point.y);
       this.logger(
-        'SCREENSHOTS:capture Monitor.fromPoint arguments %o',
-        display,
+        "SCREENSHOTS:capture Monitor.fromPoint arguments %o",
+        display
       );
-      this.logger('SCREENSHOTS:capture Monitor.fromPoint return %o', {
+      this.logger("SCREENSHOTS:capture Monitor.fromPoint return %o", {
         id: monitor?.id,
         name: monitor?.name,
         x: monitor?.x,
@@ -274,12 +274,11 @@ export default class Screenshots extends Events {
 
       const image = await monitor.captureImage();
       const buffer = await image.toPng(true);
-      return `data:image/png;base64,${buffer.toString('base64')}`;
+      return `data:image/png;base64,${buffer.toString("base64")}`;
     } catch (err) {
-      this.logger('SCREENSHOTS:capture Monitor capture() error %o', err);
-
+      this.logger("SCREENSHOTS:capture Monitor capture() error %o", err);
       const sources = await desktopCapturer.getSources({
-        types: ['screen'],
+        types: ["screen"],
         thumbnailSize: {
           width: display.width * display.scaleFactor,
           height: display.height * display.scaleFactor,
@@ -294,8 +293,9 @@ export default class Screenshots extends Events {
         [source] = sources;
       } else {
         source = sources.find(
-          (item) => item.display_id === display.id.toString()
-            || item.id.startsWith(`screen:${display.id}:`),
+          (item) =>
+            item.display_id === display.id.toString() ||
+            item.id.startsWith(`screen:${display.id}:`)
         );
       }
 
@@ -303,7 +303,7 @@ export default class Screenshots extends Events {
         this.logger(
           "SCREENSHOTS:capture Can't find screen source. sources: %o, display: %o",
           sources,
-          display,
+          display
         );
         throw new Error("Can't find screen source");
       }
@@ -319,15 +319,15 @@ export default class Screenshots extends Events {
     /**
      * OK事件
      */
-    ipcMain.on('SCREENSHOTS:ok', (e, buffer: Buffer, data: ScreenshotsData) => {
+    ipcMain.on("SCREENSHOTS:ok", (e, buffer: Buffer, data: ScreenshotsData) => {
       this.logger(
-        'SCREENSHOTS:ok buffer.length %d, data: %o',
+        "SCREENSHOTS:ok buffer.length %d, data: %o",
         buffer.length,
-        data,
+        data
       );
 
       const event = new Event();
-      this.emit('ok', event, buffer, data);
+      this.emit("ok", event, buffer, data);
       if (event.defaultPrevented) {
         return;
       }
@@ -337,11 +337,11 @@ export default class Screenshots extends Events {
     /**
      * CANCEL事件
      */
-    ipcMain.on('SCREENSHOTS:cancel', () => {
-      this.logger('SCREENSHOTS:cancel');
+    ipcMain.on("SCREENSHOTS:cancel", () => {
+      this.logger("SCREENSHOTS:cancel");
 
       const event = new Event();
-      this.emit('cancel', event);
+      this.emit("cancel", event);
       if (event.defaultPrevented) {
         return;
       }
@@ -352,54 +352,54 @@ export default class Screenshots extends Events {
      * SAVE事件
      */
     ipcMain.on(
-      'SCREENSHOTS:save',
+      "SCREENSHOTS:save",
       async (e, buffer: Buffer, data: ScreenshotsData) => {
         this.logger(
-          'SCREENSHOTS:save buffer.length %d, data: %o',
+          "SCREENSHOTS:save buffer.length %d, data: %o",
           buffer.length,
-          data,
+          data
         );
 
         const event = new Event();
-        this.emit('save', event, buffer, data);
+        this.emit("save", event, buffer, data);
         if (event.defaultPrevented || !this.$win) {
           return;
         }
 
         const time = new Date();
         const year = time.getFullYear();
-        const month = padStart(time.getMonth() + 1, 2, '0');
-        const date = padStart(time.getDate(), 2, '0');
-        const hours = padStart(time.getHours(), 2, '0');
-        const minutes = padStart(time.getMinutes(), 2, '0');
-        const seconds = padStart(time.getSeconds(), 2, '0');
-        const milliseconds = padStart(time.getMilliseconds(), 3, '0');
+        const month = padStart(time.getMonth() + 1, 2, "0");
+        const date = padStart(time.getDate(), 2, "0");
+        const hours = padStart(time.getHours(), 2, "0");
+        const minutes = padStart(time.getMinutes(), 2, "0");
+        const seconds = padStart(time.getSeconds(), 2, "0");
+        const milliseconds = padStart(time.getMilliseconds(), 3, "0");
 
         this.$win.setAlwaysOnTop(false);
 
         const { canceled, filePath } = await dialog.showSaveDialog(this.$win, {
           defaultPath: `${year}${month}${date}${hours}${minutes}${seconds}${milliseconds}.png`,
           filters: [
-            { name: 'Image (png)', extensions: ['png'] },
-            { name: 'All Files', extensions: ['*'] },
+            { name: "Image (png)", extensions: ["png"] },
+            { name: "All Files", extensions: ["*"] },
           ],
         });
 
         if (!this.$win) {
-          this.emit('afterSave', new Event(), buffer, data, false); // isSaved = false
+          this.emit("afterSave", new Event(), buffer, data, false); // isSaved = false
           return;
         }
 
         this.$win.setAlwaysOnTop(true);
         if (canceled || !filePath) {
-          this.emit('afterSave', new Event(), buffer, data, false); // isSaved = false
+          this.emit("afterSave", new Event(), buffer, data, false); // isSaved = false
           return;
         }
 
         await fs.writeFile(filePath, buffer);
-        this.emit('afterSave', new Event(), buffer, data, true); // isSaved = true
+        this.emit("afterSave", new Event(), buffer, data, true); // isSaved = true
         this.endCapture();
-      },
+      }
     );
   }
 }

@@ -1,4 +1,5 @@
-import React, { ReactElement, useCallback, useRef, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
+import type { ReactElement } from 'react'
 import useCanvasContextRef from '../../hooks/useCanvasContextRef'
 import useCanvasMousedown from '../../hooks/useCanvasMousedown'
 import useCursor from '../../hooks/useCursor'
@@ -6,12 +7,8 @@ import useHistory from '../../hooks/useHistory'
 import useOperation from '../../hooks/useOperation'
 import ScreenshotsButton from '../../ScreenshotsButton'
 import ScreenshotsSizeColor from '../../ScreenshotsSizeColor'
-import {
-  HistoryItemEdit,
-  HistoryItemSource,
-  HistoryItemType,
-  Point
-} from '../../types'
+import type { HistoryItemEdit, HistoryItemSource, Point } from '../../types'
+import { HistoryItemType } from '../../types'
 import ScreenshotsTextarea from '../../ScreenshotsTextarea'
 import useBounds from '../../hooks/useBounds'
 import useDrawSelect from '../../hooks/useDrawSelect'

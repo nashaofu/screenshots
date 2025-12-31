@@ -1,4 +1,5 @@
-import React, { ReactElement, useCallback } from 'react'
+import { useCallback } from 'react'
+import type { ReactElement } from 'react'
 import useCall from '../../hooks/useCall'
 import useLang from '../../hooks/useLang'
 import useReset from '../../hooks/useReset'

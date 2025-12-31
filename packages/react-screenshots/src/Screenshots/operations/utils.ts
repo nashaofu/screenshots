@@ -1,4 +1,4 @@
-import { HistoryItemSource, Point } from '../types'
+import type { HistoryItemSource, Point } from '../types'
 
 const CircleRadius = 4
 

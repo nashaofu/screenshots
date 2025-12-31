@@ -2,21 +2,15 @@
   "name": "root",
   "private": true,
   "engines": {
-    "node": ">=14"
+    "node": ">=20"
   },
-  "packageManager": "yarn@1.22.17",
   "scripts": {
-    "preinstall": "npx only-allow yarn",
-    "install": "npm run bootstrap",
-    "bootstrap": "lerna bootstrap",
-    "dev": "lerna run dev --parallel",
-    "start": "lerna run start --parallel",
-    "build": "lerna run build",
-    "clean": "lerna clean --yes",
-    "release": "lerna publish",
-    "alpha": "lerna publish --dist-tag alpha"
+    "check": "biome check --write",
+    "format": "biome format --write",
+    "lint": "biome lint --write"
   },
   "devDependencies": {
-    "lerna": "^6.6.1"
-  }
+    "@biomejs/biome": "^2.3.10"
+  },
+  "packageManager": "pnpm@10.27.0"
 }

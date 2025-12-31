@@ -5,6 +5,7 @@
   "types": "lib/index.d.ts",
   "main": "lib/index.cjs.js",
   "module": "lib/index.js",
+  "type": "commonjs",
   "files": [
     "lib/**"
   ],
@@ -12,8 +13,7 @@
     "prepublishOnly": "npm run build",
     "start": "cross-env DEBUG=electron-screenshots electron lib/demo.js",
     "dev": "tsc --sourceMap --watch",
-    "build": "npm run lint && npm run clean && tsc",
-    "lint": "eslint . --ext .js,.ts --fix",
+    "build": "npm run clean && tsc",
     "clean": "rimraf lib"
   },
   "repository": {
@@ -36,27 +36,21 @@
     "registry": "https://registry.npmjs.org/"
   },
   "dependencies": {
-    "debug": "^4.3.4",
-    "fs-extra": "^11.1.1",
-    "node-screenshots": "^0.2.1",
+    "debug": "^4.4.3",
+    "fs-extra": "^11.3.3",
+    "node-screenshots": "^0.2.5",
     "react-screenshots": "^0.5.22"
   },
   "peerDependencies": {
-    "electron": ">=14"
+    "electron": ">=20"
   },
   "devDependencies": {
-    "@types/debug": "^4.1.7",
-    "@types/fs-extra": "^11.0.1",
-    "@types/node": "^18.15.11",
-    "@typescript-eslint/eslint-plugin": "^5.57.0",
-    "@typescript-eslint/parser": "^5.57.0",
-    "cross-env": "^7.0.3",
-    "electron": "^23.2.0",
-    "eslint": "^8.37.0",
-    "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-config-airbnb-typescript": "^17.0.0",
-    "eslint-plugin-import": "^2.27.5",
-    "rimraf": "^4.4.1",
-    "typescript": "^5.0.2"
+    "@types/debug": "^4.1.12",
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^25.0.3",
+    "cross-env": "^10.1.0",
+    "electron": "^20.3.12",
+    "rimraf": "^6.1.2",
+    "typescript": "^5.9.3"
   }
 }

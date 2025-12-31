@@ -1,5 +1,6 @@
 import { useCallback } from 'react'
-import { History, HistoryItem, HistoryItemType } from '../types'
+import type { History, HistoryItem } from '../types'
+import { HistoryItemType } from '../types'
 import useDispatcher from './useDispatcher'
 import useStore from './useStore'
 

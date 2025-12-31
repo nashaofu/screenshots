@@ -1,5 +1,5 @@
 import { useCallback } from 'react'
-import { EmiterListener } from '../types'
+import type { EmiterListener } from '../types'
 import useStore from './useStore'
 
 export interface EmiterDispatcher {

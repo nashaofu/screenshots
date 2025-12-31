@@ -1,6 +1,7 @@
-import React, { ReactElement, useCallback } from 'react'
+import { useCallback } from 'react'
+import type { ReactElement } from 'react'
 import Screenshots from '../Screenshots'
-import { Bounds } from '../Screenshots/types'
+import type { Bounds } from '../Screenshots/types'
 import './app.less'
 import imageUrl from './image.jpg'
 
