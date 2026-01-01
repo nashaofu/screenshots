@@ -5,7 +5,7 @@ import { pluginLess } from "@rsbuild/plugin-less";
 export default defineConfig({
   source: {
     entry: {
-      index: ["./src/Screenshots/index.tsx"],
+      index: ["./src/**/*.tsx", "./src/**/*.ts"],
     },
   },
   lib: [

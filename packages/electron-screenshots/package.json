@@ -1,6 +1,6 @@
 {
   "name": "electron-screenshots",
-  "version": "0.5.28",
+  "version": "0.6.0",
   "description": "electron 截图插件",
   "types": "lib/index.d.ts",
   "main": "lib/index.cjs.js",
@@ -49,7 +49,7 @@
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^25.0.3",
     "cross-env": "^10.1.0",
-    "electron": "^20.3.12",
+    "electron": "^39.2.7",
     "rimraf": "^6.1.2",
     "typescript": "^5.9.3"
   }

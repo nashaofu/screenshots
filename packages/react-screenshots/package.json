@@ -1,15 +1,21 @@
 {
   "name": "react-screenshots",
-  "version": "0.5.22",
+  "version": "0.6.0",
   "description": "a screenshot cropper tool by react",
   "type": "module",
   "exports": {
     ".": {
-      "types": "./lib/index.d.ts",
-      "import": "./lib/index.js"
+      "types": "./lib/Screenshots/index.d.ts",
+      "import": "./lib/Screenshots/index.js",
+      "require": "./lib/Screenshots/index.js"
+    },
+    "./dist/*": {
+      "types": "./dist/*",
+      "import": "./dist/*",
+      "require": "./dist/*"
     }
   },
-  "types": "./lib/index.d.ts",
+  "types": "./lib/Screenshots/index.d.ts",
   "files": [
     "lib/**",
     "dist/**"

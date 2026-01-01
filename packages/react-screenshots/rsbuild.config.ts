@@ -10,5 +10,8 @@ export default defineConfig({
       electron: "./src/electron/index.tsx",
     },
   },
+  output: {
+    assetPrefix: "./",
+  },
   plugins: [pluginReact(), pluginLess()],
 });
