@@ -1,30 +1,40 @@
-import { memo } from 'react'
-import type { ReactElement } from 'react'
-import './index.less'
+import type { ReactElement } from 'react';
+import { memo } from 'react';
+import './index.less';
 
 export interface ColorProps {
-  value: string
-  onChange: (value: string) => void
+  value: string;
+  onChange: (value: string) => void;
 }
 
-export default memo(function ScreenshotsColor ({ value, onChange }: ColorProps): ReactElement {
-  const colors = ['#ee5126', '#fceb4d', '#90e746', '#51c0fa', '#7a7a7a', '#ffffff']
+export default memo(function ScreenshotsColor({
+  value,
+  onChange,
+}: ColorProps): ReactElement {
+  const colors = [
+    '#ee5126',
+    '#fceb4d',
+    '#90e746',
+    '#51c0fa',
+    '#7a7a7a',
+    '#ffffff',
+  ];
   return (
-    <div className='screenshots-color'>
-      {colors.map(color => {
-        const classNames = ['screenshots-color-item']
+    <div className="screenshots-color">
+      {colors.map((color) => {
+        const classNames = ['screenshots-color-item'];
         if (color === value) {
-          classNames.push('screenshots-color-active')
+          classNames.push('screenshots-color-active');
         }
         return (
           <div
             key={color}
             className={classNames.join(' ')}
             style={{ backgroundColor: color }}
-            onClick={() => onChange && onChange(color)}
+            onClick={() => onChange?.(color)}
           />
-        )
+        );
       })}
     </div>
-  )
-})
+  );
+});

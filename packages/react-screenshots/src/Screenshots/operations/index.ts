@@ -1,13 +1,27 @@
-import Ok from './Ok'
-import Cancel from './Cancel'
-import Save from './Save'
-import Redo from './Redo'
-import Undo from './Undo'
-import Mosaic from './Mosaic'
-import Text from './Text'
-import Brush from './Brush'
-import Arrow from './Arrow'
-import Ellipse from './Ellipse'
-import Rectangle from './Rectangle'
+import Arrow from './Arrow';
+import Brush from './Brush';
+import Cancel from './Cancel';
+import Ellipse from './Ellipse';
+import Mosaic from './Mosaic';
+import Ok from './Ok';
+import Rectangle from './Rectangle';
+import Redo from './Redo';
+import Save from './Save';
+import Text from './Text';
+import Undo from './Undo';
 
-export default [Rectangle, Ellipse, Arrow, Brush, Text, Mosaic, '|', Undo, Redo, '|', Save, Cancel, Ok]
+export default [
+  Rectangle,
+  Ellipse,
+  Arrow,
+  Brush,
+  Text,
+  Mosaic,
+  '|',
+  Undo,
+  Redo,
+  '|',
+  Save,
+  Cancel,
+  Ok,
+];

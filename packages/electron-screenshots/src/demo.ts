@@ -35,7 +35,7 @@ app.whenReady().then(() => {
   });
 
   // 点击确定按钮回调事件
-  screenshots.on('ok', (e, buffer, bounds) => {
+  screenshots.on('ok', (_event, buffer, bounds) => {
     console.log('capture', buffer, bounds);
   });
   // 点击取消按钮回调事件
@@ -47,7 +47,7 @@ app.whenReady().then(() => {
     });
   });
   // 点击保存按钮回调事件
-  screenshots.on('save', (e, buffer, bounds) => {
+  screenshots.on('save', (_event, buffer, bounds) => {
     console.log('capture', buffer, bounds);
   });
 

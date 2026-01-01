@@ -1,16 +1,19 @@
-import { useEffect } from 'react'
-import useEmiter from '../hooks/useEmiter'
-import type { HistoryItemSource } from '../types'
+import { useEffect } from 'react';
+import useEmitter from '../hooks/useEmitter';
+import type { HistoryItemSource } from '../types';
 
-export default function useDrawSelect (
-  onDrawSelect: (action: HistoryItemSource<unknown, unknown>, e: MouseEvent) => unknown
+export default function useDrawSelect(
+  onDrawSelect: (
+    action: HistoryItemSource<unknown, unknown>,
+    e: PointerEvent,
+  ) => unknown,
 ): void {
-  const emiter = useEmiter()
+  const emitter = useEmitter();
 
   useEffect(() => {
-    emiter.on('drawselect', onDrawSelect)
+    emitter.on('drawselect', onDrawSelect);
     return () => {
-      emiter.off('drawselect', onDrawSelect)
-    }
-  }, [onDrawSelect, emiter])
+      emitter.off('drawselect', onDrawSelect);
+    };
+  }, [onDrawSelect, emitter]);
 }

@@ -1,7 +1,7 @@
-import { memo, useCallback } from 'react'
-import type { ReactElement, PointerEvent, ReactNode } from 'react'
-import ScreenshotsOption from '../ScreenshotsOption'
-import './index.less'
+import type { PointerEvent, ReactElement, ReactNode } from 'react';
+import { memo, useCallback } from 'react';
+import ScreenshotsOption from '../ScreenshotsOption';
+import './index.less';
 
 export interface ScreenshotsButtonProps {
   title: string;
@@ -12,31 +12,31 @@ export interface ScreenshotsButtonProps {
   onClick?: (e: PointerEvent<HTMLDivElement>) => unknown;
 }
 
-export default memo(function ScreenshotsButton ({
+export default memo(function ScreenshotsButton({
   title,
   icon,
   checked,
   disabled,
   option,
-  onClick
+  onClick,
 }: ScreenshotsButtonProps): ReactElement {
-  const classNames = ['screenshots-button']
+  const classNames = ['screenshots-button'];
 
   const onButtonClick = useCallback(
     (e: PointerEvent<HTMLDivElement>) => {
       if (disabled || !onClick) {
-        return
+        return;
       }
-      onClick(e)
+      onClick(e);
     },
-    [disabled, onClick]
-  )
+    [disabled, onClick],
+  );
 
   if (checked) {
-    classNames.push('screenshots-button-checked')
+    classNames.push('screenshots-button-checked');
   }
   if (disabled) {
-    classNames.push('screenshots-button-disabled')
+    classNames.push('screenshots-button-disabled');
   }
 
   return (
@@ -49,5 +49,5 @@ export default memo(function ScreenshotsButton ({
         <span className={icon} />
       </div>
     </ScreenshotsOption>
-  )
-})
+  );
+});

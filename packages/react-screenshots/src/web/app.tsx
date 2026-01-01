@@ -1,44 +1,44 @@
-import { useCallback } from 'react'
-import type { ReactElement } from 'react'
-import Screenshots from '../Screenshots'
-import type { Bounds } from '../Screenshots/types'
-import './app.less'
-import imageUrl from './image.jpg'
+import type { ReactElement } from 'react';
+import { useCallback } from 'react';
+import Screenshots from '../Screenshots';
+import type { Bounds } from '../Screenshots/types';
+import './app.less';
+import imageUrl from './image.jpg';
 
-export default function App (): ReactElement {
+export default function App(): ReactElement {
   const onSave = useCallback((blob: Blob | null, bounds: Bounds) => {
-    console.log('save', blob, bounds)
+    console.log('save', blob, bounds);
     if (blob) {
-      const url = URL.createObjectURL(blob)
-      console.log(url)
-      window.open(url)
+      const url = URL.createObjectURL(blob);
+      console.log(url);
+      window.open(url);
     }
-  }, [])
+  }, []);
   const onCancel = useCallback(() => {
-    console.log('cancel')
-  }, [])
+    console.log('cancel');
+  }, []);
   const onOk = useCallback((blob: Blob | null, bounds: Bounds) => {
-    console.log('ok', blob, bounds)
+    console.log('ok', blob, bounds);
     if (blob) {
-      const url = URL.createObjectURL(blob)
-      console.log(url)
-      window.open(url)
+      const url = URL.createObjectURL(blob);
+      console.log(url);
+      window.open(url);
     }
-  }, [])
+  }, []);
 
   return (
-    <div className='body'>
+    <div className="body">
       <Screenshots
         url={imageUrl}
         width={window.innerWidth}
         height={window.innerHeight}
         lang={{
-          operation_rectangle_title: 'Rectangle'
+          operation_rectangle_title: 'Rectangle',
         }}
         onSave={onSave}
         onCancel={onCancel}
         onOk={onOk}
       />
     </div>
-  )
+  );
 }

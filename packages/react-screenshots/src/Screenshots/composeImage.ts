@@ -1,35 +1,48 @@
-import type { Bounds, History } from './types'
-import { HistoryItemType } from './types'
+import type { Bounds, History } from './types';
+import { HistoryItemType } from './types';
 
 interface ComposeImageOpts {
-  image: HTMLImageElement
-  width: number
-  height: number
-  history: History
-  bounds: Bounds
+  image: HTMLImageElement;
+  width: number;
+  height: number;
+  history: History;
+  bounds: Bounds;
 }
 
-export default function composeImage ({ image, width, height, history, bounds }: ComposeImageOpts): Promise<Blob> {
+export default function composeImage({
+  image,
+  width,
+  height,
+  history,
+  bounds,
+}: ComposeImageOpts): Promise<Blob> {
   return new Promise<Blob>((resolve, reject) => {
-    const $canvas = document.createElement('canvas')
-    const targetWidth = bounds.width * window.devicePixelRatio
-    const targetHeight = bounds.height * window.devicePixelRatio
-    $canvas.width = targetWidth
-    $canvas.height = targetHeight
+    const $canvas = document.createElement('canvas');
+    const targetWidth = bounds.width * window.devicePixelRatio;
+    const targetHeight = bounds.height * window.devicePixelRatio;
+    $canvas.width = targetWidth;
+    $canvas.height = targetHeight;
 
-    const ctx = $canvas.getContext('2d')
+    const ctx = $canvas.getContext('2d');
     if (!ctx) {
-      return reject(new Error('convert image to blob fail'))
+      return reject(new Error('convert image to blob fail'));
     }
 
-    const rx = image.naturalWidth / width
-    const ry = image.naturalHeight / height
+    const rx = image.naturalWidth / width;
+    const ry = image.naturalHeight / height;
 
-    ctx.imageSmoothingEnabled = true
+    ctx.imageSmoothingEnabled = true;
     // 设置太高，图片会模糊
-    ctx.imageSmoothingQuality = 'low'
-    ctx.setTransform(window.devicePixelRatio, 0, 0, window.devicePixelRatio, 0, 0)
-    ctx.clearRect(0, 0, bounds.width, bounds.height)
+    ctx.imageSmoothingQuality = 'low';
+    ctx.setTransform(
+      window.devicePixelRatio,
+      0,
+      0,
+      window.devicePixelRatio,
+      0,
+      0,
+    );
+    ctx.clearRect(0, 0, bounds.width, bounds.height);
     ctx.drawImage(
       image,
       bounds.x * rx,
@@ -39,20 +52,20 @@ export default function composeImage ({ image, width, height, history, bounds }:
       0,
       0,
       bounds.width,
-      bounds.height
-    )
+      bounds.height,
+    );
 
-    history.stack.slice(0, history.index + 1).forEach(item => {
+    history.stack.slice(0, history.index + 1).forEach((item) => {
       if (item.type === HistoryItemType.Source) {
-        item.draw(ctx, item)
+        item.draw(ctx, item);
       }
-    })
+    });
 
-    $canvas.toBlob(blob => {
+    $canvas.toBlob((blob) => {
       if (!blob) {
-        return reject(new Error('canvas toBlob fail'))
+        return reject(new Error('canvas toBlob fail'));
       }
-      resolve(blob)
-    }, 'image/png')
-  })
+      resolve(blob);
+    }, 'image/png');
+  });
 }

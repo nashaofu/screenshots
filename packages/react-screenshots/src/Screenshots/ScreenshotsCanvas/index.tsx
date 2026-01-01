@@ -1,30 +1,38 @@
-import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useLayoutEffect, useRef } from 'react'
-import type { ReactElement, MouseEvent as ReactMouseEvent } from 'react'
-import useBounds from '../hooks/useBounds'
-import { HistoryItemType } from '../types'
-import type { Bounds, Point } from '../types'
-import useCursor from '../hooks/useCursor'
-import useEmiter from '../hooks/useEmiter'
-import useHistory from '../hooks/useHistory'
-import useOperation from '../hooks/useOperation'
-import useStore from '../hooks/useStore'
-import getBoundsByPoints from './getBoundsByPoints'
-import getPoints from './getPoints'
-import './index.less'
-import isPointInDraw from './isPointInDraw'
+import type { ReactElement, PointerEvent as ReactPointerEvent } from "react";
+import {
+  forwardRef,
+  memo,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useLayoutEffect,
+  useRef,
+} from "react";
+import useBounds from "../hooks/useBounds";
+import useCursor from "../hooks/useCursor";
+import useEmitter from "../hooks/useEmitter";
+import useHistory from "../hooks/useHistory";
+import useOperation from "../hooks/useOperation";
+import useStore from "../hooks/useStore";
+import type { Bounds, Point } from "../types";
+import { HistoryItemType } from "../types";
+import getBoundsByPoints from "./getBoundsByPoints";
+import getPoints from "./getPoints";
+import "./index.less";
+import isPointInDraw from "./isPointInDraw";
 
-const borders = ['top', 'right', 'bottom', 'left']
+const borders = ["top", "right", "bottom", "left"];
 
 export enum ResizePoints {
-  ResizeTop = 'top',
-  ResizetopRight = 'top-right',
-  ResizeRight = 'right',
-  ResizeRightBottom = 'right-bottom',
-  ResizeBottom = 'bottom',
-  ResizeBottomLeft = 'bottom-left',
-  ResizeLeft = 'left',
-  ResizeLeftTop = 'left-top',
-  Move = 'move',
+  ResizeTop = "top",
+  ResizetopRight = "top-right",
+  ResizeRight = "right",
+  ResizeRightBottom = "right-bottom",
+  ResizeBottom = "bottom",
+  ResizeBottomLeft = "bottom-left",
+  ResizeLeft = "left",
+  ResizeLeftTop = "left-top",
+  Move = "move",
 }
 
 const resizePoints = [
@@ -35,98 +43,99 @@ const resizePoints = [
   ResizePoints.ResizeBottom,
   ResizePoints.ResizeBottomLeft,
   ResizePoints.ResizeLeft,
-  ResizePoints.ResizeLeftTop
-]
+  ResizePoints.ResizeLeftTop,
+];
 
 export default memo(
-  forwardRef<CanvasRenderingContext2D>(function ScreenshotsCanvas (
+  forwardRef<CanvasRenderingContext2D>(function ScreenshotsCanvas(
     _props,
     ref
   ): ReactElement | null {
-    const { url, image, width, height } = useStore()
+    const { url, image, width, height } = useStore();
 
-    const emiter = useEmiter()
-    const [history] = useHistory()
-    const [cursor] = useCursor()
-    const [bounds, boundsDispatcher] = useBounds()
-    const [operation] = useOperation()
+    const emitter = useEmitter();
+    const [history] = useHistory();
+    const [cursor] = useCursor();
+    const [bounds, boundsDispatcher] = useBounds();
+    const [operation] = useOperation();
 
-    const resizeOrMoveRef = useRef<string | undefined>(undefined)
-    const pointRef = useRef<Point | null>(null)
-    const boundsRef = useRef<Bounds | null>(null)
-    const canvasRef = useRef<HTMLCanvasElement | null>(null)
-    const ctxRef = useRef<CanvasRenderingContext2D | null>(null)
+    const resizeOrMoveRef = useRef<string | undefined>(undefined);
+    const pointRef = useRef<Point | null>(null);
+    const boundsRef = useRef<Bounds | null>(null);
+    const canvasRef = useRef<HTMLCanvasElement | null>(null);
+    const ctxRef = useRef<CanvasRenderingContext2D | null>(null);
 
-    const isCanResize = bounds && !history.stack.length && !operation
+    const isCanResize = bounds && !history.stack.length && !operation;
 
+    // biome-ignore lint/correctness/useExhaustiveDependencies: draw only cares about bounds, ctxRef and history
     const draw = useCallback(() => {
       if (!bounds || !ctxRef.current) {
-        return
+        return;
       }
 
-      const ctx = ctxRef.current
-      ctx.imageSmoothingEnabled = true
+      const ctx = ctxRef.current;
+      ctx.imageSmoothingEnabled = true;
       // 设置太高，图片会模糊
-      ctx.imageSmoothingQuality = 'low'
-      ctx.clearRect(0, 0, bounds.width, bounds.height)
+      ctx.imageSmoothingQuality = "low";
+      ctx.clearRect(0, 0, bounds.width, bounds.height);
 
       history.stack.slice(0, history.index + 1).forEach((item) => {
         if (item.type === HistoryItemType.Source) {
-          item.draw(ctx, item)
+          item.draw(ctx, item);
         }
-      })
-    }, [bounds, ctxRef, history])
+      });
+    }, [bounds, ctxRef, history]);
 
-    const onMouseDown = useCallback(
-      (e: ReactMouseEvent, resizeOrMove: string) => {
+    const onPointerDown = useCallback(
+      (e: ReactPointerEvent<HTMLDivElement>, resizeOrMove: string) => {
         if (e.button !== 0 || !bounds) {
-          return
+          return;
         }
         if (!operation) {
-          resizeOrMoveRef.current = resizeOrMove
+          resizeOrMoveRef.current = resizeOrMove;
           pointRef.current = {
             x: e.clientX,
-            y: e.clientY
-          }
+            y: e.clientY,
+          };
           boundsRef.current = {
             x: bounds.x,
             y: bounds.y,
             width: bounds.width,
-            height: bounds.height
-          }
+            height: bounds.height,
+          };
         } else {
           const draw = isPointInDraw(
             bounds,
             canvasRef.current,
             history,
             e.nativeEvent
-          )
+          );
           if (draw) {
-            emiter.emit('drawselect', draw, e.nativeEvent)
+            emitter.emit("drawselect", draw, e.nativeEvent);
           } else {
-            emiter.emit('mousedown', e.nativeEvent)
+            emitter.emit("pointerdown", e.nativeEvent);
           }
         }
       },
-      [bounds, operation, emiter, history]
-    )
+      [bounds, operation, emitter, history]
+    );
 
     const updateBounds = useCallback(
-      (e: MouseEvent) => {
+      (e: PointerEvent) => {
         if (
           !resizeOrMoveRef.current ||
           !pointRef.current ||
           !boundsRef.current ||
           !bounds
         ) {
-          return
+          return;
         }
         const points = getPoints(
           e,
           resizeOrMoveRef.current,
           pointRef.current,
           boundsRef.current
-        )
+        );
         boundsDispatcher.set(
           getBoundsByPoints(
             points[0],
@@ -136,112 +145,112 @@ export default memo(
             height,
             resizeOrMoveRef.current
           )
-        )
+        );
       },
       [width, height, bounds, boundsDispatcher]
-    )
+    );
 
     useLayoutEffect(() => {
       if (!image || !bounds || !canvasRef.current) {
-        ctxRef.current = null
-        return
+        ctxRef.current = null;
+        return;
       }
 
       if (!ctxRef.current) {
-        ctxRef.current = canvasRef.current.getContext('2d')
+        ctxRef.current = canvasRef.current.getContext("2d");
       }
 
-      draw()
-    }, [image, bounds, draw])
+      draw();
+    }, [image, bounds, draw]);
 
     useEffect(() => {
-      const onMouseMove = (e: MouseEvent) => {
+      const onPointerMove = (e: PointerEvent) => {
         if (!operation) {
           if (
             !resizeOrMoveRef.current ||
             !pointRef.current ||
             !boundsRef.current
           ) {
-            return
+            return;
           }
-          updateBounds(e)
+          updateBounds(e);
         } else {
-          emiter.emit('mousemove', e)
+          emitter.emit("pointermove", e);
         }
-      }
+      };
 
-      const onMouseUp = (e: MouseEvent) => {
+      const onPointerUp = (e: PointerEvent) => {
         if (!operation) {
           if (
             !resizeOrMoveRef.current ||
             !pointRef.current ||
             !boundsRef.current
           ) {
-            return
+            return;
           }
-          updateBounds(e)
-          resizeOrMoveRef.current = undefined
-          pointRef.current = null
-          boundsRef.current = null
+          updateBounds(e);
+          resizeOrMoveRef.current = undefined;
+          pointRef.current = null;
+          boundsRef.current = null;
         } else {
-          emiter.emit('mouseup', e)
+          emitter.emit("pointerup", e);
         }
-      }
-      window.addEventListener('mousemove', onMouseMove)
-      window.addEventListener('mouseup', onMouseUp)
+      };
+      window.addEventListener("pointermove", onPointerMove);
+      window.addEventListener("pointerup", onPointerUp);
 
       return () => {
-        window.removeEventListener('mousemove', onMouseMove)
-        window.removeEventListener('mouseup', onMouseUp)
-      }
-    }, [updateBounds, operation, emiter])
+        window.removeEventListener("pointermove", onPointerMove);
+        window.removeEventListener("pointerup", onPointerUp);
+      };
+    }, [updateBounds, operation, emitter]);
 
     // 放到最后，保证ctxRef.current存在
     useImperativeHandle<
       CanvasRenderingContext2D | null,
       CanvasRenderingContext2D | null
-    >(ref, () => ctxRef.current)
+    >(ref, () => ctxRef.current);
 
     return (
       <div
-        className='screenshots-canvas'
+        className="screenshots-canvas"
         style={{
           width: bounds?.width || 0,
           height: bounds?.height || 0,
           transform: bounds
             ? `translate(${bounds.x}px, ${bounds.y}px)`
-            : 'none'
+            : "none",
         }}
       >
-        <div className='screenshots-canvas-body'>
+        <div className="screenshots-canvas-body">
           {/* 保证一开始就显示，减少加载时间 */}
           <img
-            className='screenshots-canvas-image'
+            className="screenshots-canvas-image"
             src={url}
             style={{
               width,
               height,
               transform: bounds
                 ? `translate(${-bounds.x}px, ${-bounds.y}px)`
-                : 'none'
+                : "none",
             }}
           />
           <canvas
             ref={canvasRef}
-            className='screenshots-canvas-panel'
+            className="screenshots-canvas-panel"
             width={bounds?.width || 0}
             height={bounds?.height || 0}
           />
         </div>
         <div
-          className='screenshots-canvas-mask'
+          className="screenshots-canvas-mask"
           style={{
-            cursor
+            cursor,
           }}
-          onMouseDown={(e) => onMouseDown(e, 'move')}
+          onPointerDown={(e) => onPointerDown(e, "move")}
         >
           {isCanResize && (
-            <div className='screenshots-canvas-size'>
+            <div className="screenshots-canvas-size">
               {bounds.width} &times; {bounds.height}
             </div>
           )}
@@ -252,7 +261,7 @@ export default memo(
               key={border}
               className={`screenshots-canvas-border-${border}`}
             />
-          )
+          );
         })}
         {isCanResize &&
           resizePoints.map((resizePoint) => {
@@ -260,11 +269,11 @@ export default memo(
               <div
                 key={resizePoint}
                 className={`screenshots-canvas-point-${resizePoint}`}
-                onMouseDown={(e) => onMouseDown(e, resizePoint)}
+                onPointerDown={(e) => onPointerDown(e, resizePoint)}
               />
-            )
+            );
           })}
       </div>
-    )
+    );
   })
-)
+);

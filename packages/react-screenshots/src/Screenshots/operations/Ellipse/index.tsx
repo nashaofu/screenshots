@@ -1,28 +1,28 @@
-import { useCallback, useRef, useState } from 'react'
-import type { ReactElement } from 'react'
-import useCanvasContextRef from '../../hooks/useCanvasContextRef'
-import useCanvasMousedown from '../../hooks/useCanvasMousedown'
-import useCanvasMousemove from '../../hooks/useCanvasMousemove'
-import useCanvasMouseup from '../../hooks/useCanvasMouseup'
-import useCursor from '../../hooks/useCursor'
-import useDrawSelect from '../../hooks/useDrawSelect'
-import useHistory from '../../hooks/useHistory'
-import useLang from '../../hooks/useLang'
-import useOperation from '../../hooks/useOperation'
-import ScreenshotsButton from '../../ScreenshotsButton'
-import ScreenshotsSizeColor from '../../ScreenshotsSizeColor'
-import type { HistoryItemEdit, HistoryItemSource } from '../../types'
-import { HistoryItemType } from '../../types'
-import { isHit, isHitCircle } from '../utils'
-import draw, { getEditedEllipseData } from './draw'
+import type { ReactElement } from 'react';
+import { useCallback, useRef, useState } from 'react';
+import useCanvasContextRef from '../../hooks/useCanvasContextRef';
+import useCanvasPointerDown from '../../hooks/useCanvasPointerDown';
+import useCanvasPointerMove from '../../hooks/useCanvasPointerMove';
+import useCanvasPointerUp from '../../hooks/useCanvasPointerUp';
+import useCursor from '../../hooks/useCursor';
+import useDrawSelect from '../../hooks/useDrawSelect';
+import useHistory from '../../hooks/useHistory';
+import useLang from '../../hooks/useLang';
+import useOperation from '../../hooks/useOperation';
+import ScreenshotsButton from '../../ScreenshotsButton';
+import ScreenshotsSizeColor from '../../ScreenshotsSizeColor';
+import type { HistoryItemEdit, HistoryItemSource } from '../../types';
+import { HistoryItemType } from '../../types';
+import { isHit, isHitCircle } from '../utils';
+import draw, { getEditedEllipseData } from './draw';
 
 export interface EllipseData {
-  size: number
-  color: string
-  x1: number
-  y1: number
-  x2: number
-  y2: number
+  size: number;
+  color: string;
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
 }
 
 export enum EllipseEditType {
@@ -34,112 +34,118 @@ export enum EllipseEditType {
   ResizeBottom,
   ResizeLeftBottom,
   ResizeLeft,
-  ResizeLeftTop
+  ResizeLeftTop,
 }
 
 export interface EllipseEditData {
-  type: EllipseEditType
-  x1: number
-  y1: number
-  x2: number
-  y2: number
+  type: EllipseEditType;
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
 }
 
-export default function Ellipse (): ReactElement {
-  const lang = useLang()
-  const [history, historyDispatcher] = useHistory()
-  const [operation, operationDispatcher] = useOperation()
-  const [, cursorDispatcher] = useCursor()
-  const canvasContextRef = useCanvasContextRef()
-  const [size, setSize] = useState(3)
-  const [color, setColor] = useState('#ee5126')
-  const ellipseRef = useRef<HistoryItemSource<EllipseData, EllipseEditData> | null>(null)
-  const ellipseEditRef = useRef<HistoryItemEdit<EllipseEditData, EllipseData> | null>(null)
+export default function Ellipse(): ReactElement {
+  const lang = useLang();
+  const [history, historyDispatcher] = useHistory();
+  const [operation, operationDispatcher] = useOperation();
+  const [, cursorDispatcher] = useCursor();
+  const canvasContextRef = useCanvasContextRef();
+  const [size, setSize] = useState(3);
+  const [color, setColor] = useState('#ee5126');
+  const ellipseRef = useRef<HistoryItemSource<
+    EllipseData,
+    EllipseEditData
+  > | null>(null);
+  const ellipseEditRef = useRef<HistoryItemEdit<
+    EllipseEditData,
+    EllipseData
+  > | null>(null);
 
-  const checked = operation === 'Ellipse'
+  const checked = operation === 'Ellipse';
 
   const selectEllipse = useCallback(() => {
-    operationDispatcher.set('Ellipse')
-    cursorDispatcher.set('crosshair')
-  }, [operationDispatcher, cursorDispatcher])
+    operationDispatcher.set('Ellipse');
+    cursorDispatcher.set('crosshair');
+  }, [operationDispatcher, cursorDispatcher]);
 
   const onSelectEllipse = useCallback(() => {
     if (checked) {
-      return
+      return;
     }
-    selectEllipse()
-    historyDispatcher.clearSelect()
-  }, [checked, selectEllipse, historyDispatcher])
+    selectEllipse();
+    historyDispatcher.clearSelect();
+  }, [checked, selectEllipse, historyDispatcher]);
 
   const onDrawSelect = useCallback(
-    (action: HistoryItemSource<unknown, unknown>, e: MouseEvent) => {
+    (action: HistoryItemSource<unknown, unknown>, e: PointerEvent) => {
       if (action.name !== 'Ellipse' || !canvasContextRef.current) {
-        return
+        return;
       }
 
-      const source = action as HistoryItemSource<EllipseData, EllipseEditData>
+      const source = action as HistoryItemSource<EllipseData, EllipseEditData>;
 
-      selectEllipse()
+      selectEllipse();
 
-      const { x1, y1, x2, y2 } = getEditedEllipseData(source)
+      const { x1, y1, x2, y2 } = getEditedEllipseData(source);
 
-      let type = EllipseEditType.Move
+      let type = EllipseEditType.Move;
       if (
         isHitCircle(canvasContextRef.current.canvas, e, {
           x: (x1 + x2) / 2,
-          y: y1
+          y: y1,
         })
       ) {
-        type = EllipseEditType.ResizeTop
+        type = EllipseEditType.ResizeTop;
       } else if (
         isHitCircle(canvasContextRef.current.canvas, e, {
           x: x2,
-          y: y1
+          y: y1,
         })
       ) {
-        type = EllipseEditType.ResizeRightTop
+        type = EllipseEditType.ResizeRightTop;
       } else if (
         isHitCircle(canvasContextRef.current.canvas, e, {
           x: x2,
-          y: (y1 + y2) / 2
+          y: (y1 + y2) / 2,
         })
       ) {
-        type = EllipseEditType.ResizeRight
+        type = EllipseEditType.ResizeRight;
       } else if (
         isHitCircle(canvasContextRef.current.canvas, e, {
           x: x2,
-          y: y2
+          y: y2,
         })
       ) {
-        type = EllipseEditType.ResizeRightBottom
+        type = EllipseEditType.ResizeRightBottom;
       } else if (
         isHitCircle(canvasContextRef.current.canvas, e, {
           x: (x1 + x2) / 2,
-          y: y2
+          y: y2,
         })
       ) {
-        type = EllipseEditType.ResizeBottom
+        type = EllipseEditType.ResizeBottom;
       } else if (
         isHitCircle(canvasContextRef.current.canvas, e, {
           x: x1,
-          y: y2
+          y: y2,
         })
       ) {
-        type = EllipseEditType.ResizeLeftBottom
+        type = EllipseEditType.ResizeLeftBottom;
       } else if (
         isHitCircle(canvasContextRef.current.canvas, e, {
           x: x1,
-          y: (y1 + y2) / 2
+          y: (y1 + y2) / 2,
         })
       ) {
-        type = EllipseEditType.ResizeLeft
+        type = EllipseEditType.ResizeLeft;
       } else if (
         isHitCircle(canvasContextRef.current.canvas, e, {
           x: x1,
-          y: y1
+          y: y1,
         })
       ) {
-        type = EllipseEditType.ResizeLeftTop
+        type = EllipseEditType.ResizeLeftTop;
       }
 
       ellipseEditRef.current = {
@@ -149,25 +155,26 @@ export default function Ellipse (): ReactElement {
           x1: e.clientX,
           y1: e.clientY,
           x2: e.clientX,
-          y2: e.clientY
+          y2: e.clientY,
         },
-        source
-      }
+        source,
+      };
 
-      historyDispatcher.select(action)
+      historyDispatcher.select(action);
     },
-    [canvasContextRef, selectEllipse, historyDispatcher]
-  )
+    [canvasContextRef, selectEllipse, historyDispatcher],
+  );
 
-  const onMousedown = useCallback(
-    (e: MouseEvent) => {
+  const onPointerDown = useCallback(
+    (e: PointerEvent) => {
       if (!checked || !canvasContextRef.current || ellipseRef.current) {
-        return
+        return;
       }
 
-      const { left, top } = canvasContextRef.current.canvas.getBoundingClientRect()
-      const x = e.clientX - left
-      const y = e.clientY - top
+      const { left, top } =
+        canvasContextRef.current.canvas.getBoundingClientRect();
+      const x = e.clientX - left;
+      const y = e.clientY - top;
       ellipseRef.current = {
         name: 'Ellipse',
         type: HistoryItemType.Source,
@@ -177,71 +184,81 @@ export default function Ellipse (): ReactElement {
           x1: x,
           y1: y,
           x2: x,
-          y2: y
+          y2: y,
         },
         editHistory: [],
         draw,
-        isHit
-      }
+        isHit,
+      };
     },
-    [checked, size, color, canvasContextRef]
-  )
+    [checked, size, color, canvasContextRef],
+  );
 
-  const onMousemove = useCallback(
-    (e: MouseEvent) => {
+  const onPointerMove = useCallback(
+    (e: PointerEvent) => {
       if (!checked || !canvasContextRef.current) {
-        return
+        return;
       }
 
       if (ellipseEditRef.current) {
-        ellipseEditRef.current.data.x2 = e.clientX
-        ellipseEditRef.current.data.y2 = e.clientY
+        ellipseEditRef.current.data.x2 = e.clientX;
+        ellipseEditRef.current.data.y2 = e.clientY;
         if (history.top !== ellipseEditRef.current) {
-          ellipseEditRef.current.source.editHistory.push(ellipseEditRef.current)
-          historyDispatcher.push(ellipseEditRef.current)
+          ellipseEditRef.current.source.editHistory.push(
+            ellipseEditRef.current,
+          );
+          historyDispatcher.push(ellipseEditRef.current);
         } else {
-          historyDispatcher.set(history)
+          historyDispatcher.set(history);
         }
       } else if (ellipseRef.current) {
-        const { left, top } = canvasContextRef.current.canvas.getBoundingClientRect()
-        ellipseRef.current.data.x2 = e.clientX - left
-        ellipseRef.current.data.y2 = e.clientY - top
+        const { left, top } =
+          canvasContextRef.current.canvas.getBoundingClientRect();
+        ellipseRef.current.data.x2 = e.clientX - left;
+        ellipseRef.current.data.y2 = e.clientY - top;
 
         if (history.top !== ellipseRef.current) {
-          historyDispatcher.push(ellipseRef.current)
+          historyDispatcher.push(ellipseRef.current);
         } else {
-          historyDispatcher.set(history)
+          historyDispatcher.set(history);
         }
       }
     },
-    [checked, canvasContextRef, history, historyDispatcher]
-  )
+    [checked, canvasContextRef, history, historyDispatcher],
+  );
 
-  const onMouseup = useCallback(() => {
+  const onPointerUp = useCallback(() => {
     if (!checked) {
-      return
+      return;
     }
 
     if (ellipseRef.current) {
-      historyDispatcher.clearSelect()
+      historyDispatcher.clearSelect();
     }
 
-    ellipseRef.current = null
-    ellipseEditRef.current = null
-  }, [checked, historyDispatcher])
+    ellipseRef.current = null;
+    ellipseEditRef.current = null;
+  }, [checked, historyDispatcher]);
 
-  useDrawSelect(onDrawSelect)
-  useCanvasMousedown(onMousedown)
-  useCanvasMousemove(onMousemove)
-  useCanvasMouseup(onMouseup)
+  useDrawSelect(onDrawSelect);
+  useCanvasPointerDown(onPointerDown);
+  useCanvasPointerMove(onPointerMove);
+  useCanvasPointerUp(onPointerUp);
 
   return (
     <ScreenshotsButton
       title={lang.operation_ellipse_title}
-      icon='icon-ellipse'
+      icon="icon-ellipse"
       checked={checked}
       onClick={onSelectEllipse}
-      option={<ScreenshotsSizeColor size={size} color={color} onSizeChange={setSize} onColorChange={setColor} />}
+      option={
+        <ScreenshotsSizeColor
+          size={size}
+          color={color}
+          onSizeChange={setSize}
+          onColorChange={setColor}
+        />
+      }
     />
-  )
+  );
 }

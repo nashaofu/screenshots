@@ -1,7 +1,7 @@
-import { memo, type ReactElement } from "react";
-import ScreenshotsSize from "../ScreenshotsSize";
-import ScreenshotsColor from "../ScreenshotsColor";
-import "./index.less";
+import { memo, type ReactElement } from 'react';
+import ScreenshotsColor from '../ScreenshotsColor';
+import ScreenshotsSize from '../ScreenshotsSize';
+import './index.less';
 
 export interface SizeColorProps {
   size: number;

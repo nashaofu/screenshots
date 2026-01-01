@@ -1,22 +1,22 @@
-import { useRef, useLayoutEffect, useState, memo } from 'react'
-import type { ReactElement, FocusEvent } from 'react'
-import { createPortal } from 'react-dom'
-import calculateNodeSize from './calculateNodeSize'
-import './index.less'
+import type { FocusEvent, ReactElement } from 'react';
+import { memo, useLayoutEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
+import calculateNodeSize from './calculateNodeSize';
+import './index.less';
 
 export interface TextInputProps {
-  x: number
-  y: number
-  maxWidth: number
-  maxHeight: number
-  size: number
-  color: string
-  value: string
-  onChange: (value: string) => unknown
-  onBlur: (e: FocusEvent<HTMLTextAreaElement>) => unknown
+  x: number;
+  y: number;
+  maxWidth: number;
+  maxHeight: number;
+  size: number;
+  color: string;
+  value: string;
+  onChange: (value: string) => unknown;
+  onBlur: (e: FocusEvent<HTMLTextAreaElement>) => unknown;
 }
 
-export default memo(function ScreenshotsTextarea ({
+export default memo(function ScreenshotsTextarea({
   x,
   y,
   maxWidth,
@@ -25,47 +25,52 @@ export default memo(function ScreenshotsTextarea ({
   color,
   value,
   onChange,
-  onBlur
+  onBlur,
 }: TextInputProps): ReactElement {
-  const popoverRef = useRef<HTMLDivElement | null>(null)
-  const textareaRef = useRef<HTMLTextAreaElement>(null)
-  const [width, setWidth] = useState(0)
-  const [height, setHeight] = useState(0)
+  const popoverRef = useRef<HTMLDivElement | null>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [width, setWidth] = useState(0);
+  const [height, setHeight] = useState(0);
 
   const getPopoverEl = () => {
     if (!popoverRef.current) {
-      popoverRef.current = document.createElement('div')
+      popoverRef.current = document.createElement('div');
     }
-    return popoverRef.current
-  }
+    return popoverRef.current;
+  };
 
   useLayoutEffect(() => {
     if (popoverRef.current) {
-      document.body.appendChild(popoverRef.current)
+      document.body.appendChild(popoverRef.current);
       requestAnimationFrame(() => {
-        textareaRef.current?.focus()
-      })
+        textareaRef.current?.focus();
+      });
     }
 
     return () => {
-      popoverRef.current?.remove()
-    }
-  }, [])
+      popoverRef.current?.remove();
+    };
+  }, []);
 
   useLayoutEffect(() => {
     if (!textareaRef.current) {
-      return
+      return;
     }
 
-    const { width, height } = calculateNodeSize(textareaRef.current, value, maxWidth, maxHeight)
-    setWidth(width)
-    setHeight(height)
-  }, [value, maxWidth, maxHeight])
+    const { width, height } = calculateNodeSize(
+      textareaRef.current,
+      value,
+      maxWidth,
+      maxHeight,
+    );
+    setWidth(width);
+    setHeight(height);
+  }, [value, maxWidth, maxHeight]);
 
   return createPortal(
     <textarea
       ref={textareaRef}
-      className='screenshots-textarea'
+      className="screenshots-textarea"
       style={{
         color,
         width,
@@ -74,12 +79,12 @@ export default memo(function ScreenshotsTextarea ({
         maxHeight,
         fontSize: size,
         lineHeight: `${size}px`,
-        transform: `translate(${x}px, ${y}px)`
+        transform: `translate(${x}px, ${y}px)`,
       }}
       value={value}
-      onChange={e => onChange && onChange(e.target.value)}
-      onBlur={e => onBlur && onBlur(e)}
+      onChange={(e) => onChange?.(e.target.value)}
+      onBlur={(e) => onBlur?.(e)}
     />,
-    getPopoverEl()
-  )
-})
+    getPopoverEl(),
+  );
+});

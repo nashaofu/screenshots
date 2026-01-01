@@ -1,19 +1,25 @@
-import { useCallback } from 'react'
-import type { ReactElement } from 'react'
-import useCall from '../../hooks/useCall'
-import useLang from '../../hooks/useLang'
-import useReset from '../../hooks/useReset'
-import ScreenshotsButton from '../../ScreenshotsButton'
+import type { ReactElement } from 'react';
+import { useCallback } from 'react';
+import useCall from '../../hooks/useCall';
+import useLang from '../../hooks/useLang';
+import useReset from '../../hooks/useReset';
+import ScreenshotsButton from '../../ScreenshotsButton';
 
-export default function Cancel (): ReactElement {
-  const call = useCall()
-  const reset = useReset()
-  const lang = useLang()
+export default function Cancel(): ReactElement {
+  const call = useCall();
+  const reset = useReset();
+  const lang = useLang();
 
   const onClick = useCallback(() => {
-    call('onCancel')
-    reset()
-  }, [call, reset])
+    call('onCancel');
+    reset();
+  }, [call, reset]);
 
-  return <ScreenshotsButton title={lang.operation_cancel_title} icon='icon-cancel' onClick={onClick} />
+  return (
+    <ScreenshotsButton
+      title={lang.operation_cancel_title}
+      icon="icon-cancel"
+      onClick={onClick}
+    />
+  );
 }

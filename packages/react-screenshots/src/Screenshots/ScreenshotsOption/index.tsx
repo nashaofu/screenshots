@@ -1,128 +1,153 @@
-import { cloneElement, memo, useContext, useEffect, useRef, useState } from 'react'
-import type { ReactElement, ReactNode } from 'react'
-import { createPortal } from 'react-dom'
-import { ScreenshotsOperationsCtx } from '../ScreenshotsOperations'
-import type { Point } from '../types'
-import './index.less'
+import type { ReactElement, ReactNode, RefObject } from "react";
+import {
+  cloneElement,
+  memo,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import { createPortal } from "react-dom";
+import { ScreenshotsOperationsCtx } from "../ScreenshotsOperations";
+import type { Point } from "../types";
+import "./index.less";
 
 export interface ScreenshotsOptionProps {
-  open?: boolean
-  content?: ReactNode
-  children: ReactElement
+  open?: boolean;
+  content?: ReactNode;
+  children: ReactElement;
 }
 
-export type Position = Point
+export type Position = Point;
 
 export enum Placement {
-  Bottom = 'bottom',
-  Top = 'top'
+  Bottom = "bottom",
+  Top = "top",
 }
 
-export default memo(function ScreenshotsOption ({ open, content, children }: ScreenshotsOptionProps): ReactElement {
-  const childrenRef = useRef<HTMLDivElement>(null)
-  const popoverRef = useRef<HTMLDivElement | null>(null)
-  const contentRef = useRef<HTMLDivElement>(null)
-  const operationsRect = useContext(ScreenshotsOperationsCtx)
-  const [placement, setPlacement] = useState<Placement>(Placement.Bottom)
-  const [position, setPosition] = useState<Position | null>(null)
-  const [offsetX, setOffsetX] = useState<number>(0)
+export default memo(function ScreenshotsOption({
+  open,
+  content,
+  children,
+}: ScreenshotsOptionProps): ReactElement {
+  const childrenRef = useRef<HTMLDivElement>(null);
+  const popoverRef = useRef<HTMLDivElement | null>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const operationsRect = useContext(ScreenshotsOperationsCtx);
+  const [placement, setPlacement] = useState<Placement>(Placement.Bottom);
+  const [position, setPosition] = useState<Position | null>(null);
+  const [offsetX, setOffsetX] = useState<number>(0);
 
   const getPopoverEl = () => {
     if (!popoverRef.current) {
-      popoverRef.current = document.createElement('div')
+      popoverRef.current = document.createElement("div");
     }
-    return popoverRef.current
-  }
+    return popoverRef.current;
+  };
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: getPopoverEl only cares about popoverRef
   useEffect(() => {
-    const $el = getPopoverEl()
+    const $el = getPopoverEl();
     if (open) {
-      document.body.appendChild($el)
+      document.body.appendChild($el);
     }
     return () => {
-      $el.remove()
-    }
-  }, [open])
+      $el.remove();
+    };
+  }, [open]);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
-    if (!open || !operationsRect || !childrenRef.current || !contentRef.current) {
-      return
+    if (
+      !open ||
+      !operationsRect ||
+      !childrenRef.current ||
+      !contentRef.current
+    ) {
+      return;
     }
 
-    const childrenRect = childrenRef.current.getBoundingClientRect()
-    const contentRect = contentRef.current.getBoundingClientRect()
+    const childrenRect = childrenRef.current.getBoundingClientRect();
+    const contentRect = contentRef.current.getBoundingClientRect();
 
-    let currentPlacement = placement
-    let x = childrenRect.left + childrenRect.width / 2
-    let y = childrenRect.top + childrenRect.height
-    let currentOffsetX = offsetX
+    let currentPlacement = placement;
+    let x = childrenRect.left + childrenRect.width / 2;
+    let y = childrenRect.top + childrenRect.height;
+    let currentOffsetX = offsetX;
 
     // 如果左右都越界了，就以左边界为准
     if (x + contentRect.width / 2 > operationsRect.x + operationsRect.width) {
-      const ox = x
-      x = operationsRect.x + operationsRect.width - contentRect.width / 2
-      currentOffsetX = ox - x
+      const ox = x;
+      x = operationsRect.x + operationsRect.width - contentRect.width / 2;
+      currentOffsetX = ox - x;
     }
 
     // 左边不能超出
     if (x < operationsRect.x + contentRect.width / 2) {
-      const ox = x
-      x = operationsRect.x + contentRect.width / 2
-      currentOffsetX = ox - x
+      const ox = x;
+      x = operationsRect.x + contentRect.width / 2;
+      currentOffsetX = ox - x;
     }
 
     // 如果上下都越界了，就以上边界为准
     if (y > window.innerHeight - contentRect.height) {
       if (currentPlacement === Placement.Bottom) {
-        currentPlacement = Placement.Top
+        currentPlacement = Placement.Top;
       }
-      y = childrenRect.top - contentRect.height
+      y = childrenRect.top - contentRect.height;
     }
 
     if (y < 0) {
       if (currentPlacement === Placement.Top) {
-        currentPlacement = Placement.Bottom
+        currentPlacement = Placement.Bottom;
       }
-      y = childrenRect.top + childrenRect.height
+      y = childrenRect.top + childrenRect.height;
     }
     if (currentPlacement !== placement) {
-      setPlacement(currentPlacement)
+      setPlacement(currentPlacement);
     }
     if (position?.x !== x || position.y !== y) {
       setPosition({
         x,
-        y
-      })
+        y,
+      });
     }
 
     if (currentOffsetX !== offsetX) {
-      setOffsetX(currentOffsetX)
+      setOffsetX(currentOffsetX);
     }
-  })
+  });
 
   return (
     <>
-      {cloneElement(children as React.ReactElement<any>, {
-        ref: childrenRef as any
-      })}
+      {cloneElement(
+        children as ReactElement<{ ref: RefObject<HTMLDivElement | null> }>,
+        {
+          ref: childrenRef,
+        }
+      )}
       {open &&
         content &&
         createPortal(
           <div
             ref={contentRef}
-            className='screenshots-option'
+            className="screenshots-option"
             style={{
-              visibility: position ? 'visible' : 'hidden',
-              transform: `translate(${position?.x ?? 0}px, ${position?.y ?? 0}px)`
+              visibility: position ? "visible" : "hidden",
+              transform: `translate(${position?.x ?? 0}px, ${
+                position?.y ?? 0
+              }px)`,
             }}
             data-placement={placement}
           >
-            <div className='screenshots-option-container'>{content}</div>
-            <div className='screenshots-option-arrow' style={{ marginLeft: offsetX }} />
+            <div className="screenshots-option-container">{content}</div>
+            <div
+              className="screenshots-option-arrow"
+              style={{ marginLeft: offsetX }}
+            />
           </div>,
           getPopoverEl()
         )}
     </>
-  )
-})
+  );
+});

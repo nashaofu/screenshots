@@ -1,16 +1,16 @@
 export interface Lang {
-  magnifier_position_label: string
-  operation_ok_title: string
-  operation_cancel_title: string
-  operation_save_title: string
-  operation_redo_title: string
-  operation_undo_title: string
-  operation_mosaic_title: string
-  operation_text_title: string
-  operation_brush_title: string
-  operation_arrow_title: string
-  operation_ellipse_title: string
-  operation_rectangle_title: string
+  magnifier_position_label: string;
+  operation_ok_title: string;
+  operation_cancel_title: string;
+  operation_save_title: string;
+  operation_redo_title: string;
+  operation_undo_title: string;
+  operation_mosaic_title: string;
+  operation_text_title: string;
+  operation_brush_title: string;
+  operation_arrow_title: string;
+  operation_ellipse_title: string;
+  operation_rectangle_title: string;
 }
 
 const zhCN: Lang = {
@@ -25,7 +25,7 @@ const zhCN: Lang = {
   operation_brush_title: '画笔',
   operation_arrow_title: '箭头',
   operation_ellipse_title: '椭圆',
-  operation_rectangle_title: '矩形'
-}
+  operation_rectangle_title: '矩形',
+};
 
-export default zhCN
+export default zhCN;
