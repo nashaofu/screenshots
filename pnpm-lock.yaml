@@ -40,8 +40,8 @@ importers:
         specifier: ^10.1.0
         version: 10.1.0
       electron:
-        specifier: ^39.8.4
-        version: 39.8.4
+        specifier: ^39.8.5
+        version: 39.8.5
       rimraf:
         specifier: ^6.1.2
         version: 6.1.2
@@ -376,8 +376,8 @@ packages:
   '@types/ms@2.1.0':
     resolution: {integrity: sha512-GsCCIZDE/p3i96vtEqx+7dBUGXrc7zeSK3wwPHIaRThS+9OhWIXRqzs4d6k1SVU8g91DrNRWxWUGhp5KXQb2VA==}
 
-  '@types/node@22.19.15':
-    resolution: {integrity: sha512-F0R/h2+dsy5wJAUe3tAU6oqa2qbWY5TpNfL/RGmo1y38hiyO1w3x2jPtt76wmuaJI4DQnOBu21cNXQ2STIUUWg==}
+  '@types/node@22.19.17':
+    resolution: {integrity: sha512-wGdMcf+vPYM6jikpS/qhg6WiqSV/OhG+jeeHT/KlVqxYfD40iYJf9/AE1uQxVWFvU7MipKRkRv8NSHiCGgPr8Q==}
 
   '@types/node@25.2.1':
     resolution: {integrity: sha512-CPrnr8voK8vC6eEtyRzvMpgp3VyVRhgclonE7qYi6P9sXwYb59ucfrnmFBTaP0yUi8Gk4yZg/LlTJULGxvTNsg==}
@@ -461,8 +461,8 @@ packages:
   detect-node@2.1.0:
     resolution: {integrity: sha512-T0NIuQpnTvFDATNuHN5roPwSBG83rFsuO+MXXH9/3N1eFbn4wcPjttvjMLEPWJ0RGUYgQE7cGgS3tNxbqCGM7g==}
 
-  electron@39.8.4:
-    resolution: {integrity: sha512-eXYKxr4y+s31xs78keVJYg+XY20tGQMQzyIhZvc5L0XRDH2Gp08mbeFlbR1OjAeM5h5l/T2JYT2MFK2kYe2fMg==}
+  electron@39.8.5:
+    resolution: {integrity: sha512-q6+LiQIcTadSyvtPgLDQkCtVA9jQJXQVMrQcctfOJILh6OFMN+UJJLRkuUTy8CZDYeCIBn1ZycqsL1dAXugxZA==}
     engines: {node: '>= 12.20.55'}
     hasBin: true
 
@@ -1107,7 +1107,7 @@ snapshots:
 
   '@types/ms@2.1.0': {}
 
-  '@types/node@22.19.15':
+  '@types/node@22.19.17':
     dependencies:
       undici-types: 6.21.0
 
@@ -1197,10 +1197,10 @@ snapshots:
   detect-node@2.1.0:
     optional: true
 
-  electron@39.8.4:
+  electron@39.8.5:
     dependencies:
       '@electron/get': 2.0.3
-      '@types/node': 22.19.15
+      '@types/node': 22.19.17
       extract-zip: 2.0.1
     transitivePeerDependencies:
       - supports-color
