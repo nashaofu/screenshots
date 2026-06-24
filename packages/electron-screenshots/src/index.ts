@@ -281,8 +281,8 @@ export default class Screenshots extends Events {
       const sources = await desktopCapturer.getSources({
         types: ['screen'],
         thumbnailSize: {
-          width: display.width * display.scaleFactor,
-          height: display.height * display.scaleFactor,
+          width: Math.floor(display.width * display.scaleFactor),
+          height: Math.floor(display.height * display.scaleFactor),
         },
       });
 
